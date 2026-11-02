@@ -1,7 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import { StyleSheet, View, SafeAreaView, StatusBar, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import { StudentProvider } from './src/context/StudentContext';
 import { StudentSelector } from './src/components/StudentSelector';
+import { BottomTabNavigator } from './src/navigation/BottomTabNavigator';
 
 // Mock initial data demonstrating multi-child support (e.g. 1 in Kindergarten, 1 in Primary)
 const initialStudentsMock = [
@@ -28,115 +30,74 @@ const initialStudentsMock = [
 export default function App() {
   return (
     <StudentProvider initialStudents={initialStudentsMock}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" />
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        
+        {/* App Institutional Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>BiliAPP Escolar</Text>
-          <Text style={styles.headerSubtitle}>Portal Familiar</Text>
+          <View style={styles.headerLeft}>
+            <View style={styles.logoBadge}>
+              <Text style={styles.logoText}>B</Text>
+            </View>
+            <View>
+              <Text style={styles.headerTitle}>BiliAPP Escolar</Text>
+              <Text style={styles.headerSubtitle}>Portal de Familias y Tutores</Text>
+            </View>
+          </View>
         </View>
 
-        {/* Multi-Child Selector */}
+        {/* Global Multi-Child Selector */}
         <StudentSelector />
 
-        <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Muro del Estudiante</Text>
-            <Text style={styles.cardBody}>
-              Cambia entre tus hijos desde la barra superior para ver su asistencia, comunicaciones,
-              autorizaciones de retiro y boletines correspondientes a su nivel.
-            </Text>
-          </View>
-
-          <View style={styles.actionGrid}>
-            <View style={styles.actionCard}>
-              <Text style={styles.actionCardTitle}>📋 Asistencia</Text>
-              <Text style={styles.actionCardDesc}>0 faltas acumuladas este mes</Text>
-            </View>
-            <View style={styles.actionCard}>
-              <Text style={styles.actionCardTitle}>🚪 Retiros Seguros</Text>
-              <Text style={styles.actionCardDesc}>3 personas autorizadas</Text>
-            </View>
-            <View style={styles.actionCard}>
-              <Text style={styles.actionCardTitle}>📢 Comunicados</Text>
-              <Text style={styles.actionCardDesc}>1 circular para firmar con PIN</Text>
-            </View>
-            <View style={styles.actionCard}>
-              <Text style={styles.actionCardTitle}>📊 Boletín</Text>
-              <Text style={styles.actionCardDesc}>1° Trimestre en curso</Text>
-            </View>
-          </View>
-        </ScrollView>
+        {/* Dynamic Multi-Tab Content */}
+        <NavigationContainer>
+          <BottomTabNavigator />
+        </NavigationContainer>
       </SafeAreaView>
     </StudentProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#ffffff',
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
     backgroundColor: '#ffffff',
   },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  logoBadge: {
+    width: 34,
+    height: 34,
+    borderRadius: 8,
+    backgroundColor: '#1e3a8a',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '800',
+  },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 17,
     fontWeight: '800',
     color: '#0f172a',
   },
   headerSubtitle: {
-    fontSize: 13,
-    color: '#64748b',
-    marginTop: 2,
-  },
-  content: {
-    padding: 16,
-    gap: 16,
-  },
-  card: {
-    backgroundColor: '#eff6ff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#bfdbfe',
-  },
-  cardTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#1e3a8a',
-    marginBottom: 6,
-  },
-  cardBody: {
-    fontSize: 13,
-    color: '#1e40af',
-    lineHeight: 18,
-  },
-  actionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  actionCard: {
-    flex: 1,
-    minWidth: '45%',
-    backgroundColor: '#f8fafc',
-    padding: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-  },
-  actionCardTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#0f172a',
-    marginBottom: 4,
-  },
-  actionCardDesc: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#64748b',
   },
 });
-
