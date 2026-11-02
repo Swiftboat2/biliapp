@@ -17,6 +17,8 @@ interface ConversationItem {
   id: string;
   senderName: string;
   senderRole: string;
+  childScope: 'MATEO' | 'SOFIA' | 'GENERAL';
+  childBadgeLabel: string;
   subject: string;
   excerpt: string;
   time: string;
@@ -30,13 +32,14 @@ interface ConversationItem {
 
 export const MessagesScreen: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<
-    'TODOS' | 'NO_LEIDOS' | 'INSTITUCIONAL' | 'ENVIADOS' | 'PAPELERA'
+    'TODOS' | 'MATEO' | 'SOFIA' | 'INSTITUCIONAL' | 'NO_LEIDOS'
   >('TODOS');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedChat, setSelectedChat] = useState<ConversationItem | null>(null);
   const [replyText, setReplyText] = useState('');
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [composeTo, setComposeTo] = useState('Seño Valentina (Sala de 4)');
+  const [composeChild, setComposeChild] = useState<'MATEO' | 'SOFIA'>('MATEO');
   const [composeSubject, setComposeSubject] = useState('');
   const [composeBody, setComposeBody] = useState('');
 
@@ -45,6 +48,8 @@ export const MessagesScreen: React.FC = () => {
       id: 'c1',
       senderName: 'Seño Valentina · Sala de 4',
       senderRole: 'Docente Nivel Inicial',
+      childScope: 'MATEO',
+      childBadgeLabel: '🧒 Mateo · Sala de 4',
       subject: 'Resumen semanal y taller bicultural de arte 🎨🇮🇹',
       excerpt:
         '¡Hola familia! Les comparto que Mateo participó con entusiasmo cantando en italiano y preparando su propia obra con témperas...',
@@ -58,10 +63,12 @@ export const MessagesScreen: React.FC = () => {
     {
       id: 'c2',
       senderName: 'Prof. Carlos Gómez · Ed. Física',
-      senderRole: 'Educación Física',
+      senderRole: 'Educación Física Escolar',
+      childScope: 'SOFIA',
+      childBadgeLabel: '👧 Sofía · 4° Grado',
       subject: '🏊 Ficha médica y apto físico para natación',
       excerpt:
-        'Recordamos enviar el apto médico actualizado antes del viernes para habilitar el ingreso al natatorio del club...',
+        'Recordamos enviar el apto médico actualizado de Sofía antes del viernes para habilitar el ingreso al natatorio del club...',
       time: 'Ayer',
       tag: 'DEPORTE ESCOLAR',
       tagType: 'DEPORTE',
@@ -73,9 +80,11 @@ export const MessagesScreen: React.FC = () => {
       id: 'c3',
       senderName: 'Lic. Andrea Paz · Psicopedagogía',
       senderRole: 'Gabinete Psicopedagógico',
+      childScope: 'MATEO',
+      childBadgeLabel: '🧒 Mateo · Sala de 4',
       subject: 'Devolución de observación evolutiva',
       excerpt:
-        'Coordinamos una breve reunión virtual para repasar los avances de adaptación y dinámicas de socialización observadas...',
+        'Coordinamos una breve reunión virtual para repasar los avances de adaptación y dinámicas de socialización observadas en Mateo...',
       time: '26 Oct',
       tag: 'SEGUIMIENTO PERSONAL',
       tagType: 'GABINETE',
@@ -87,6 +96,8 @@ export const MessagesScreen: React.FC = () => {
       id: 'c4',
       senderName: 'Secretaría Administrativa',
       senderRole: 'Administración y Aranceles',
+      childScope: 'GENERAL',
+      childBadgeLabel: '🏛️ Toda la Familia',
       subject: '📢 Circular N° 14: Cuotas y rematriculación 2027',
       excerpt:
         'Se encuentra disponible en la sección Archivos la planilla de confirmación de vacante y aranceles para el próximo ciclo lectivo...',
@@ -100,21 +111,28 @@ export const MessagesScreen: React.FC = () => {
     },
   ]);
 
+  // Counts for pills
+  const mateoCount = conversations.filter((c) => c.childScope === 'MATEO').length;
+  const sofiaCount = conversations.filter((c) => c.childScope === 'SOFIA').length;
+  const generalCount = conversations.filter((c) => c.childScope === 'GENERAL').length;
+  const unreadCountTotal = conversations.filter((c) => c.unreadCount > 0).length;
+
   // Filter logic
   const filteredList = conversations.filter((c) => {
-    // Search query
+    // Search query filter
     const matchQuery =
       c.senderName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+      c.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.childBadgeLabel.toLowerCase().includes(searchQuery.toLowerCase());
 
     if (!matchQuery) return false;
 
+    if (activeFilter === 'MATEO') return c.childScope === 'MATEO';
+    if (activeFilter === 'SOFIA') return c.childScope === 'SOFIA';
+    if (activeFilter === 'INSTITUCIONAL') return c.childScope === 'GENERAL';
     if (activeFilter === 'NO_LEIDOS') return c.unreadCount > 0;
-    if (activeFilter === 'INSTITUCIONAL') return c.tagType === 'SECRETARIA';
-    if (activeFilter === 'ENVIADOS') return false; // Demo empty
-    if (activeFilter === 'PAPELERA') return false; // Demo empty
-    return true;
+    return true; // TODOS
   });
 
   const handleMarkAllRead = () => {
@@ -135,7 +153,8 @@ export const MessagesScreen: React.FC = () => {
       Alert.alert('Campos incompletos', 'Ingresa asunto y mensaje antes de enviar.');
       return;
     }
-    Alert.alert('Mensaje enviado con éxito', `Destinatario: ${composeTo}`);
+    const childName = composeChild === 'MATEO' ? 'Mateo' : 'Sofía';
+    Alert.alert('Mensaje enviado con éxito', `Para: ${composeTo}\nReferencia: ${childName}`);
     setIsComposeOpen(false);
     setComposeSubject('');
     setComposeBody('');
@@ -143,9 +162,9 @@ export const MessagesScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* 1. HERO WAVE BANNER INSTITUCIONAL (#008C45) */}
+      {/* 1. HERO BANNER INSTITUCIONAL VERDE (#008C45) */}
       <View style={styles.heroBanner}>
-        {/* Decorative subtle ambient circles */}
+        {/* Luces sutiles de fondo */}
         <View style={styles.heroCircle1} />
         <View style={styles.heroCircle2} />
 
@@ -180,11 +199,11 @@ export const MessagesScreen: React.FC = () => {
         <View style={styles.heroTextSection}>
           <View style={styles.heroContextPill}>
             <Text style={styles.heroContextIcon}>💬</Text>
-            <Text style={styles.heroContextText}>COMUNIDAD EDUCATIVA</Text>
+            <Text style={styles.heroContextText}>CANAL INSTITUCIONAL</Text>
           </View>
           <Text style={styles.heroMainTitle}>Comunicaciones</Text>
           <Text style={styles.heroMainSubtitle}>
-            Canal directo con docentes, secretaría y directivos
+            Mensajes directos para Mateo, Sofía y avisos generales
           </Text>
         </View>
 
@@ -193,7 +212,7 @@ export const MessagesScreen: React.FC = () => {
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             style={styles.searchInput}
-            placeholder="Buscar mensajes, docentes o avisos..."
+            placeholder="Buscar por hijo, docente o tema..."
             placeholderTextColor="#94A3B8"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -204,14 +223,14 @@ export const MessagesScreen: React.FC = () => {
         </View>
       </View>
 
-      {/* 2. FILTROS / PESTAÑAS HORIZONTALES (Pill chips deslizables) */}
+      {/* 2. FILTROS RÁPIDOS POR HIJO Y CATEGORÍA (Píldoras Deslizables) */}
       <View style={styles.filterChipsSection}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filterChipsScroll}
         >
-          {/* Chip Recibidos */}
+          {/* Todos */}
           <TouchableOpacity
             style={[
               styles.filterChip,
@@ -226,14 +245,58 @@ export const MessagesScreen: React.FC = () => {
                 activeFilter === 'TODOS' && styles.filterChipTextActive,
               ]}
             >
-              📥 Recibidos
+              📥 Todos
             </Text>
-            <View style={styles.chipRedBadge}>
-              <Text style={styles.chipRedBadgeText}>3</Text>
+            <View style={styles.chipCountBadge}>
+              <Text style={styles.chipCountText}>{conversations.length}</Text>
             </View>
           </TouchableOpacity>
 
-          {/* Chip No Leídos */}
+          {/* Filtro Mateo */}
+          <TouchableOpacity
+            style={[
+              styles.filterChip,
+              activeFilter === 'MATEO' && styles.filterChipActiveGreen,
+            ]}
+            onPress={() => setActiveFilter('MATEO')}
+            activeOpacity={0.85}
+          >
+            <Text
+              style={[
+                styles.filterChipText,
+                activeFilter === 'MATEO' && styles.filterChipTextActive,
+              ]}
+            >
+              🧒 Mateo
+            </Text>
+            <View style={styles.chipCountBadgeGreen}>
+              <Text style={styles.chipCountTextGreen}>{mateoCount}</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Filtro Sofía */}
+          <TouchableOpacity
+            style={[
+              styles.filterChip,
+              activeFilter === 'SOFIA' && styles.filterChipActiveBlue,
+            ]}
+            onPress={() => setActiveFilter('SOFIA')}
+            activeOpacity={0.85}
+          >
+            <Text
+              style={[
+                styles.filterChipText,
+                activeFilter === 'SOFIA' && styles.filterChipTextActive,
+              ]}
+            >
+              👧 Sofía
+            </Text>
+            <View style={styles.chipCountBadgeBlue}>
+              <Text style={styles.chipCountTextBlue}>{sofiaCount}</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* No Leídos */}
           <TouchableOpacity
             style={[
               styles.filterChip,
@@ -250,12 +313,14 @@ export const MessagesScreen: React.FC = () => {
             >
               ✉️ No leídos
             </Text>
-            <View style={styles.chipLightRedBadge}>
-              <Text style={styles.chipLightRedBadgeText}>3</Text>
-            </View>
+            {unreadCountTotal > 0 && (
+              <View style={styles.chipRedBadge}>
+                <Text style={styles.chipRedBadgeText}>{unreadCountTotal}</Text>
+              </View>
+            )}
           </TouchableOpacity>
 
-          {/* Chip Institucionales */}
+          {/* Institucionales / Familia */}
           <TouchableOpacity
             style={[
               styles.filterChip,
@@ -270,51 +335,16 @@ export const MessagesScreen: React.FC = () => {
                 activeFilter === 'INSTITUCIONAL' && styles.filterChipTextActive,
               ]}
             >
-              🏛️ Institucionales
+              🏛️ General
             </Text>
-          </TouchableOpacity>
-
-          {/* Chip Enviados */}
-          <TouchableOpacity
-            style={[
-              styles.filterChip,
-              activeFilter === 'ENVIADOS' && styles.filterChipActive,
-            ]}
-            onPress={() => setActiveFilter('ENVIADOS')}
-            activeOpacity={0.85}
-          >
-            <Text
-              style={[
-                styles.filterChipText,
-                activeFilter === 'ENVIADOS' && styles.filterChipTextActive,
-              ]}
-            >
-              📤 Enviados
-            </Text>
-          </TouchableOpacity>
-
-          {/* Chip Papelera */}
-          <TouchableOpacity
-            style={[
-              styles.filterChip,
-              activeFilter === 'PAPELERA' && styles.filterChipActive,
-            ]}
-            onPress={() => setActiveFilter('PAPELERA')}
-            activeOpacity={0.85}
-          >
-            <Text
-              style={[
-                styles.filterChipText,
-                activeFilter === 'PAPELERA' && styles.filterChipTextActive,
-              ]}
-            >
-              🗑️ Papelera
-            </Text>
+            <View style={styles.chipCountBadge}>
+              <Text style={styles.chipCountText}>{generalCount}</Text>
+            </View>
           </TouchableOpacity>
         </ScrollView>
       </View>
 
-      {/* 3. LISTADO DE CONVERSACIONES */}
+      {/* 3. LISTADO DE CONVERSACIONES CON ETIQUETAS POR HIJO */}
       <FlatList
         data={filteredList}
         keyExtractor={(item) => item.id}
@@ -323,7 +353,13 @@ export const MessagesScreen: React.FC = () => {
         ListHeaderComponent={
           <View style={styles.listHeaderRow}>
             <View style={styles.listHeaderLeft}>
-              <Text style={styles.listHeaderCategory}>BANDEJA PRINCIPAL</Text>
+              <Text style={styles.listHeaderCategory}>
+                {activeFilter === 'MATEO'
+                  ? 'MENSAJES DE MATEO'
+                  : activeFilter === 'SOFIA'
+                  ? 'MENSAJES DE SOFÍA'
+                  : 'BANDEJA DE ENTRADA'}
+              </Text>
               <View style={styles.listHeaderDot} />
               <Text style={styles.listHeaderCount}>
                 {filteredList.length} conversaciones
@@ -336,6 +372,8 @@ export const MessagesScreen: React.FC = () => {
         }
         renderItem={({ item }) => {
           const isUnread = item.unreadCount > 0;
+          const isForMateo = item.childScope === 'MATEO';
+          const isForSofia = item.childScope === 'SOFIA';
 
           return (
             <TouchableOpacity
@@ -347,9 +385,15 @@ export const MessagesScreen: React.FC = () => {
               activeOpacity={0.88}
             >
               <View style={styles.cardFlexRow}>
-                {/* Avatar with Online/Role dot */}
+                {/* Avatar with Role/Child Indicator */}
                 <View style={styles.avatarBoxWrap}>
-                  <View style={styles.avatarCircle}>
+                  <View
+                    style={[
+                      styles.avatarCircle,
+                      isForMateo && styles.avatarCircleGreen,
+                      isForSofia && styles.avatarCircleBlue,
+                    ]}
+                  >
                     <Text style={styles.avatarEmoji}>
                       {item.tagType === 'INICIAL'
                         ? '👩‍🏫'
@@ -372,7 +416,8 @@ export const MessagesScreen: React.FC = () => {
 
                 {/* Content Col */}
                 <View style={styles.cardContentCol}>
-                  <View style={styles.cardTitleRow}>
+                  {/* Top Row: Sender + Child Scope Pill */}
+                  <View style={styles.cardTopHeaderRow}>
                     <Text style={styles.cardSenderName} numberOfLines={1}>
                       {item.senderName}
                     </Text>
@@ -386,6 +431,30 @@ export const MessagesScreen: React.FC = () => {
                     </Text>
                   </View>
 
+                  {/* Child Identification Badge */}
+                  <View style={styles.childIdentifierRow}>
+                    <View
+                      style={[
+                        styles.childIdentifierBadge,
+                        isForMateo && styles.childIdentifierBadgeMateo,
+                        isForSofia && styles.childIdentifierBadgeSofia,
+                        !isForMateo && !isForSofia && styles.childIdentifierBadgeGeneral,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.childIdentifierText,
+                          isForMateo && styles.childIdentifierTextMateo,
+                          isForSofia && styles.childIdentifierTextSofia,
+                          !isForMateo && !isForSofia && styles.childIdentifierTextGeneral,
+                        ]}
+                      >
+                        {item.childBadgeLabel}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Subject and Excerpt */}
                   <Text
                     style={[
                       styles.cardSubject,
@@ -474,8 +543,15 @@ export const MessagesScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
-              <View>
-                <Text style={styles.modalSender}>{selectedChat?.senderName}</Text>
+              <View style={{ flex: 1 }}>
+                <View style={styles.modalSenderRow}>
+                  <Text style={styles.modalSender}>{selectedChat?.senderName}</Text>
+                  <View style={styles.modalChildBadge}>
+                    <Text style={styles.modalChildBadgeText}>
+                      {selectedChat?.childBadgeLabel}
+                    </Text>
+                  </View>
+                </View>
                 <Text style={styles.modalRole}>{selectedChat?.senderRole}</Text>
               </View>
               <TouchableOpacity onPress={() => setSelectedChat(null)}>
@@ -519,6 +595,35 @@ export const MessagesScreen: React.FC = () => {
             </View>
 
             <ScrollView style={styles.modalBody}>
+              <Text style={styles.composeLabel}>¿Respecto a qué estudiante?:</Text>
+              <View style={styles.composeChildSelectRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.composeChildBtn,
+                    composeChild === 'MATEO' && styles.composeChildBtnActiveMateo,
+                  ]}
+                  onPress={() => {
+                    setComposeChild('MATEO');
+                    setComposeTo('Seño Valentina (Sala de 4)');
+                  }}
+                >
+                  <Text style={styles.composeChildBtnText}>🧒 Mateo (Sala 4)</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.composeChildBtn,
+                    composeChild === 'SOFIA' && styles.composeChildBtnActiveSofia,
+                  ]}
+                  onPress={() => {
+                    setComposeChild('SOFIA');
+                    setComposeTo('Prof. Carlos Gómez (Ed. Física)');
+                  }}
+                >
+                  <Text style={styles.composeChildBtnText}>👧 Sofía (4° Grado)</Text>
+                </TouchableOpacity>
+              </View>
+
               <Text style={styles.composeLabel}>Destinatario:</Text>
               <View style={styles.composeInputBox}>
                 <Text style={styles.composeDestText}>{composeTo}</Text>
@@ -527,7 +632,7 @@ export const MessagesScreen: React.FC = () => {
               <Text style={styles.composeLabel}>Asunto:</Text>
               <TextInput
                 style={styles.composeSubjectInput}
-                placeholder="Ej: Consulta por retiro anticipado o tarea..."
+                placeholder="Ej: Consulta por retiro o tarea..."
                 placeholderTextColor="#94A3B8"
                 value={composeSubject}
                 onChangeText={setComposeSubject}
@@ -550,7 +655,7 @@ export const MessagesScreen: React.FC = () => {
                 style={styles.sendNewBtn}
                 onPress={handleSendNewMessage}
               >
-                <Text style={styles.sendNewBtnText}>Enviar a Dirección / Docente</Text>
+                <Text style={styles.sendNewBtnText}>Enviar a Docente / Directivo</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -747,7 +852,7 @@ const styles = StyleSheet.create({
   /* 2. FILTER CHIPS */
   filterChipsSection: {
     paddingTop: 12,
-    paddingBottom: 6,
+    paddingBottom: 4,
   },
   filterChipsScroll: {
     paddingHorizontal: 16,
@@ -759,7 +864,7 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: '#FFFFFF',
     paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingHorizontal: 13,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -773,6 +878,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
+  filterChipActiveGreen: {
+    backgroundColor: '#005F2E',
+    borderColor: '#005F2E',
+  },
+  filterChipActiveBlue: {
+    backgroundColor: '#1A73E8',
+    borderColor: '#1A73E8',
+  },
   filterChipText: {
     fontSize: 12,
     fontWeight: '700',
@@ -780,6 +893,39 @@ const styles = StyleSheet.create({
   },
   filterChipTextActive: {
     color: '#FFFFFF',
+  },
+  chipCountBadge: {
+    backgroundColor: '#EAEDFF',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 9999,
+  },
+  chipCountText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#475569',
+  },
+  chipCountBadgeGreen: {
+    backgroundColor: '#E8F7EE',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 9999,
+  },
+  chipCountTextGreen: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#005F2E',
+  },
+  chipCountBadgeBlue: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 9999,
+  },
+  chipCountTextBlue: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#1A73E8',
   },
   chipRedBadge: {
     backgroundColor: colors.coral,
@@ -791,17 +937,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '800',
     color: '#FFFFFF',
-  },
-  chipLightRedBadge: {
-    backgroundColor: '#FFF1F2',
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: 9999,
-  },
-  chipLightRedBadgeText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#9F1239',
   },
 
   /* 3. CONVERSATIONS LIST */
@@ -878,6 +1013,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
+  avatarCircleGreen: {
+    backgroundColor: '#E8F7EE',
+    borderColor: '#C6F6D5',
+  },
+  avatarCircleBlue: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#BAE6FD',
+  },
   avatarEmoji: {
     fontSize: 24,
   },
@@ -894,7 +1037,7 @@ const styles = StyleSheet.create({
   cardContentCol: {
     flex: 1,
   },
-  cardTitleRow: {
+  cardTopHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -915,11 +1058,50 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: '800',
   },
+
+  /* Child Identifier Row */
+  childIdentifierRow: {
+    flexDirection: 'row',
+    marginVertical: 3,
+  },
+  childIdentifierBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 9999,
+  },
+  childIdentifierBadgeMateo: {
+    backgroundColor: '#FFE4E6',
+  },
+  childIdentifierTextMateo: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#9F1239',
+  },
+  childIdentifierBadgeSofia: {
+    backgroundColor: '#DBEAFE',
+  },
+  childIdentifierTextSofia: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#1E40AF',
+  },
+  childIdentifierBadgeGeneral: {
+    backgroundColor: '#F1F5F9',
+  },
+  childIdentifierTextGeneral: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#475569',
+  },
+  childIdentifierText: {
+    fontSize: 10,
+  },
+
   cardSubject: {
     fontSize: 13,
     fontWeight: '600',
     color: '#334155',
-    marginTop: 1,
+    marginTop: 2,
   },
   cardSubjectUnread: {
     fontWeight: '800',
@@ -952,32 +1134,24 @@ const styles = StyleSheet.create({
   },
   tagPillTextGreen: {
     color: '#005F2E',
-    fontSize: 10,
-    fontWeight: '800',
   },
   tagPillBlue: {
     backgroundColor: '#EFF6FF',
   },
   tagPillTextBlue: {
     color: '#1A73E8',
-    fontSize: 10,
-    fontWeight: '800',
   },
   tagPillAmber: {
     backgroundColor: '#FEF3C7',
   },
   tagPillTextAmber: {
     color: '#B45309',
-    fontSize: 10,
-    fontWeight: '800',
   },
   tagPillCeleste: {
     backgroundColor: '#E0F2FE',
   },
   tagPillTextCeleste: {
     color: '#0369A1',
-    fontSize: 10,
-    fontWeight: '800',
   },
   unreadCounterBadge: {
     width: 22,
@@ -1087,16 +1261,33 @@ const styles = StyleSheet.create({
   },
   modalHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     paddingBottom: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
   },
+  modalSenderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
   modalSender: {
     fontSize: 16,
     fontWeight: '900',
     color: '#131B2E',
+  },
+  modalChildBadge: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 9999,
+  },
+  modalChildBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#1A73E8',
   },
   modalRole: {
     fontSize: 12,
@@ -1162,6 +1353,33 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 4,
   },
+  composeChildSelectRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 6,
+  },
+  composeChildBtn: {
+    flex: 1,
+    backgroundColor: '#F1F5F9',
+    paddingVertical: 8,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  composeChildBtnActiveMateo: {
+    backgroundColor: '#FFE4E6',
+    borderColor: '#FECDD3',
+  },
+  composeChildBtnActiveSofia: {
+    backgroundColor: '#DBEAFE',
+    borderColor: '#BAE6FD',
+  },
+  composeChildBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#131B2E',
+  },
   composeInputBox: {
     backgroundColor: '#F1F5F9',
     padding: 10,
@@ -1190,7 +1408,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#131B2E',
     textAlignVertical: 'top',
-    height: 100,
+    height: 95,
   },
   sendNewBtn: {
     backgroundColor: colors.primary,

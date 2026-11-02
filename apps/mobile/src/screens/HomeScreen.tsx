@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -9,36 +9,28 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useActiveStudent } from '../context/StudentContext';
-import { StudentCarousel } from '../components/StudentCarousel';
 import { colors } from '../theme/colors';
 
 export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const { activeStudent } = useActiveStudent();
+  const { students, setActiveStudent } = useActiveStudent();
   const { width } = useWindowDimensions();
-  const [activeTab, setActiveTab] = useState<'TABLERO' | 'TIMELINE'>('TIMELINE');
 
-  // Responsive event card width for snap carousel
-  const eventCardWidth = Math.min(width * 0.8, 300);
+  // Responsive card widths
+  const eventCardWidth = Math.min(width * 0.78, 290);
+  const studentCardWidth = Math.min(width * 0.72, 270);
 
-  if (!activeStudent) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.emptyText}>No hay estudiante activo.</Text>
-      </View>
-    );
-  }
-
-  const isKindergarten = activeStudent.educationalLevel === 'INICIAL';
+  const mateo = students.find((s) => s.educationalLevel === 'INICIAL') || students[0];
+  const sofia = students.find((s) => s.educationalLevel === 'PRIMARIA') || students[1] || students[0];
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* 1. HERO BANNER VERDE INSTITUCIONAL (#008C45) con esquinas redondeadas 32px */}
+      {/* 1. HERO BANNER INSTITUCIONAL VERDE (#008C45) CON BORDES REDONDEADOS 32px */}
       <View style={styles.heroHeader}>
-        {/* Subtle Decorative Ambient Circles */}
+        {/* Luces sutiles de fondo */}
         <View style={styles.heroCircleTopRight} />
         <View style={styles.heroCircleBottomLeft} />
 
-        {/* Cabecera Institucional Superior */}
+        {/* Cabecera Superior: Escudo + Título + Notificaciones y Avatar Familiar */}
         <View style={styles.heroTopRow}>
           <View style={styles.heroBrand}>
             <Image
@@ -55,7 +47,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
 
           <View style={styles.heroActionsRow}>
-            {/* Botón Notificaciones con punto rojo */}
+            {/* Botón Notificaciones con badge rojo */}
             <TouchableOpacity
               style={styles.notifBtn}
               activeOpacity={0.85}
@@ -65,289 +57,148 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               <View style={styles.notifRedDot} />
             </TouchableOpacity>
 
-            {/* Avatar Familiar FL */}
+            {/* Avatar Familia López */}
             <View style={styles.familyAvatar}>
               <Text style={styles.familyAvatarText}>FL</Text>
             </View>
           </View>
         </View>
 
-        {/* Saludo Cálido y Estudiante Actual */}
+        {/* Saludo Cálido y Resumen Familiar Multi-Hijo */}
         <View style={styles.heroGreeting}>
           <Text style={styles.heroHello}>¡Hola, Familia López! 👋</Text>
-          <View style={styles.heroStudentActiveRow}>
-            <View style={styles.pulseDot} />
-            <Text style={styles.heroStudentActive}>
-              Viendo rutina de{' '}
-              <Text style={styles.heroStudentNameUnderline}>
-                {activeStudent.firstName}
-              </Text>
-            </Text>
+          <View style={styles.heroChildrenSummaryRow}>
+            <View style={styles.childPillHeader}>
+              <Text style={styles.childPillEmoji}>🧒</Text>
+              <Text style={styles.childPillText}>Mateo (Sala 4)</Text>
+            </View>
+            <View style={styles.childPillHeader}>
+              <Text style={styles.childPillEmoji}>👧</Text>
+              <Text style={styles.childPillText}>Sofía (4° Grado)</Text>
+            </View>
           </View>
         </View>
       </View>
 
-      {/* 2. SELECTOR DE ESTUDIANTES FLOTANTE (-mt-5) */}
-      <View style={styles.floatingCarousel}>
-        <StudentCarousel />
-      </View>
-
-      {/* 3. CONMUTADOR DE MODO (Tablero vs Línea de tiempo) */}
-      <View style={styles.modeSwitcherContainer}>
-        <View style={styles.modeSwitcherPill}>
-          <TouchableOpacity
-            style={[
-              styles.modeTabBtn,
-              activeTab === 'TABLERO' && styles.modeTabBtnActive,
-            ]}
-            onPress={() => setActiveTab('TABLERO')}
-            activeOpacity={0.9}
-          >
-            <Text style={styles.modeTabIcon}>📊</Text>
-            <Text
-              style={[
-                styles.modeTabText,
-                activeTab === 'TABLERO' && styles.modeTabTextActive,
-              ]}
-            >
-              Tablero
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.modeTabBtn,
-              activeTab === 'TIMELINE' && styles.modeTabBtnActive,
-            ]}
-            onPress={() => setActiveTab('TIMELINE')}
-            activeOpacity={0.9}
-          >
-            <Text style={styles.modeTabIcon}>⏳</Text>
-            <Text
-              style={[
-                styles.modeTabText,
-                activeTab === 'TIMELINE' && styles.modeTabTextActive,
-              ]}
-            >
-              {isKindergarten ? 'Línea de tiempo' : 'Actividades'}
-            </Text>
-          </TouchableOpacity>
+      {/* 2. ESTUDIANTES A CARGO (Tarjetas de Mateo y Sofía en el Tablero) */}
+      <View style={styles.floatingStudentsSection}>
+        <View style={styles.studentsHeaderRow}>
+          <View style={styles.studentsHeaderLeft}>
+            <Text style={styles.studentsHeaderTitle}>Estudiantes a cargo</Text>
+            <View style={styles.badgeTwoKids}>
+              <Text style={styles.badgeTwoKidsText}>2 hijos</Text>
+            </View>
+          </View>
+          <Text style={styles.studentsHeaderHint}>Resumen diario unificado</Text>
         </View>
-      </View>
 
-      {/* CONTENT AREA: TOGGLED BY ACTIVE TAB */}
-      {activeTab === 'TIMELINE' ? (
-        <View style={styles.contentBody}>
-          {/* 1. INDICADOR DE JORNADA CONTEXTUAL */}
-          <View style={styles.dailyContextCard}>
-            <View style={styles.dailyContextLeft}>
-              <View style={styles.calendarIconBox}>
-                <Text style={styles.calendarIcon}>📅</Text>
-              </View>
-              <View>
-                <Text style={styles.dailyContextLabel}>JORNADA ESCOLAR</Text>
-                <Text style={styles.dailyContextDate}>Hoy, 28 de Octubre</Text>
-              </View>
-            </View>
-            <View style={styles.inClassBadge}>
-              <View style={styles.inClassPing} />
-              <Text style={styles.inClassText}>● EN CLASE AHORA</Text>
-            </View>
-          </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.studentsScrollContainer}
+          decelerationRate="fast"
+        >
+          {/* Tarjeta Mateo López */}
+          <TouchableOpacity
+            style={[styles.studentCard, { width: studentCardWidth }]}
+            activeOpacity={0.9}
+            onPress={() => {
+              if (mateo) setActiveStudent(mateo);
+            }}
+          >
+            <View style={styles.studentCardAccentGreen} />
 
-          {/* 2. CRONOGRAMA DEL JARDÍN (5 Momentos con Línea Continua) */}
-          <View style={styles.cardSection}>
-            <View style={styles.sectionHeaderRow}>
-              <View style={styles.sectionTitleWithSub}>
-                <Text style={styles.sectionTitle}>Cronograma del Jardín</Text>
-                <Text style={styles.sectionSubMuted}>
-                  ({isKindergarten ? 'Sala de 4' : 'Primaria'})
-                </Text>
-              </View>
-              <View style={styles.pillCountBadge}>
-                <Text style={styles.pillCountText}>5 Momentos</Text>
-              </View>
-            </View>
-
-            {/* Timeline Tree */}
-            <View style={styles.timelineTree}>
-              <View style={styles.verticalTimelineLine} />
-
-              {/* Hito 1: Entrada */}
-              <View style={styles.timelineItem}>
-                <View style={[styles.timelineNode, { backgroundColor: colors.primary }]}>
-                  <Text style={styles.timelineNodeIcon}>☀️</Text>
+            <View style={styles.studentCardTopRow}>
+              <View style={styles.studentAvatarWrap}>
+                <View style={styles.studentAvatarCircleGreen}>
+                  <Text style={styles.studentAvatarEmoji}>🧒</Text>
                 </View>
-                <View style={styles.timelineContentBox}>
-                  <View style={styles.timelineTopBadgeRow}>
-                    <Text style={styles.timelineTime}>08:00 hs</Text>
-                    <View style={styles.badgeSuccess}>
-                      <Text style={styles.badgeSuccessText}>😊 Alegre y participativo</Text>
-                    </View>
+                <View style={styles.checkBadge}>
+                  <Text style={styles.checkBadgeText}>✓</Text>
+                </View>
+              </View>
+
+              <View style={styles.studentDetailsCol}>
+                <View style={styles.studentNameAndRateRow}>
+                  <Text style={styles.studentNameText} numberOfLines={1}>
+                    Mateo López
+                  </Text>
+                  <View style={styles.asistBadgeGreen}>
+                    <Text style={styles.asistBadgeTextGreen}>96% ASIST.</Text>
                   </View>
-                  <Text style={styles.timelineEventTitle}>
-                    Entrada al aula e inicio de jornada
-                  </Text>
-                  <Text style={styles.timelineEventDesc}>
-                    Llegó puntual, dejó sus pertenencias en su casillero con entusiasmo y saludó con canciones.
-                  </Text>
                 </View>
-              </View>
-
-              {/* Hito 2: Colación */}
-              <View style={styles.timelineItem}>
-                <View style={[styles.timelineNode, { backgroundColor: '#0061a2' }]}>
-                  <Text style={styles.timelineNodeIcon}>🍎</Text>
-                </View>
-                <View style={styles.timelineContentBox}>
-                  <View style={styles.timelineTopBadgeRow}>
-                    <Text style={styles.timelineTime}>10:15 hs</Text>
-                    <View style={styles.badgeBlue}>
-                      <Text style={styles.badgeBlueText}>⭐ Comió TODO</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.timelineEventTitle}>
-                    Colación de media mañana
-                  </Text>
-                  <Text style={styles.timelineEventDesc}>
-                    Fruta fresca y jugo natural. Compartió mesa con sus compañeros de sala con hábitos impecables.
-                  </Text>
-                </View>
-              </View>
-
-              {/* Hito 3: Higiene y Mudas */}
-              <View style={styles.timelineItem}>
-                <View style={[styles.timelineNode, { backgroundColor: '#1A73E8' }]}>
-                  <Text style={styles.timelineNodeIcon}>💧</Text>
-                </View>
-                <View style={styles.timelineContentBox}>
-                  <View style={styles.timelineTopBadgeRow}>
-                    <Text style={styles.timelineTime}>12:30 hs</Text>
-                    <View style={styles.badgeCeleste}>
-                      <Text style={styles.badgeCelesteText}>💧 Higiene completa</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.timelineEventTitle}>
-                    Higiene y mudas
-                  </Text>
-                  <Text style={styles.timelineEventDesc}>
-                    Lavado de manos independiente y cambio de indumentaria tras el taller de expresión artística.
-                  </Text>
-                </View>
-              </View>
-
-              {/* Hito 4: Siesta y Descanso */}
-              <View style={styles.timelineItem}>
-                <View style={[styles.timelineNode, { backgroundColor: '#4da8fd' }]}>
-                  <Text style={styles.timelineNodeIcon}>💤</Text>
-                </View>
-                <View style={styles.timelineContentBox}>
-                  <View style={styles.timelineTopBadgeRow}>
-                    <Text style={styles.timelineTime}>13:00 - 14:15 hs</Text>
-                    <View style={styles.badgePurple}>
-                      <Text style={styles.badgePurpleText}>💤 Descanso tranquilo</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.timelineEventTitle}>
-                    Siesta y descanso guiado
-                  </Text>
-                  <Text style={styles.timelineEventDesc}>
-                    Durmió plácidamente durante todo el período de reposo con música de relajación instrumental.
-                  </Text>
-                </View>
-              </View>
-
-              {/* Hito 5: Merienda y Preparativos */}
-              <View style={styles.timelineItem}>
-                <View style={[styles.timelineNode, { backgroundColor: '#94A3B8' }]}>
-                  <Text style={styles.timelineNodeIcon}>🎒</Text>
-                </View>
-                <View style={[styles.timelineContentBox, styles.timelineNextBox]}>
-                  <View style={styles.timelineTopBadgeRow}>
-                    <Text style={styles.timelineTimeMuted}>15:30 hs</Text>
-                    <View style={styles.badgeMuted}>
-                      <Text style={styles.badgeMutedText}>⏰ Próxima actividad</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.timelineEventTitle}>
-                    Merienda y preparativos de salida
-                  </Text>
-                  <Text style={styles.timelineEventDesc}>
-                    Colación de cierre y armado de mochilas antes de la entrega por puerta principal.
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* 3. BITÁCORA / NOTA DE LA SEÑO VALENTINA */}
-          <View style={styles.teacherNoteCard}>
-            <View style={styles.teacherHeaderRow}>
-              <View style={styles.teacherAvatarWrap}>
-                <View style={styles.teacherAvatarBox}>
-                  <Text style={styles.teacherAvatarEmoji}>👩‍🏫</Text>
-                </View>
-                <View style={styles.teacherHeartBadge}>
-                  <Text style={styles.teacherHeartIcon}>❤️</Text>
-                </View>
-              </View>
-
-              <View style={styles.teacherInfoCol}>
-                <View style={styles.teacherNameRow}>
-                  <Text style={styles.teacherName}>Seño Valentina</Text>
-                  <Text style={styles.teacherTime}>14:20 hs</Text>
-                </View>
-                <Text style={styles.teacherRole}>Docente a cargo · Sala de 4</Text>
-              </View>
-            </View>
-
-            <View style={styles.teacherMessageBox}>
-              <Text style={styles.teacherMessageText}>
-                «¡Mateo disfrutó mucho del rincón de construcciones y participó activamente en las canciones en italiano! 🇮🇹🎵»
-              </Text>
-            </View>
-
-            <View style={styles.teacherActionRow}>
-              <TouchableOpacity
-                style={styles.replyTeacherBtn}
-                activeOpacity={0.88}
-                onPress={() => navigation.navigate('Mensajes')}
-              >
-                <Text style={styles.replyTeacherIcon}>💬</Text>
-                <Text style={styles.replyTeacherBtnText}>Enviar mensaje a la Seño</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* 4. CÁPSULA LINGÜÍSTICA BICULTURAL */}
-          <View style={styles.linguisticCard}>
-            <View style={styles.linguisticLeft}>
-              <View style={styles.flagCircle}>
-                <Text style={styles.flagEmoji}>🇮🇹</Text>
-              </View>
-              <View style={styles.linguisticTextCol}>
-                <Text style={styles.linguisticTag}>PROYECTO LINGÜÍSTICO</Text>
-                <Text style={styles.linguisticWord}>
-                  Palabra de la semana: <Text style={styles.linguisticItalic}>"Amicizia"</Text>
+                <Text style={styles.studentLevelText} numberOfLines={1}>
+                  Sala de 4 · Nivel Inicial
                 </Text>
               </View>
             </View>
-            <View style={styles.linguisticLevelPill}>
-              <Text style={styles.linguisticLevelText}>Nivel Inicial</Text>
+
+            <View style={styles.studentStatusStrip}>
+              <View style={styles.studentStatusLeft}>
+                <Text style={styles.statusShiftEmoji}>🏫</Text>
+                <Text style={styles.statusShiftText}>Turno Tarde</Text>
+              </View>
+              <Text style={styles.statusPresentGreen}>PRESENTE HOY</Text>
             </View>
-          </View>
-        </View>
-      ) : (
-        /* TABLERO SCREEN (Screen 01) */
-        <View style={styles.contentBody}>
-          {/* 1. SECCIÓN PRÓXIMOS EVENTOS */}
+          </TouchableOpacity>
+
+          {/* Tarjeta Sofía López */}
+          <TouchableOpacity
+            style={[styles.studentCard, { width: studentCardWidth }]}
+            activeOpacity={0.9}
+            onPress={() => {
+              if (sofia) setActiveStudent(sofia);
+            }}
+          >
+            <View style={styles.studentCardAccentCeleste} />
+
+            <View style={styles.studentCardTopRow}>
+              <View style={styles.studentAvatarWrap}>
+                <View style={styles.studentAvatarCircleCeleste}>
+                  <Text style={styles.studentAvatarEmoji}>👧</Text>
+                </View>
+                <View style={styles.checkBadge}>
+                  <Text style={styles.checkBadgeText}>✓</Text>
+                </View>
+              </View>
+
+              <View style={styles.studentDetailsCol}>
+                <View style={styles.studentNameAndRateRow}>
+                  <Text style={styles.studentNameText} numberOfLines={1}>
+                    Sofía López
+                  </Text>
+                  <View style={styles.asistBadgeCeleste}>
+                    <Text style={styles.asistBadgeTextCeleste}>98% ASIST.</Text>
+                  </View>
+                </View>
+                <Text style={styles.studentLevelText} numberOfLines={1}>
+                  4° Grado "B" · Primaria
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.studentStatusStrip}>
+              <View style={styles.studentStatusLeft}>
+                <Text style={styles.statusShiftEmoji}>🏫</Text>
+                <Text style={styles.statusShiftText}>Turno Mañana</Text>
+              </View>
+              <Text style={styles.statusPresentGreen}>PRESENTE HOY</Text>
+            </View>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+
+      {/* 3. CONTENIDO DEL TABLERO UNIFICADO */}
+      <View style={styles.contentBody}>
+        {/* SECCIÓN 1: PRÓXIMOS EVENTOS (Distinguidos por hijo) */}
+        <View style={styles.sectionWrap}>
           <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionTitleWithSub}>
+            <View style={styles.sectionTitleWithDot}>
               <Text style={styles.sectionTitle}>Próximos eventos</Text>
               <View style={styles.greenTitleDot} />
             </View>
             <TouchableOpacity activeOpacity={0.8}>
-              <Text style={styles.sectionLinkGreen}>Ver calendario</Text>
+              <Text style={styles.sectionLinkGreen}>Ver calendario ›</Text>
             </TouchableOpacity>
           </View>
 
@@ -358,17 +209,12 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             decelerationRate="fast"
             snapToInterval={eventCardWidth + 12}
           >
-            {/* Card 1: Celebración */}
-            <View
-              style={[
-                styles.eventCardCelebration,
-                { width: eventCardWidth },
-              ]}
-            >
+            {/* Evento 1: Para Mateo (Jardín) */}
+            <View style={[styles.eventCardCelebration, { width: eventCardWidth }]}>
               <View>
                 <View style={styles.eventCardTopRow}>
-                  <View style={styles.celebrationPill}>
-                    <Text style={styles.celebrationPillText}>CELEBRACIÓN</Text>
+                  <View style={styles.eventChildBadgeMateo}>
+                    <Text style={styles.eventChildTextMateo}>🧒 Mateo · Sala de 4</Text>
                   </View>
                   <View style={styles.eventIconCircleYellow}>
                     <Text style={styles.eventEmoji}>🎉</Text>
@@ -383,181 +229,278 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               </View>
             </View>
 
-            {/* Card 2: Cita Colegio */}
-            <View
-              style={[
-                styles.eventCardMeeting,
-                { width: eventCardWidth },
-              ]}
-            >
+            {/* Evento 2: Para Sofía (Primaria) */}
+            <View style={[styles.eventCardMeeting, { width: eventCardWidth }]}>
               <View>
                 <View style={styles.eventCardTopRow}>
-                  <View style={styles.meetingPill}>
-                    <Text style={styles.meetingPillText}>CITA COLEGIO</Text>
+                  <View style={styles.eventChildBadgeSofia}>
+                    <Text style={styles.eventChildTextSofia}>👧 Sofía · 4° Grado</Text>
                   </View>
                   <View style={styles.eventIconCircleBlue}>
-                    <Text style={styles.eventEmoji}>👨‍👩‍👧</Text>
+                    <Text style={styles.eventEmoji}>🏃‍♀️</Text>
                   </View>
                 </View>
                 <Text style={styles.eventCardTitle} numberOfLines={2}>
-                  Reunión de Padres y Madres
+                  Torneo Intercolegial de Atletismo y Postas
                 </Text>
               </View>
               <View style={styles.eventDatePill}>
-                <Text style={styles.eventDateText}>📅 Martes, 10 Noviembre</Text>
+                <Text style={styles.eventDateText}>📅 Jueves, 12 Noviembre</Text>
+              </View>
+            </View>
+
+            {/* Evento 3: Toda la Familia */}
+            <View style={[styles.eventCardGeneral, { width: eventCardWidth }]}>
+              <View>
+                <View style={styles.eventCardTopRow}>
+                  <View style={styles.eventChildBadgeFamily}>
+                    <Text style={styles.eventChildTextFamily}>👨‍👩‍👧‍👦 Toda la Familia</Text>
+                  </View>
+                  <View style={styles.eventIconCircleGreen}>
+                    <Text style={styles.eventEmoji}>🏫</Text>
+                  </View>
+                </View>
+                <Text style={styles.eventCardTitle} numberOfLines={2}>
+                  Reunión de Padres y Balance Pedagógico
+                </Text>
+              </View>
+              <View style={styles.eventDatePill}>
+                <Text style={styles.eventDateText}>📅 Martes, 17 Noviembre</Text>
               </View>
             </View>
           </ScrollView>
+        </View>
 
-          {/* 2. SECCIÓN "¿QUÉ HA PASADO HOY?" (Dual Cards) */}
-          <View style={styles.dualSectionWrap}>
-            <View>
-              <Text style={styles.sectionTitle}>¿Qué ha pasado hoy?</Text>
-              <Text style={styles.sectionSubtitle}>
-                Estado institucional y novedades del día
-              </Text>
-            </View>
+        {/* SECCIÓN 2: "¿QUÉ HA PASADO HOY?" (Estado de ambos chicos) */}
+        <View style={styles.sectionWrap}>
+          <View>
+            <Text style={styles.sectionTitle}>¿Qué ha pasado hoy?</Text>
+            <Text style={styles.sectionSubtitle}>
+              Asistencia y novedades del día para Mateo y Sofía
+            </Text>
+          </View>
 
-            <View style={styles.dualGrid}>
-              {/* Card 1: Falta de asistencia / Tardanza */}
-              <View style={styles.dualCardRed}>
-                <View>
-                  <View style={styles.dualIconBoxRed}>
-                    <Text style={styles.dualIconText}>⏱️</Text>
+          <View style={styles.dualGrid}>
+            {/* Card Mateo: Tardanza */}
+            <View style={styles.dualCardMateo}>
+              <View>
+                <View style={styles.dualCardHeaderChild}>
+                  <View style={styles.kidTagMateo}>
+                    <Text style={styles.kidTagTextMateo}>🧒 Mateo</Text>
                   </View>
-                  <Text style={styles.dualCardTitle}>Falta de asistencia</Text>
-                  <Text style={styles.dualCardDate}>Vie, 28 Octubre</Text>
+                  <Text style={styles.dualDateText}>Hoy, 13:10 hs</Text>
                 </View>
-                <View style={styles.dualBadgeContainer}>
-                  <View style={styles.dualBadgeWhiteRed}>
-                    <Text style={styles.dualBadgeWhiteRedText}>Tardanza (1/4)</Text>
-                  </View>
+                <Text style={styles.dualCardTitle}>Falta parcial</Text>
+                <Text style={styles.dualCardSub}>Ingreso posterior al horario</Text>
+              </View>
+              <View style={styles.dualBadgeContainer}>
+                <View style={styles.badgeTardanza}>
+                  <Text style={styles.badgeTardanzaText}>Tardanza (1/4)</Text>
                 </View>
               </View>
+            </View>
 
-              {/* Card 2: Ficha Médica / Fiebre */}
-              <View style={styles.dualCardBlue}>
-                <View>
-                  <View style={styles.dualIconBoxBlue}>
-                    <Text style={styles.dualIconText}>🩺</Text>
+            {/* Card Sofía: Asistencia Completa */}
+            <View style={styles.dualCardSofia}>
+              <View>
+                <View style={styles.dualCardHeaderChild}>
+                  <View style={styles.kidTagSofia}>
+                    <Text style={styles.kidTagTextSofia}>👧 Sofía</Text>
                   </View>
-                  <Text style={styles.dualCardTitle}>Fiebre / Consulta</Text>
-                  <Text style={styles.dualCardDate}>Vie, 24 Octubre</Text>
+                  <Text style={styles.dualDateText}>Hoy, 07:45 hs</Text>
                 </View>
-                <View style={styles.dualBadgeContainer}>
-                  <View style={styles.dualBadgeWhiteBlue}>
-                    <Text style={styles.dualBadgeWhiteBlueText}>Justificada ✓</Text>
-                  </View>
+                <Text style={styles.dualCardTitle}>Asistencia perfecta</Text>
+                <Text style={styles.dualCardSub}>Ingreso puntual en portería</Text>
+              </View>
+              <View style={styles.dualBadgeContainer}>
+                <View style={styles.badgePresentePuntual}>
+                  <Text style={styles.badgePresentePuntualText}>Presente ✓</Text>
                 </View>
               </View>
             </View>
           </View>
+        </View>
 
-          {/* 3. SECCIÓN "CALIFICACIONES RECIENTES" */}
-          <View style={styles.gradesSectionWrap}>
-            <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>Calificaciones recientes</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Archivos')}
-                style={styles.viewReportLink}
-              >
-                <Text style={styles.viewReportText}>Ver boletín</Text>
-                <Text style={styles.viewReportArrow}>→</Text>
-              </TouchableOpacity>
-            </View>
+        {/* SECCIÓN 3: CALIFICACIONES Y BOLETINES RECIENTES (Ambos Chicos) */}
+        <View style={styles.sectionWrap}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Calificaciones y Boletines</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Archivos')}
+              style={styles.viewReportLink}
+            >
+              <Text style={styles.viewReportText}>Ver boletines</Text>
+              <Text style={styles.viewReportArrow}>→</Text>
+            </TouchableOpacity>
+          </View>
 
+          <View style={styles.gradesStack}>
+            {/* Calificación Mateo: Lengua Italiana */}
             <View style={styles.gradeCard}>
               <View style={styles.gradeLeft}>
-                <View style={styles.gradeIconBox}>
-                  <Text style={styles.gradeBookIcon}>📖</Text>
-                  <Text style={styles.gradeMiniFlag}>🇮🇹</Text>
+                <View style={styles.gradeIconBoxGreen}>
+                  <Text style={styles.gradeBookEmoji}>📖</Text>
+                  <Text style={styles.gradeFlagEmoji}>🇮🇹</Text>
                 </View>
                 <View style={styles.gradeTextCol}>
+                  <View style={styles.gradeChildTagRow}>
+                    <View style={styles.kidTagMateo}>
+                      <Text style={styles.kidTagTextMateo}>🧒 Mateo · Sala de 4</Text>
+                    </View>
+                    <Text style={styles.gradeTimeText}>Ayer, 11:30</Text>
+                  </View>
                   <Text style={styles.gradeSubjectTitle} numberOfLines={1}>
                     Lengua y Cultura Italiana
                   </Text>
                   <Text style={styles.gradeAssessmentName} numberOfLines={1}>
                     Examen trimestral oral: Tradizioni e Famiglia
                   </Text>
-                  <View style={styles.gradeMetaRow}>
-                    <View style={styles.gradePeriodBadge}>
-                      <Text style={styles.gradePeriodText}>1° INFORME</Text>
+                </View>
+              </View>
+
+              <View style={styles.gradeScoreBadgeCol}>
+                <View style={styles.gradeScoreCircleGreen}>
+                  <Text style={styles.gradeScoreNum}>9.8</Text>
+                </View>
+                <Text style={styles.gradeScoreLabelGreen}>Sobresaliente</Text>
+              </View>
+            </View>
+
+            {/* Calificación Sofía: Matemática */}
+            <View style={styles.gradeCard}>
+              <View style={styles.gradeLeft}>
+                <View style={styles.gradeIconBoxBlue}>
+                  <Text style={styles.gradeBookEmoji}>📐</Text>
+                  <Text style={styles.gradeFlagEmoji}>🇦🇷</Text>
+                </View>
+                <View style={styles.gradeTextCol}>
+                  <View style={styles.gradeChildTagRow}>
+                    <View style={styles.kidTagSofia}>
+                      <Text style={styles.kidTagTextSofia}>👧 Sofía · 4° Grado "B"</Text>
                     </View>
-                    <Text style={styles.gradeMetaTime}>Ayer, 11:30</Text>
+                    <Text style={styles.gradeTimeText}>Hace 2 días</Text>
                   </View>
+                  <Text style={styles.gradeSubjectTitle} numberOfLines={1}>
+                    Matemática y Geometría
+                  </Text>
+                  <Text style={styles.gradeAssessmentName} numberOfLines={1}>
+                    Evaluación Escrita: Fracciones y Ángulos
+                  </Text>
                 </View>
               </View>
 
-              {/* Grade Display Badge */}
-              <View style={styles.gradeBadgeRight}>
-                <View style={styles.gradeCircle}>
-                  <Text style={styles.gradeScoreNumber}>9.8</Text>
+              <View style={styles.gradeScoreBadgeCol}>
+                <View style={styles.gradeScoreCircleBlue}>
+                  <Text style={styles.gradeScoreNumBlue}>9.5</Text>
                 </View>
-                <Text style={styles.gradeScoreLabel}>Sobresaliente</Text>
+                <Text style={styles.gradeScoreLabelBlue}>Distinguido</Text>
               </View>
-            </View>
-          </View>
-
-          {/* 4. SECCIÓN "GALERÍA DE LA SEMANA" */}
-          <View style={styles.gallerySectionWrap}>
-            <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>Galería de la semana</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Galería')}
-                style={styles.viewReportLink}
-              >
-                <Text style={styles.galleryExploreText}>Explorar</Text>
-                <Text style={styles.galleryExploreArrow}>›</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.galleryGrid}>
-              {/* Album 1 */}
-              <TouchableOpacity
-                style={styles.galleryCard}
-                activeOpacity={0.88}
-                onPress={() => navigation.navigate('Galería')}
-              >
-                <View style={styles.galleryImageBoxArt}>
-                  <Text style={styles.galleryImagePlaceholder}>🎨🖼️</Text>
-                  <View style={styles.galleryPhotoCountBadge}>
-                    <Text style={styles.galleryPhotoCountText}>📷 18</Text>
-                  </View>
-                </View>
-                <View style={styles.galleryCardBody}>
-                  <Text style={styles.galleryCardTitle} numberOfLines={1}>
-                    Taller Expresión Artística 🎨
-                  </Text>
-                  <Text style={styles.galleryCardTime}>Hace 2 días</Text>
-                </View>
-              </TouchableOpacity>
-
-              {/* Album 2 */}
-              <TouchableOpacity
-                style={styles.galleryCard}
-                activeOpacity={0.88}
-                onPress={() => navigation.navigate('Galería')}
-              >
-                <View style={styles.galleryImageBoxGarden}>
-                  <Text style={styles.galleryImagePlaceholder}>🌱🌻</Text>
-                  <View style={styles.galleryPhotoCountBadge}>
-                    <Text style={styles.galleryPhotoCountText}>📷 12</Text>
-                  </View>
-                </View>
-                <View style={styles.galleryCardBody}>
-                  <Text style={styles.galleryCardTitle} numberOfLines={1}>
-                    Huerta Escolar y Ciencias 🌱
-                  </Text>
-                  <Text style={styles.galleryCardTime}>Hace 4 días</Text>
-                </View>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
-      )}
+
+        {/* SECCIÓN 4: GALERÍA DE LA SEMANA (Talleres de Mateo y Sofía) */}
+        <View style={styles.sectionWrap}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Galería de la semana</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Galería')}
+              style={styles.viewReportLink}
+            >
+              <Text style={styles.galleryExploreText}>Explorar todas</Text>
+              <Text style={styles.galleryExploreArrow}>›</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.galleryGrid}>
+            {/* Album Mateo */}
+            <TouchableOpacity
+              style={styles.galleryCard}
+              activeOpacity={0.88}
+              onPress={() => navigation.navigate('Galería')}
+            >
+              <View style={styles.galleryImageBoxArt}>
+                <Text style={styles.galleryPlaceholderEmoji}>🎨🖼️</Text>
+                <View style={styles.galleryPhotoBadge}>
+                  <Text style={styles.galleryPhotoBadgeText}>📷 18</Text>
+                </View>
+                <View style={styles.galleryChildPill}>
+                  <Text style={styles.galleryChildPillText}>🧒 Mateo</Text>
+                </View>
+              </View>
+              <View style={styles.galleryCardBody}>
+                <Text style={styles.galleryCardTitle} numberOfLines={1}>
+                  Taller Expresión Artística
+                </Text>
+                <Text style={styles.galleryCardSubtitle}>Sala de 4 · Hace 2 días</Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Album Sofía */}
+            <TouchableOpacity
+              style={styles.galleryCard}
+              activeOpacity={0.88}
+              onPress={() => navigation.navigate('Galería')}
+            >
+              <View style={styles.galleryImageBoxGarden}>
+                <Text style={styles.galleryPlaceholderEmoji}>🌱🌻</Text>
+                <View style={styles.galleryPhotoBadge}>
+                  <Text style={styles.galleryPhotoBadgeText}>📷 24</Text>
+                </View>
+                <View style={styles.galleryChildPill}>
+                  <Text style={styles.galleryChildPillText}>👧 Sofía</Text>
+                </View>
+              </View>
+              <View style={styles.galleryCardBody}>
+                <Text style={styles.galleryCardTitle} numberOfLines={1}>
+                  Huerta Escolar y Ciencias
+                </Text>
+                <Text style={styles.galleryCardSubtitle}>4° Grado · Hace 3 días</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* SECCIÓN 5: ACCESOS RÁPIDOS INSTITUCIONALES */}
+        <View style={styles.quickAccessSection}>
+          <TouchableOpacity
+            style={styles.quickActionBtn}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('Seguridad')}
+          >
+            <View style={styles.quickActionIconCircleGreen}>
+              <Text style={styles.quickActionEmoji}>🛡️</Text>
+            </View>
+            <View style={styles.quickActionTextCol}>
+              <Text style={styles.quickActionTitle}>Pases QR de Puerta</Text>
+              <Text style={styles.quickActionSub}>
+                Habilitar retiros para Mateo o Sofía
+              </Text>
+            </View>
+            <Text style={styles.quickActionArrow}>›</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickActionBtn}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('Archivos')}
+          >
+            <View style={styles.quickActionIconCircleRed}>
+              <Text style={styles.quickActionEmoji}>✍️</Text>
+            </View>
+            <View style={styles.quickActionTextCol}>
+              <Text style={styles.quickActionTitle}>Autorización Pendiente</Text>
+              <Text style={styles.quickActionSubRed}>
+                Salida Museo Provincial (Firma PIN)
+              </Text>
+            </View>
+            <Text style={styles.quickActionArrow}>›</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* Espaciado de cortesía para el scroll */}
-      <View style={{ height: 32 }} />
+      <View style={{ height: 36 }} />
     </ScrollView>
   );
 };
@@ -566,16 +509,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4F7FC',
-  },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: '#64748B',
   },
 
   /* 1. HERO BANNER */
@@ -694,7 +627,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   heroGreeting: {
-    marginTop: 20,
+    marginTop: 18,
     zIndex: 10,
   },
   heroHello: {
@@ -703,175 +636,240 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     letterSpacing: -0.4,
   },
-  heroStudentActiveRow: {
+  heroChildrenSummaryRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
+    gap: 8,
+    marginTop: 8,
   },
-  pulseDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#6cdd8c',
+  childPillHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 9999,
   },
-  heroStudentActive: {
+  childPillEmoji: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontWeight: '500',
   },
-  heroStudentNameUnderline: {
-    fontWeight: '800',
-    textDecorationLine: 'underline',
+  childPillText: {
+    fontSize: 12,
+    fontWeight: '700',
     color: '#FFFFFF',
   },
 
-  /* 2. FLOATING STUDENT CAROUSEL */
-  floatingCarousel: {
-    marginTop: -20,
+  /* 2. ESTUDIANTES A CARGO */
+  floatingStudentsSection: {
+    marginTop: -22,
     zIndex: 20,
   },
-
-  /* 3. MODE SWITCHER TABS */
-  modeSwitcherContainer: {
-    paddingHorizontal: 16,
-    marginTop: 14,
-    marginBottom: 6,
-  },
-  modeSwitcherPill: {
-    flexDirection: 'row',
-    backgroundColor: '#E2E7FF',
-    borderRadius: 9999,
-    padding: 4,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  modeTabBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 9,
-    borderRadius: 9999,
-  },
-  modeTabBtnActive: {
-    backgroundColor: colors.primary,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  modeTabIcon: {
-    fontSize: 15,
-  },
-  modeTabText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#475569',
-  },
-  modeTabTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-
-  /* BODY CONTAINER */
-  contentBody: {
-    paddingHorizontal: 16,
-    gap: 16,
-    marginTop: 10,
-  },
-
-  /* JORNADA CONTEXTUAL */
-  dailyContextCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 14,
+  studentsHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
+    paddingHorizontal: 18,
+    marginBottom: 8,
   },
-  dailyContextLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  calendarIconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    backgroundColor: '#EFF6FF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  calendarIcon: {
-    fontSize: 18,
-  },
-  dailyContextLabel: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#94A3B8',
-    letterSpacing: 0.6,
-  },
-  dailyContextDate: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#131B2E',
-    marginTop: 1,
-  },
-  inClassBadge: {
+  studentsHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+  },
+  studentsHeaderTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#131B2E',
+  },
+  badgeTwoKids: {
     backgroundColor: '#E8F7EE',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
     borderRadius: 9999,
   },
-  inClassPing: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
+  badgeTwoKidsText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#005F2E',
+  },
+  studentsHeaderHint: {
+    fontSize: 11,
+    color: '#64748B',
+  },
+  studentsScrollContainer: {
+    paddingHorizontal: 16,
+    gap: 12,
+    paddingVertical: 2,
+  },
+  studentCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    position: 'relative',
+    overflow: 'hidden',
+    justifyContent: 'space-between',
+  },
+  studentCardAccentGreen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
     backgroundColor: colors.primary,
   },
-  inClassText: {
+  studentCardAccentCeleste: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+    backgroundColor: '#1A73E8',
+  },
+  studentCardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 2,
+  },
+  studentAvatarWrap: {
+    position: 'relative',
+  },
+  studentAvatarCircleGreen: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: '#E8F7EE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+  },
+  studentAvatarCircleCeleste: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+  },
+  studentAvatarEmoji: {
+    fontSize: 24,
+  },
+  checkBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 17,
+    height: 17,
+    borderRadius: 8.5,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  checkBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '900',
+  },
+  studentDetailsCol: {
+    flex: 1,
+  },
+  studentNameAndRateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 4,
+  },
+  studentNameText: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#131B2E',
+    flexShrink: 1,
+  },
+  asistBadgeGreen: {
+    backgroundColor: '#E8F7EE',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 9999,
+  },
+  asistBadgeTextGreen: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#005F2E',
+  },
+  asistBadgeCeleste: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 9999,
+  },
+  asistBadgeTextCeleste: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#1A73E8',
+  },
+  studentLevelText: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  studentStatusStrip: {
+    marginTop: 10,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  studentStatusLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  statusShiftEmoji: {
+    fontSize: 13,
+  },
+  statusShiftText: {
+    fontSize: 12,
+    color: '#475569',
+    fontWeight: '500',
+  },
+  statusPresentGreen: {
     fontSize: 10,
     fontWeight: '800',
     color: '#005F2E',
     letterSpacing: 0.5,
   },
 
-  /* TIMELINE SECTION */
-  cardSection: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
+  /* 3. CONTENT BODY */
+  contentBody: {
+    paddingHorizontal: 16,
+    gap: 20,
+    marginTop: 16,
+  },
+  sectionWrap: {
+    gap: 10,
   },
   sectionHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
   },
-  sectionTitleWithSub: {
+  sectionTitleWithDot: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -881,335 +879,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#131B2E',
   },
-  sectionSubMuted: {
-    fontSize: 12,
-    color: '#94A3B8',
-    fontWeight: '500',
-  },
-  pillCountBadge: {
-    backgroundColor: '#EAEDFF',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 9999,
-  },
-  pillCountText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#475569',
-  },
-
-  /* TIMELINE TREE */
-  timelineTree: {
-    position: 'relative',
-    paddingLeft: 30,
-    gap: 16,
-  },
-  verticalTimelineLine: {
-    position: 'absolute',
-    left: 11,
-    top: 10,
-    bottom: 20,
-    width: 2,
-    backgroundColor: '#E2E7FF',
-  },
-  timelineItem: {
-    position: 'relative',
-  },
-  timelineNode: {
-    position: 'absolute',
-    left: -30,
-    top: 2,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  timelineNodeIcon: {
-    fontSize: 12,
-  },
-  timelineContentBox: {
-    backgroundColor: '#F2F3FF',
-    borderRadius: 12,
-    padding: 12,
-  },
-  timelineNextBox: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    opacity: 0.9,
-  },
-  timelineTopBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-    flexWrap: 'wrap',
-    gap: 6,
-  },
-  timelineTime: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#475569',
-  },
-  timelineTimeMuted: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#94A3B8',
-  },
-  badgeSuccess: {
-    backgroundColor: '#E8F7EE',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 9999,
-  },
-  badgeSuccessText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#005F2E',
-  },
-  badgeBlue: {
-    backgroundColor: '#D1E4FF',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 9999,
-  },
-  badgeBlueText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#00497C',
-  },
-  badgeCeleste: {
-    backgroundColor: '#EFF6FF',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 9999,
-  },
-  badgeCelesteText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#1A73E8',
-  },
-  badgePurple: {
-    backgroundColor: '#DAE2FD',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 9999,
-  },
-  badgePurpleText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#283044',
-  },
-  badgeMuted: {
-    backgroundColor: '#E2E7FF',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 9999,
-  },
-  badgeMutedText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#475569',
-  },
-  timelineEventTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#131B2E',
-  },
-  timelineEventDesc: {
-    fontSize: 12,
-    color: '#475569',
-    marginTop: 3,
-    lineHeight: 17,
-  },
-
-  /* TEACHER NOTE CARD */
-  teacherNoteCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  teacherHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  teacherAvatarWrap: {
-    position: 'relative',
-  },
-  teacherAvatarBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#E8F7EE',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  teacherAvatarEmoji: {
-    fontSize: 26,
-  },
-  teacherHeartBadge: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-  },
-  teacherHeartIcon: {
-    fontSize: 9,
-  },
-  teacherInfoCol: {
-    flex: 1,
-  },
-  teacherNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  teacherName: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#131B2E',
-  },
-  teacherTime: {
-    fontSize: 11,
-    color: '#94A3B8',
-    fontWeight: '500',
-  },
-  teacherRole: {
-    fontSize: 11,
-    color: '#005F2E',
-    fontWeight: '700',
-    marginTop: 1,
-  },
-  teacherMessageBox: {
-    marginTop: 12,
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#F2F3FF',
-  },
-  teacherMessageText: {
-    fontSize: 13,
-    color: '#131B2E',
-    lineHeight: 19,
-    fontStyle: 'italic',
-  },
-  teacherActionRow: {
-    marginTop: 12,
-    alignItems: 'flex-end',
-  },
-  replyTeacherBtn: {
-    backgroundColor: colors.primary,
-    paddingVertical: 9,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  replyTeacherIcon: {
-    fontSize: 14,
-  },
-  replyTeacherBtnText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-
-  /* LINGUISTIC CAPSULE */
-  linguisticCard: {
-    backgroundColor: '#EFF6FF',
-    borderRadius: 16,
-    padding: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: '#BAE6FD',
-  },
-  linguisticLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
-  },
-  flagCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  flagEmoji: {
-    fontSize: 18,
-  },
-  linguisticTextCol: {
-    flex: 1,
-  },
-  linguisticTag: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#1A73E8',
-    letterSpacing: 0.8,
-  },
-  linguisticWord: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#131B2E',
-    marginTop: 1,
-  },
-  linguisticItalic: {
-    fontStyle: 'italic',
-    fontWeight: '800',
-    color: colors.primary,
-  },
-  linguisticLevelPill: {
-    backgroundColor: '#E8F7EE',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 9999,
-  },
-  linguisticLevelText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#005F2E',
-  },
-
-  /* TABLERO (SCREEN 01) STYLES */
   greenTitleDot: {
     width: 7,
     height: 7,
@@ -1221,9 +890,16 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.primary,
   },
+  sectionSubtitle: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 1,
+  },
+
+  /* EVENT CARDS */
   eventsScrollContainer: {
     gap: 12,
-    paddingVertical: 4,
+    paddingVertical: 2,
   },
   eventCardCelebration: {
     backgroundColor: '#FEF9C3',
@@ -1232,7 +908,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#FDE047',
     justifyContent: 'space-between',
-    minHeight: 140,
+    minHeight: 145,
   },
   eventCardMeeting: {
     backgroundColor: '#EFF6FF',
@@ -1241,7 +917,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#BAE6FD',
     justifyContent: 'space-between',
-    minHeight: 140,
+    minHeight: 145,
+  },
+  eventCardGeneral: {
+    backgroundColor: '#E8F7EE',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    justifyContent: 'space-between',
+    minHeight: 145,
   },
   eventCardTopRow: {
     flexDirection: 'row',
@@ -1249,29 +934,38 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 8,
   },
-  celebrationPill: {
+  eventChildBadgeMateo: {
     backgroundColor: '#FEF08A',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 9999,
   },
-  celebrationPillText: {
+  eventChildTextMateo: {
     fontSize: 10,
     fontWeight: '800',
     color: '#854D0E',
-    letterSpacing: 0.5,
   },
-  meetingPill: {
+  eventChildBadgeSofia: {
     backgroundColor: '#D1E4FF',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 9999,
   },
-  meetingPillText: {
+  eventChildTextSofia: {
     fontSize: 10,
     fontWeight: '800',
     color: '#00497C',
-    letterSpacing: 0.5,
+  },
+  eventChildBadgeFamily: {
+    backgroundColor: '#D1FAE5',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 9999,
+  },
+  eventChildTextFamily: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#065F46',
   },
   eventIconCircleYellow: {
     width: 32,
@@ -1282,6 +976,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   eventIconCircleBlue: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eventIconCircleGreen: {
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -1317,20 +1019,12 @@ const styles = StyleSheet.create({
     color: '#131B2E',
   },
 
-  /* DUAL CARDS */
-  dualSectionWrap: {
-    gap: 8,
-  },
-  sectionSubtitle: {
-    fontSize: 12,
-    color: '#475569',
-    marginTop: 1,
-  },
+  /* DUAL CARDS (HOY) */
   dualGrid: {
     flexDirection: 'row',
     gap: 12,
   },
-  dualCardRed: {
+  dualCardMateo: {
     flex: 1,
     backgroundColor: '#FFF1F2',
     borderWidth: 1,
@@ -1338,9 +1032,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 14,
     justifyContent: 'space-between',
-    minHeight: 130,
+    minHeight: 140,
   },
-  dualCardBlue: {
+  dualCardSofia: {
     flex: 1,
     backgroundColor: '#EFF6FF',
     borderWidth: 1,
@@ -1348,71 +1042,80 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 14,
     justifyContent: 'space-between',
-    minHeight: 130,
+    minHeight: 140,
   },
-  dualIconBoxRed: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF',
+  dualCardHeaderChild: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
+    justifyContent: 'space-between',
+    marginBottom: 6,
   },
-  dualIconBoxBlue: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  dualIconText: {
-    fontSize: 17,
-  },
-  dualCardTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#131B2E',
-  },
-  dualCardDate: {
-    fontSize: 11,
-    color: '#64748B',
-    marginTop: 2,
-  },
-  dualBadgeContainer: {
-    marginTop: 8,
-  },
-  dualBadgeWhiteRed: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+  kidTagMateo: {
+    backgroundColor: '#FFE4E6',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
     borderRadius: 9999,
-    alignItems: 'center',
   },
-  dualBadgeWhiteRedText: {
+  kidTagTextMateo: {
     fontSize: 10,
     fontWeight: '800',
     color: '#9F1239',
   },
-  dualBadgeWhiteBlue: {
+  kidTagSofia: {
+    backgroundColor: '#DBEAFE',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 9999,
+  },
+  kidTagTextSofia: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#1E40AF',
+  },
+  dualDateText: {
+    fontSize: 10,
+    color: '#94A3B8',
+  },
+  dualCardTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#131B2E',
+  },
+  dualCardSub: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+    lineHeight: 15,
+  },
+  dualBadgeContainer: {
+    marginTop: 8,
+  },
+  badgeTardanza: {
     backgroundColor: '#FFFFFF',
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 9999,
     alignItems: 'center',
   },
-  dualBadgeWhiteBlueText: {
+  badgeTardanzaText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#9F1239',
+  },
+  badgePresentePuntual: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 9999,
+    alignItems: 'center',
+  },
+  badgePresentePuntualText: {
     fontSize: 10,
     fontWeight: '800',
     color: '#1A73E8',
   },
 
-  /* GRADES SECTION */
-  gradesSectionWrap: {
-    gap: 8,
-  },
+  /* GRADES STACK */
   viewReportLink: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1427,6 +1130,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.primary,
     fontWeight: '800',
+  },
+  gradesStack: {
+    gap: 10,
   },
   gradeCard: {
     backgroundColor: '#FFFFFF',
@@ -1449,7 +1155,7 @@ const styles = StyleSheet.create({
     gap: 10,
     flex: 1,
   },
-  gradeIconBox: {
+  gradeIconBoxGreen: {
     width: 44,
     height: 44,
     borderRadius: 12,
@@ -1458,10 +1164,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
   },
-  gradeBookIcon: {
+  gradeIconBoxBlue: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  gradeBookEmoji: {
     fontSize: 22,
   },
-  gradeMiniFlag: {
+  gradeFlagEmoji: {
     position: 'absolute',
     bottom: -2,
     right: -2,
@@ -1469,6 +1184,16 @@ const styles = StyleSheet.create({
   },
   gradeTextCol: {
     flex: 1,
+  },
+  gradeChildTagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 2,
+  },
+  gradeTimeText: {
+    fontSize: 10,
+    color: '#94A3B8',
   },
   gradeSubjectTitle: {
     fontSize: 14,
@@ -1480,58 +1205,56 @@ const styles = StyleSheet.create({
     color: '#475569',
     marginTop: 1,
   },
-  gradeMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
-  },
-  gradePeriodBadge: {
-    backgroundColor: '#EAEDFF',
-    paddingHorizontal: 6,
-    paddingVertical: 1.5,
-    borderRadius: 9999,
-  },
-  gradePeriodText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#475569',
-  },
-  gradeMetaTime: {
-    fontSize: 10,
-    color: '#94A3B8',
-  },
-  gradeBadgeRight: {
+  gradeScoreBadgeCol: {
     alignItems: 'center',
     paddingLeft: 8,
   },
-  gradeCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  gradeScoreCircleGreen: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: 'rgba(0, 140, 69, 0.2)',
   },
-  gradeScoreNumber: {
-    fontSize: 17,
+  gradeScoreCircleBlue: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(26, 115, 232, 0.2)',
+  },
+  gradeScoreNum: {
+    fontSize: 16,
     fontWeight: '900',
     color: colors.primary,
   },
-  gradeScoreLabel: {
+  gradeScoreNumBlue: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#1A73E8',
+  },
+  gradeScoreLabelGreen: {
     fontSize: 9,
     fontWeight: '800',
     color: '#005F2E',
     textTransform: 'uppercase',
     marginTop: 2,
   },
-
-  /* GALLERY WEEK */
-  gallerySectionWrap: {
-    gap: 8,
+  gradeScoreLabelBlue: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#1E40AF',
+    textTransform: 'uppercase',
+    marginTop: 2,
   },
+
+  /* GALLERY SECTION */
   galleryExploreText: {
     fontSize: 12,
     color: '#475569',
@@ -1560,23 +1283,23 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   galleryImageBoxArt: {
-    height: 100,
+    height: 105,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   galleryImageBoxGarden: {
-    height: 100,
+    height: 105,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
-  galleryImagePlaceholder: {
+  galleryPlaceholderEmoji: {
     fontSize: 28,
   },
-  galleryPhotoCountBadge: {
+  galleryPhotoBadge: {
     position: 'absolute',
     top: 8,
     right: 8,
@@ -1585,22 +1308,102 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 9999,
   },
-  galleryPhotoCountText: {
+  galleryPhotoBadgeText: {
     fontSize: 9,
     fontWeight: '800',
     color: '#FFFFFF',
+  },
+  galleryChildPill: {
+    position: 'absolute',
+    bottom: 6,
+    left: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 9999,
+  },
+  galleryChildPillText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#131B2E',
   },
   galleryCardBody: {
     padding: 10,
   },
   galleryCardTitle: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#131B2E',
   },
-  galleryCardTime: {
+  galleryCardSubtitle: {
     fontSize: 10,
     color: '#94A3B8',
     marginTop: 2,
+  },
+
+  /* QUICK ACCESS */
+  quickAccessSection: {
+    gap: 10,
+  },
+  quickActionBtn: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  quickActionIconCircleGreen: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: '#E8F7EE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  quickActionIconCircleRed: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: '#FFF1F2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  quickActionEmoji: {
+    fontSize: 18,
+  },
+  quickActionTextCol: {
+    flex: 1,
+  },
+  quickActionTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#131B2E',
+  },
+  quickActionSub: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  quickActionSubRed: {
+    fontSize: 11,
+    color: '#9F1239',
+    fontWeight: '600',
+    marginTop: 1,
+  },
+  quickActionArrow: {
+    fontSize: 20,
+    color: '#94A3B8',
+    fontWeight: '700',
+    marginLeft: 8,
   },
 });
