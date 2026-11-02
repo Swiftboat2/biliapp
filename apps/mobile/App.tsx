@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, SafeAreaView, StatusBar, Text } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Text } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { StudentProvider } from './src/context/StudentContext';
 import { StudentSelector } from './src/components/StudentSelector';
@@ -31,7 +32,7 @@ export default function App() {
   return (
     <StudentProvider initialStudents={initialStudentsMock}>
       <SafeAreaView style={styles.safeArea}>
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <StatusBar style="dark" />
         
         {/* App Institutional Header */}
         <View style={styles.header}>
