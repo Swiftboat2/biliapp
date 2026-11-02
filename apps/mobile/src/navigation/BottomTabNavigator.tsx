@@ -1,32 +1,30 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from '../screens/HomeScreen';
-import { AttendanceScreen } from '../screens/AttendanceScreen';
-import { KindergartenScreen } from '../screens/KindergartenScreen';
+import { MessagesScreen } from '../screens/MessagesScreen';
+import { FilesScreen } from '../screens/FilesScreen';
+import { GalleryScreen } from '../screens/GalleryScreen';
 import { PickupScreen } from '../screens/PickupScreen';
-import { CommunicationsScreen } from '../screens/CommunicationsScreen';
-import { useActiveStudent } from '../context/StudentContext';
+import { AttendanceScreen } from '../screens/AttendanceScreen';
+import { colors } from '../theme/colors';
 import { Text } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 export const BottomTabNavigator: React.FC = () => {
-  const { activeStudent } = useActiveStudent();
-  const isKindergarten = activeStudent?.educationalLevel === 'INICIAL';
-
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#1e3a8a',
-        tabBarInactiveTintColor: '#94a3b8',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
-          borderTopColor: '#e2e8f0',
+          borderTopColor: colors.border,
           paddingBottom: 6,
           paddingTop: 6,
-          height: 60,
+          height: 62,
         },
         tabBarLabelStyle: {
           fontSize: 11,
@@ -38,46 +36,57 @@ export const BottomTabNavigator: React.FC = () => {
         name="Inicio"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 18 }}>🏠</Text>,
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text>,
         }}
       />
 
-      {isKindergarten && (
-        <Tab.Screen
-          name="Jardín"
-          component={KindergartenScreen}
-          options={{
-            tabBarIcon: ({ color }) => <Text style={{ fontSize: 18 }}>🧸</Text>,
-            tabBarBadge: 'Hoy',
-          }}
-        />
-      )}
+      <Tab.Screen
+        name="Mensajes"
+        component={MessagesScreen}
+        options={{
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>💬</Text>,
+          tabBarBadge: 3,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.coral,
+            fontSize: 10,
+            fontWeight: '800',
+          },
+        }}
+      />
 
+      <Tab.Screen
+        name="Archivos"
+        component={FilesScreen}
+        options={{
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📁</Text>,
+        }}
+      />
+
+      <Tab.Screen
+        name="Galería"
+        component={GalleryScreen}
+        options={{
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🖼️</Text>,
+        }}
+      />
+
+      <Tab.Screen
+        name="Seguridad"
+        component={PickupScreen}
+        options={{
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🛡️</Text>,
+        }}
+      />
+
+      {/* Hidden route accessible via Navigation from Home */}
       <Tab.Screen
         name="Asistencia"
         component={AttendanceScreen}
         options={{
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 18 }}>📋</Text>,
-        }}
-      />
-
-      <Tab.Screen
-        name="Retiros"
-        component={PickupScreen}
-        options={{
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 18 }}>🛡️</Text>,
-        }}
-      />
-
-      <Tab.Screen
-        name="Circulares"
-        component={CommunicationsScreen}
-        options={{
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 18 }}>📢</Text>,
-          tabBarBadge: 1,
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
         }}
       />
     </Tab.Navigator>
   );
 };
-
