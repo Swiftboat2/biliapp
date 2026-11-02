@@ -243,3 +243,4 @@ graph TD
    - Crear estilos según la tabla de la Sección 3 con fuente **Inter** o **SF Pro**.
 4. **Vectores y Recursos:**
    - Ubicación del escudo oficial: [`apps/mobile/assets/logo-colegio.png`](file:///c:/Users/Pc/Desktop/BiliAPP/apps/mobile/assets/logo-colegio.png).
+
