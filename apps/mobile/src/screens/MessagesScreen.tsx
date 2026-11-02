@@ -30,9 +30,9 @@ export const MessagesScreen: React.FC = () => {
   const [threads, setThreads] = useState<MessageThread[]>([
     {
       id: 'm1',
-      senderName: 'Ana Martínez',
-      senderRole: 'Profesora de Lengua y Literatura',
-      subject: 'Reunión del Consejo Escolar',
+      senderName: 'Prof. Ana Martínez',
+      senderRole: 'Lengua y Literatura',
+      subject: 'Reunión del Consejo Asesor Escolar',
       excerpt: 'Estimadas familias: solicitamos confirmar la asistencia a la sesión del jueves...',
       time: '12:45 PM',
       unreadCount: 2,
@@ -40,33 +40,33 @@ export const MessagesScreen: React.FC = () => {
     },
     {
       id: 'm2',
-      senderName: 'Carlos Gómez',
-      senderRole: 'Profesor de Educación Física',
-      subject: 'Evaluación del 2° Trimestre',
-      excerpt: 'Buenas tardes: el próximo martes tomaremos la prueba de coordinación y resistencia...',
+      senderName: 'Prof. Carlos Gómez',
+      senderRole: 'Educación Física y Deportes',
+      subject: 'Evaluación de Coordinación - 2° Trimestre',
+      excerpt: 'Buenas tardes: el próximo martes tomaremos la prueba de coordinación y postas...',
       time: '10:15 AM',
       unreadCount: 1,
-      statusColor: '#3B82F6',
+      statusColor: '#3898EC',
     },
     {
       id: 'm3',
       senderName: 'Lic. Raquel Rodríguez',
       senderRole: 'Gabinete Psicopedagógico',
-      subject: 'Seguimiento pedagógico y evolución',
-      excerpt: 'Queremos agendar una breve videollamada para compartir observaciones del progreso...',
+      subject: 'Seguimiento de evolución semestral',
+      excerpt: 'Queremos agendar una breve entrevista para compartir observaciones del progreso...',
       time: 'Ayer',
       unreadCount: 0,
       statusColor: '#F59E0B',
     },
     {
       id: 'm4',
-      senderName: 'Secretaría Institucional',
-      senderRole: 'Administración y Aranceles',
-      subject: 'Comprobante de Apto Físico 2026',
+      senderName: 'Secretaría Académica',
+      senderRole: 'Dirección del Nivel',
+      subject: 'Vencimiento de Apto Físico 2026',
       excerpt: 'Recordamos que el certificado médico vence próximamente. Favor de cargarlo en la app...',
       time: '28 Oct',
       unreadCount: 0,
-      statusColor: '#94A3B8',
+      statusColor: '#9CA3AF',
     },
   ]);
 
@@ -78,32 +78,34 @@ export const MessagesScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Top Title Banner */}
-      <View style={styles.topBanner}>
-        <Text style={styles.bannerTitle}>Comunicaciones</Text>
-        <Text style={styles.bannerSubtitle}>
-          Recibe mensajes y comunicados oficiales directamente en tu celular.
+      {/* 1. CURVED HERO BANNER */}
+      <View style={styles.heroBanner}>
+        <Text style={styles.heroTitle}>Comunicaciones</Text>
+        <Text style={styles.heroSubtitle}>
+          Recibe mensajes y comunicados oficiales directamente a tu celular.
         </Text>
       </View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <Text style={styles.searchIcon}>🔍</Text>
-        <TextInput
-          placeholder="Buscar conversaciones..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          style={styles.searchInput}
-          placeholderTextColor={colors.textMuted}
-        />
+      {/* 2. FLOATING SEARCH BAR */}
+      <View style={styles.searchWrapper}>
+        <View style={styles.searchContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            placeholder="Buscar en mensajes o remitentes..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={styles.searchInput}
+            placeholderTextColor={colors.textMuted}
+          />
+        </View>
       </View>
 
-      {/* Filter Tabs */}
+      {/* 3. FILTER PILLS */}
       <View style={styles.filterRow}>
         <TouchableOpacity
           style={[styles.filterPill, activeFilter === 'RECIBIDOS' && styles.activeFilterPill]}
           onPress={() => setActiveFilter('RECIBIDOS')}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
           <Text style={[styles.filterText, activeFilter === 'RECIBIDOS' && styles.activeFilterText]}>
             Recibidos (3)
@@ -113,7 +115,7 @@ export const MessagesScreen: React.FC = () => {
         <TouchableOpacity
           style={[styles.filterPill, activeFilter === 'ENVIADOS' && styles.activeFilterPill]}
           onPress={() => setActiveFilter('ENVIADOS')}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
           <Text style={[styles.filterText, activeFilter === 'ENVIADOS' && styles.activeFilterText]}>
             Enviados
@@ -123,7 +125,7 @@ export const MessagesScreen: React.FC = () => {
         <TouchableOpacity
           style={[styles.filterPill, activeFilter === 'PAPELERA' && styles.activeFilterPill]}
           onPress={() => setActiveFilter('PAPELERA')}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
           <Text style={[styles.filterText, activeFilter === 'PAPELERA' && styles.activeFilterText]}>
             Papelera
@@ -131,16 +133,17 @@ export const MessagesScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Messages Thread List */}
+      {/* 4. MESSAGES LIST */}
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={[styles.threadItem, item.unreadCount > 0 && styles.unreadThreadItem]}
+            style={[styles.threadCard, item.unreadCount > 0 && styles.unreadThreadCard]}
             onPress={() => setSelectedThread(item)}
-            activeOpacity={0.7}
+            activeOpacity={0.8}
           >
             {/* Avatar with Status Dot */}
             <View style={styles.avatarWrapper}>
@@ -153,9 +156,9 @@ export const MessagesScreen: React.FC = () => {
               <View style={[styles.statusDot, { backgroundColor: item.statusColor }]} />
             </View>
 
-            {/* Content Col */}
-            <View style={styles.threadContent}>
-              <View style={styles.threadTopRow}>
+            {/* Content Details */}
+            <View style={styles.threadDetails}>
+              <View style={styles.topRow}>
                 <Text style={styles.senderName} numberOfLines={1}>
                   {item.senderName}
                 </Text>
@@ -185,10 +188,15 @@ export const MessagesScreen: React.FC = () => {
         )}
       />
 
-      {/* Floating Action Button (Redactar) */}
+      {/* FAB (Redactar) */}
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => Alert.alert('Nuevo Mensaje', 'Selecciona el docente o directivo a contactar según la matriz institucional de comunicación.')}
+        onPress={() =>
+          Alert.alert(
+            'Nuevo Mensaje',
+            'Selecciona el docente o directivo a contactar dentro de la matriz de comunicación.'
+          )
+        }
         activeOpacity={0.85}
       >
         <Text style={styles.fabIcon}>✏️</Text>
@@ -199,7 +207,7 @@ export const MessagesScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.modalSender}>{selectedThread?.senderName}</Text>
                 <Text style={styles.modalRole}>{selectedThread?.senderRole}</Text>
               </View>
@@ -216,10 +224,13 @@ export const MessagesScreen: React.FC = () => {
                 style={styles.replyBtn}
                 onPress={() => {
                   setSelectedThread(null);
-                  Alert.alert('Respuesta Enviada', 'Tu respuesta fue enviada en el canal oficial supervisado.');
+                  Alert.alert(
+                    'Respuesta Enviada',
+                    'Tu mensaje fue transmitido en el canal oficial supervisado.'
+                  );
                 }}
               >
-                <Text style={styles.replyBtnText}>Responder al Docente</Text>
+                <Text style={styles.replyBtnText}>Responder al Remitente</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -234,36 +245,53 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  topBanner: {
+  heroBanner: {
+    backgroundColor: colors.primary,
+    paddingTop: 18,
+    paddingBottom: 34,
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 4,
   },
-  bannerTitle: {
+  heroTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: colors.primaryDark,
+    color: '#FFFFFF',
+    letterSpacing: -0.4,
   },
-  bannerSubtitle: {
+  heroSubtitle: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: 'rgba(255,255,255,0.9)',
     marginTop: 4,
     lineHeight: 18,
+  },
+  searchWrapper: {
+    paddingHorizontal: 20,
+    marginTop: -20,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 18,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 1.5,
     borderColor: colors.border,
+    shadowColor: colors.shadowColor,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
   searchIcon: {
-    fontSize: 14,
-    marginRight: 8,
+    fontSize: 15,
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
@@ -273,16 +301,16 @@ const styles = StyleSheet.create({
   },
   filterRow: {
     flexDirection: 'row',
-    paddingHorizontal: 18,
+    paddingHorizontal: 20,
     gap: 8,
-    marginVertical: 12,
+    marginVertical: 14,
   },
   filterPill: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
   },
   activeFilterPill: {
@@ -298,39 +326,43 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   list: {
-    paddingHorizontal: 18,
-    paddingBottom: 80,
-    gap: 8,
+    paddingHorizontal: 20,
+    paddingBottom: 90,
+    gap: 10,
   },
-  threadItem: {
+  threadCard: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 14,
-    borderWidth: 1,
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1.5,
     borderColor: colors.border,
     alignItems: 'flex-start',
+    shadowColor: colors.shadowColor,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  unreadThreadItem: {
-    backgroundColor: '#FFFFFF',
-    borderColor: colors.primaryMuted,
+  unreadThreadCard: {
     borderLeftWidth: 4,
     borderLeftColor: colors.primary,
+    borderColor: colors.borderFocus,
   },
   avatarWrapper: {
     position: 'relative',
-    marginRight: 12,
+    marginRight: 14,
   },
   avatarCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarLetters: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
     color: colors.primaryDark,
   },
@@ -338,34 +370,35 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 2,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 2.5,
     borderColor: '#FFFFFF',
   },
-  threadContent: {
+  threadDetails: {
     flex: 1,
   },
-  threadTopRow: {
+  topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   senderName: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
     color: colors.textPrimary,
   },
   threadTime: {
     fontSize: 11,
     color: colors.textMuted,
+    fontWeight: '600',
   },
   senderRole: {
     fontSize: 11,
     color: colors.primary,
-    fontWeight: '600',
-    marginTop: 1,
+    fontWeight: '700',
+    marginTop: 2,
   },
   threadSubject: {
     fontSize: 13,
@@ -383,7 +416,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accentRed,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
@@ -395,18 +428,19 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: 20,
+    right: 22,
     bottom: 24,
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 10,
+    elevation: 5,
   },
   fabIcon: {
     fontSize: 22,
@@ -418,10 +452,10 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 22,
-    gap: 12,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 24,
+    gap: 14,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -429,24 +463,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalSender: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '800',
     color: colors.textPrimary,
   },
   modalRole: {
     fontSize: 12,
     color: colors.primary,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   modalCloseText: {
-    fontSize: 20,
+    fontSize: 22,
     color: colors.textSecondary,
+    padding: 4,
   },
   modalSubject: {
     fontSize: 15,
     fontWeight: '800',
     color: colors.textPrimary,
-    marginTop: 4,
   },
   modalBodyText: {
     fontSize: 13,
@@ -458,14 +492,13 @@ const styles = StyleSheet.create({
   },
   replyBtn: {
     backgroundColor: colors.primary,
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingVertical: 14,
+    borderRadius: 14,
     alignItems: 'center',
   },
   replyBtnText: {
     color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '800',
   },
 });
-

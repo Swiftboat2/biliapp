@@ -1,70 +1,92 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import { useActiveStudent, ChildStudent } from '../context/StudentContext';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+import { useActiveStudent } from '../context/StudentContext';
 import { colors } from '../theme/colors';
-
-interface StudentExtended extends ChildStudent {
-  attendancePercentage?: number;
-  avatarBg?: string;
-}
 
 export const StudentCarousel: React.FC = () => {
   const { students, activeStudent, setActiveStudent } = useActiveStudent();
+  const { width } = useWindowDimensions();
+
+  // Responsive card width: on smaller screens it leaves a peek of the next card
+  const cardWidth = Math.min(width * 0.72, 280);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.wrapper}>
       <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle}>Estudiantes</Text>
-        <Text style={styles.filterText}>Ver todos ▾</Text>
+        <View style={styles.titleWithBadge}>
+          <Text style={styles.sectionTitle}>Estudiantes a cargo</Text>
+          <View style={styles.countBadge}>
+            <Text style={styles.countBadgeText}>{students.length}</Text>
+          </View>
+        </View>
+        <Text style={styles.filterLink}>Toca para cambiar</Text>
       </View>
 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.scrollContainer}
+        decelerationRate="fast"
+        snapToInterval={cardWidth + 12}
       >
         {students.map((student, index) => {
           const isSelected = activeStudent?.id === student.id;
           const percentage = student.educationalLevel === 'INICIAL' ? 96 : 88;
-          const avatarColors = ['#F97316', '#3B82F6', '#10B981', '#8B5CF6'];
-          const avatarColor = avatarColors[index % avatarColors.length];
+          const avatarGradients = ['#008C45', '#3898EC', '#D97706'];
+          const avatarBg = avatarGradients[index % avatarGradients.length];
 
           return (
             <TouchableOpacity
               key={student.id}
-              style={[styles.card, isSelected && styles.activeCard]}
+              style={[
+                styles.studentCard,
+                { width: cardWidth },
+                isSelected && styles.studentCardActive,
+              ]}
               onPress={() => setActiveStudent(student)}
-              activeOpacity={0.85}
+              activeOpacity={0.88}
             >
-              {/* Avatar Box */}
-              <View style={[styles.avatarBox, { backgroundColor: avatarColor }]}>
-                <Text style={styles.avatarInitial}>
-                  {student.firstName.charAt(0)}
-                  {student.lastName.charAt(0)}
+              {/* Portrait Avatar Box */}
+              <View style={[styles.avatarBox, { backgroundColor: avatarBg }]}>
+                <Text style={styles.avatarEmoji}>
+                  {student.educationalLevel === 'INICIAL' ? '🧒' : '👧'}
                 </Text>
+                <View style={styles.statusIndicator} />
               </View>
 
-              {/* Info Column */}
-              <View style={styles.infoCol}>
-                <View style={styles.topInfoRow}>
-                  <Text style={[styles.studentName, isSelected && styles.activeName]}>
+              {/* Student Details */}
+              <View style={styles.detailsCol}>
+                <View style={styles.topNameRow}>
+                  <Text
+                    style={[styles.studentName, isSelected && styles.studentNameActive]}
+                    numberOfLines={1}
+                  >
                     {student.firstName}
                   </Text>
-                  {/* Circular Score Badge */}
-                  <View style={[styles.percentBadge, isSelected && styles.activePercentBadge]}>
-                    <Text style={[styles.percentText, isSelected && styles.activePercentText]}>
+
+                  {/* Circular Score Ring */}
+                  <View style={[styles.circleRing, isSelected && styles.circleRingActive]}>
+                    <Text style={[styles.circleText, isSelected && styles.circleTextActive]}>
                       {percentage}%
                     </Text>
                   </View>
                 </View>
 
-                <Text style={styles.courseSubtitle} numberOfLines={1}>
-                  {student.educationalLevel === 'INICIAL'
-                    ? 'Nivel Inicial'
-                    : student.educationalLevel === 'PRIMARIA'
-                    ? 'Primaria'
-                    : 'Secundaria'}
+                <Text style={styles.courseText} numberOfLines={1}>
+                  {student.courseName}
                 </Text>
+
+                <View style={styles.bottomPillRow}>
+                  <View style={[styles.levelPill, isSelected && styles.levelPillActive]}>
+                    <Text style={[styles.levelPillText, isSelected && styles.levelPillTextActive]}>
+                      {student.educationalLevel === 'INICIAL'
+                        ? 'Nivel Inicial'
+                        : student.educationalLevel === 'PRIMARIA'
+                        ? 'Primaria'
+                        : 'Secundaria'}
+                    </Text>
+                  </View>
+                </View>
               </View>
             </TouchableOpacity>
           );
@@ -75,105 +97,158 @@ export const StudentCarousel: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 12,
+  wrapper: {
+    paddingVertical: 8,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 18,
-    marginBottom: 10,
+    paddingHorizontal: 20,
+    marginBottom: 12,
+  },
+  titleWithBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '800',
     color: colors.textPrimary,
+    letterSpacing: -0.3,
   },
-  filterText: {
+  countBadge: {
+    backgroundColor: colors.primaryLight,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  countBadgeText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '800',
     color: colors.primary,
   },
-  scrollContent: {
-    paddingHorizontal: 18,
+  filterLink: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textMuted,
+  },
+  scrollContainer: {
+    paddingHorizontal: 20,
     gap: 12,
   },
-  card: {
+  studentCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.cardBg,
-    borderRadius: 18,
-    padding: 10,
-    paddingRight: 14,
-    borderWidth: 1.5,
+    borderRadius: 22,
+    padding: 12,
+    borderWidth: 2,
     borderColor: colors.border,
-    minWidth: 180,
-    shadowColor: '#000',
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowColor: colors.shadowColor,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
   },
-  activeCard: {
+  studentCardActive: {
     borderColor: colors.primary,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: '#FFFFFF',
+    shadowColor: colors.primary,
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
   },
   avatarBox: {
-    width: 46,
-    height: 46,
-    borderRadius: 14,
+    width: 58,
+    height: 58,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    position: 'relative',
   },
-  avatarInitial: {
-    color: '#FFFFFF',
-    fontWeight: '800',
-    fontSize: 16,
+  avatarEmoji: {
+    fontSize: 28,
   },
-  infoCol: {
+  statusIndicator: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: colors.emerald,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  detailsCol: {
     flex: 1,
   },
-  topInfoRow: {
+  topNameRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 6,
+    alignItems: 'center',
   },
   studentName: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
     color: colors.textPrimary,
+    flex: 1,
+    letterSpacing: -0.3,
   },
-  activeName: {
+  studentNameActive: {
     color: colors.primaryDark,
   },
-  percentBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.background,
-    borderWidth: 2,
+  circleRing: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 2.5,
     borderColor: colors.border,
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 6,
   },
-  activePercentBadge: {
+  circleRingActive: {
     borderColor: colors.primary,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryLight,
   },
-  percentText: {
-    fontSize: 10,
-    fontWeight: '800',
+  circleText: {
+    fontSize: 11,
+    fontWeight: '900',
     color: colors.textSecondary,
   },
-  activePercentText: {
+  circleTextActive: {
     color: colors.primary,
   },
-  courseSubtitle: {
+  courseText: {
     fontSize: 12,
     color: colors.textSecondary,
+    fontWeight: '500',
     marginTop: 2,
   },
+  bottomPillRow: {
+    marginTop: 6,
+    flexDirection: 'row',
+  },
+  levelPill: {
+    backgroundColor: colors.background,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  levelPillActive: {
+    backgroundColor: colors.primaryLight,
+  },
+  levelPillText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.textSecondary,
+  },
+  levelPillTextActive: {
+    color: colors.primaryDark,
+  },
 });
-

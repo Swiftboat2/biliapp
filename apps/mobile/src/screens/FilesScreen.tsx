@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  TextInput,
   Alert,
 } from 'react-native';
 import { colors } from '../theme/colors';
@@ -21,7 +20,6 @@ interface FileItem {
 
 export const FilesScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'RECIENTES' | 'CARPETAS'>('RECIENTES');
-  const [search, setSearch] = useState('');
 
   const files: FileItem[] = [
     {
@@ -87,46 +85,48 @@ export const FilesScreen: React.FC = () => {
   };
 
   const handleDownload = (file: FileItem) => {
-    Alert.alert('Descargando Archivo', `Descargando "${file.name}" para consulta offline.`);
+    Alert.alert('Descarga de Archivo', `Descargando "${file.name}" para consulta sin conexión.`);
   };
 
   return (
     <View style={styles.container}>
-      {/* Header Banner */}
-      <View style={styles.banner}>
-        <Text style={styles.bannerTitle}>Archivos y Documentos</Text>
-        <Text style={styles.bannerSubtitle}>
+      {/* 1. CURVED HERO BANNER */}
+      <View style={styles.heroBanner}>
+        <Text style={styles.heroTitle}>Archivos</Text>
+        <Text style={styles.heroSubtitle}>
           Accede a archivos compartidos por docentes o directivos del colegio.
         </Text>
       </View>
 
-      {/* Tabs Switcher: Recientes / Carpetas */}
-      <View style={styles.tabBar}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'RECIENTES' && styles.activeTab]}
-          onPress={() => setActiveTab('RECIENTES')}
-          activeOpacity={0.8}
-        >
-          <Text style={[styles.tabText, activeTab === 'RECIENTES' && styles.activeTabText]}>
-            Recientes
-          </Text>
-        </TouchableOpacity>
+      {/* 2. FLOATING TAB BAR */}
+      <View style={styles.tabWrapper}>
+        <View style={styles.tabBar}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'RECIENTES' && styles.activeTab]}
+            onPress={() => setActiveTab('RECIENTES')}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.tabText, activeTab === 'RECIENTES' && styles.activeTabText]}>
+              Recientes
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'CARPETAS' && styles.activeTab]}
-          onPress={() => setActiveTab('CARPETAS')}
-          activeOpacity={0.8}
-        >
-          <Text style={[styles.tabText, activeTab === 'CARPETAS' && styles.activeTabText]}>
-            Carpetas
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'CARPETAS' && styles.activeTab]}
+            onPress={() => setActiveTab('CARPETAS')}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.tabText, activeTab === 'CARPETAS' && styles.activeTabText]}>
+              Carpetas
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Section: Hoy */}
         <Text style={styles.sectionHeader}>Hoy</Text>
-        <View style={styles.group}>
+        <View style={styles.groupCard}>
           {files
             .filter((f) => f.dateTag === 'HOY')
             .map((file) => (
@@ -137,7 +137,7 @@ export const FilesScreen: React.FC = () => {
                 activeOpacity={0.7}
               >
                 <View style={styles.fileLeft}>
-                  {renderIcon(file.type)}
+                  <View style={styles.iconBox}>{renderIcon(file.type)}</View>
                   <View style={styles.fileInfo}>
                     <Text style={styles.fileName} numberOfLines={1}>
                       {file.name}
@@ -147,14 +147,16 @@ export const FilesScreen: React.FC = () => {
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.downloadAction}>↓</Text>
+                <View style={styles.downloadCircle}>
+                  <Text style={styles.downloadAction}>↓</Text>
+                </View>
               </TouchableOpacity>
             ))}
         </View>
 
         {/* Section: Esta semana */}
         <Text style={styles.sectionHeader}>Esta semana</Text>
-        <View style={styles.group}>
+        <View style={styles.groupCard}>
           {files
             .filter((f) => f.dateTag === 'ESTA_SEMANA')
             .map((file) => (
@@ -165,7 +167,7 @@ export const FilesScreen: React.FC = () => {
                 activeOpacity={0.7}
               >
                 <View style={styles.fileLeft}>
-                  {renderIcon(file.type)}
+                  <View style={styles.iconBox}>{renderIcon(file.type)}</View>
                   <View style={styles.fileInfo}>
                     <Text style={styles.fileName} numberOfLines={1}>
                       {file.name}
@@ -175,14 +177,16 @@ export const FilesScreen: React.FC = () => {
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.downloadAction}>↓</Text>
+                <View style={styles.downloadCircle}>
+                  <Text style={styles.downloadAction}>↓</Text>
+                </View>
               </TouchableOpacity>
             ))}
         </View>
 
         {/* Section: Este mes */}
         <Text style={styles.sectionHeader}>Este mes</Text>
-        <View style={styles.group}>
+        <View style={styles.groupCard}>
           {files
             .filter((f) => f.dateTag === 'ESTE_MES')
             .map((file) => (
@@ -193,7 +197,7 @@ export const FilesScreen: React.FC = () => {
                 activeOpacity={0.7}
               >
                 <View style={styles.fileLeft}>
-                  {renderIcon(file.type)}
+                  <View style={styles.iconBox}>{renderIcon(file.type)}</View>
                   <View style={styles.fileInfo}>
                     <Text style={styles.fileName} numberOfLines={1}>
                       {file.name}
@@ -203,7 +207,9 @@ export const FilesScreen: React.FC = () => {
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.downloadAction}>↓</Text>
+                <View style={styles.downloadCircle}>
+                  <Text style={styles.downloadAction}>↓</Text>
+                </View>
               </TouchableOpacity>
             ))}
         </View>
@@ -219,33 +225,51 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  banner: {
+  heroBanner: {
+    backgroundColor: colors.primary,
+    paddingTop: 18,
+    paddingBottom: 34,
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 4,
   },
-  bannerTitle: {
+  heroTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: colors.primaryDark,
+    color: '#FFFFFF',
+    letterSpacing: -0.4,
   },
-  bannerSubtitle: {
+  heroSubtitle: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: 'rgba(255,255,255,0.9)',
     marginTop: 4,
     lineHeight: 18,
   },
+  tabWrapper: {
+    paddingHorizontal: 20,
+    marginTop: -20,
+  },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#E2E8F0',
-    marginHorizontal: 18,
-    borderRadius: 20,
-    padding: 3,
-    marginBottom: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 4,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    shadowColor: colors.shadowColor,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
   tab: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 18,
     alignItems: 'center',
   },
@@ -253,7 +277,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   tabText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: colors.textSecondary,
   },
@@ -261,7 +285,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   content: {
-    paddingHorizontal: 18,
+    paddingHorizontal: 20,
+    marginTop: 10,
   },
   sectionHeader: {
     fontSize: 13,
@@ -269,22 +294,27 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginTop: 14,
+    marginTop: 16,
     marginBottom: 8,
   },
-  group: {
+  groupCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: 20,
+    borderWidth: 1.5,
     borderColor: colors.border,
     overflow: 'hidden',
+    shadowColor: colors.shadowColor,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 2,
   },
   fileRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
   },
@@ -294,36 +324,51 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 12,
   },
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   iconFolder: {
-    fontSize: 24,
+    fontSize: 22,
   },
   iconPdf: {
-    fontSize: 24,
+    fontSize: 22,
   },
   iconDoc: {
-    fontSize: 24,
+    fontSize: 22,
   },
   iconFile: {
-    fontSize: 24,
+    fontSize: 22,
   },
   fileInfo: {
     flex: 1,
   },
   fileName: {
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '800',
     color: colors.textPrimary,
   },
   fileSender: {
-    fontSize: 11,
+    fontSize: 12,
     color: colors.textSecondary,
     marginTop: 2,
   },
+  downloadCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
   downloadAction: {
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '900',
     color: colors.primary,
-    paddingHorizontal: 8,
   },
 });
-
