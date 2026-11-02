@@ -1,0 +1,23 @@
+{
+  "name": "biliapp",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@12.16.1",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+    "db:studio": "pnpm --filter @biliapp/database db:studio",
+    "docker:up": "docker compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f docker/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.2",
+    "turbo": "^2.4.4",
+    "typescript": "^5.7.3"
+  }
+}
+

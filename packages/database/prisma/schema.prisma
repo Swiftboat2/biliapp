@@ -1,0 +1,507 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------
+// ENUMS
+// ----------------------------------------------------
+
+enum UserRole {
+  SUPERADMIN
+  DIRECTIVO
+  ADMINISTRACION
+  PRECEPTOR
+  DOCENTE
+  TUTOR
+  ALUMNO
+  MANTENIMIENTO
+}
+
+enum EducationalLevel {
+  INICIAL
+  PRIMARIA
+  SECUNDARIA
+}
+
+enum SchoolShift {
+  MANANA
+  TARDE
+  DOBLE
+  CONTRATURNO
+}
+
+enum AttendanceState {
+  PRESENTE
+  AUSENTE_INJUSTIFICADO
+  AUSENTE_JUSTIFICADO
+  TARDANZA_CUARTO       // 0.25 falta
+  RETIRO_MEDIO          // 0.5 falta
+}
+
+enum JustificationStatus {
+  NOT_APPLICABLE
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum MoodState {
+  ALEGRE
+  TRANQUILO
+  CANSADO
+  CON_LLANTO
+}
+
+enum IntakeAmount {
+  NADA
+  POCO
+  MITAD
+  TODO
+}
+
+enum DiaperType {
+  LIMPIO
+  HUMEDO
+  DEPOSICION
+}
+
+enum LegalAlertSeverity {
+  CRITICA
+  MODERADA
+  INFORMATIVA
+}
+
+enum PeriodStatus {
+  OPEN
+  CLOSING
+  LOCKED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  UNLOCK_PERIOD
+  SUPERVISE_CHAT
+  EMERGENCY_PICKUP
+}
+
+// ----------------------------------------------------
+// INSTITUTION & CORE
+// ----------------------------------------------------
+
+model Institution {
+  id             String          @id @default(uuid())
+  name           String
+  code           String?         @unique
+  address        String?
+  phone          String?
+  logoUrl        String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  academicYears  AcademicYear[]
+  courses        CourseDivision[]
+}
+
+model AcademicYear {
+  id             String          @id @default(uuid())
+  institutionId  String
+  institution    Institution     @relation(fields: [institutionId], references: [id])
+  year           Int             // e.g. 2026
+  startDate      DateTime
+  endDate        DateTime
+  isCurrent      Boolean         @default(false)
+  isClosed       Boolean         @default(false)
+
+  courses        CourseDivision[]
+  periods        AcademicPeriod[]
+
+  @@unique([institutionId, year])
+}
+
+model CourseDivision {
+  id              String            @id @default(uuid())
+  institutionId   String
+  institution     Institution       @relation(fields: [institutionId], references: [id])
+  academicYearId  String
+  academicYear    AcademicYear      @relation(fields: [academicYearId], references: [id])
+  level           EducationalLevel
+  yearNumber      Int               // 1 to 6 (or sala age in Jardin)
+  division        String            // "A", "B", etc.
+  shift           SchoolShift       @default(MANANA)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  enrollments     StudentEnrollment[]
+  subjects        Subject[]
+  attendanceRecords AttendanceRecord[]
+
+  @@unique([academicYearId, level, yearNumber, division, shift])
+}
+
+model Subject {
+  id               String            @id @default(uuid())
+  courseDivisionId String
+  courseDivision   CourseDivision    @relation(fields: [courseDivisionId], references: [id])
+  name             String
+  code             String?
+  
+  teacherAssignments TeacherSubjectAssignment[]
+  grades             Grade[]
+  attendanceRecords  AttendanceRecord[]
+}
+
+model TeacherSubjectAssignment {
+  id         String   @id @default(uuid())
+  subjectId  String
+  subject    Subject  @relation(fields: [subjectId], references: [id])
+  teacherId  String
+  teacher    User     @relation("TeacherAssignments", fields: [teacherId], references: [id])
+  assignedAt DateTime @default(now())
+
+  @@unique([subjectId, teacherId])
+}
+
+// ----------------------------------------------------
+// USERS, GUARDIANS & STUDENTS (MULTI-HIJO M:N)
+// ----------------------------------------------------
+
+model User {
+  id               String          @id @default(uuid())
+  dni              String          @unique
+  email            String?         @unique
+  passwordHash     String
+  pinHash          String?         // 6-digit numeric PIN for quick guardian sign-in / authorization
+  role             UserRole
+  firstName        String
+  lastName         String
+  phone            String?
+  avatarUrl        String?
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  guardianProfile  Guardian?
+  studentProfile   Student?
+  teacherSubjects  TeacherSubjectAssignment[] @relation("TeacherAssignments")
+  auditLogs        AuditLog[]
+  attendanceTaken  AttendanceRecord[]
+  pickupsVerified  PickupLog[]
+}
+
+model Guardian {
+  id                  String                    @id @default(uuid())
+  userId              String                    @unique
+  user                User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address             String?
+  emergencyPhone      String?
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+
+  students            GuardianStudentRelation[]
+}
+
+model Student {
+  id                  String                    @id @default(uuid())
+  userId              String?                   @unique
+  user                User?                     @relation(fields: [userId], references: [id])
+  dni                 String                    @unique
+  firstName           String
+  lastName            String
+  birthDate           DateTime
+  gender              String?
+  photoUrl            String?
+  educationalLevel    EducationalLevel
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+
+  guardians           GuardianStudentRelation[]
+  enrollments         StudentEnrollment[]
+  medicalRecord       MedicalRecord?
+  legalAlerts         LegalAlert[]
+  authorizedPersons   PickupAuthorizedPerson[]
+  pickupLogs          PickupLog[]
+  psychopedagogicalReports PsychopedagogicalReport[]
+  attendanceDetails   AttendanceDetail[]
+  kindergartenLogs    DailyKindergartenLog[]
+  grades              Grade[]
+  reportCards         ReportCard[]
+}
+
+// M:N link between Guardian and Student (supports multiple children across different levels)
+model GuardianStudentRelation {
+  id               String    @id @default(uuid())
+  guardianId       String
+  guardian         Guardian  @relation(fields: [guardianId], references: [id], onDelete: Cascade)
+  studentId        String
+  student          Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  relationship     String    // "Madre", "Padre", "Tutor Legal", "Abuelo/a"
+  isPrimaryContact Boolean   @default(false)
+  isAuthorizedToPickup Boolean @default(true)
+  createdAt        DateTime  @default(now())
+
+  @@unique([guardianId, studentId])
+}
+
+model StudentEnrollment {
+  id               String         @id @default(uuid())
+  studentId        String
+  student          Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseDivisionId String
+  courseDivision   CourseDivision @relation(fields: [courseDivisionId], references: [id])
+  enrolledAt       DateTime       @default(now())
+  status           String         @default("ACTIVE") // ACTIVE, TRANSFERRED, DROPPED
+
+  @@unique([studentId, courseDivisionId])
+}
+
+// ----------------------------------------------------
+// SAFETY, MEDICAL & PICK-UP
+// ----------------------------------------------------
+
+model MedicalRecord {
+  id                          String    @id @default(uuid())
+  studentId                   String    @unique
+  student                     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  bloodType                   String?
+  healthInsurance             String?
+  healthInsuranceNumber       String?
+  emergencyCenter             String?
+  allergies                   String[]  @default([])
+  foodRestrictions            String[]  @default([])
+  medication                  String[]  @default([])
+  physicalExamExpirationDate  DateTime?
+  notes                       String?
+  updatedAt                   DateTime  @updatedAt
+}
+
+model LegalAlert {
+  id                    String             @id @default(uuid())
+  studentId             String
+  student               Student            @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  severity              LegalAlertSeverity @default(CRITICA)
+  title                 String             // e.g. "Restricción de Acercamiento Judicial"
+  description           String
+  restrictedPersons     String[]           @default([]) // Names and DNIs banned from approaching or picking up
+  documentUrl           String?            // PDF of judicial order
+  isActive              Boolean            @default(true)
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+}
+
+model PickupAuthorizedPerson {
+  id             String      @id @default(uuid())
+  studentId      String
+  student        Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  dni            String
+  fullName       String
+  relationship   String
+  phone          String?
+  photoUrl       String?
+  isPermanent    Boolean     @default(true)
+  validUntil     DateTime?   // For temporary 1-day authorizations
+  authPin        String?     // Digital authorization PIN from parent
+  createdAt      DateTime    @default(now())
+
+  pickupLogs     PickupLog[]
+}
+
+model PickupLog {
+  id                 String                  @id @default(uuid())
+  studentId          String
+  student            Student                 @relation(fields: [studentId], references: [id])
+  authorizedPersonId String?
+  authorizedPerson   PickupAuthorizedPerson? @relation(fields: [authorizedPersonId], references: [id])
+  verifiedByUserId   String
+  verifiedByUser     User                    @relation(fields: [verifiedByUserId], references: [id])
+  timestamp          DateTime                @default(now())
+  notes              String?
+}
+
+model PsychopedagogicalReport {
+  id             String    @id @default(uuid())
+  studentId      String
+  student        Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  authorUserId   String
+  date           DateTime  @default(now())
+  title          String
+  contentEncrypted String  @db.Text // Encrypted confidential notes
+  isConfidential Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// ----------------------------------------------------
+// ATTENDANCE & OFFLINE SYNC
+// ----------------------------------------------------
+
+model AttendanceRecord {
+  id               String            @id @default(uuid())
+  courseDivisionId String
+  courseDivision   CourseDivision    @relation(fields: [courseDivisionId], references: [id])
+  date             DateTime          @db.Date
+  shift            SchoolShift       @default(MANANA)
+  subjectId        String?
+  subject          Subject?          @relation(fields: [subjectId], references: [id])
+  takenByUserId    String
+  takenByUser      User              @relation(fields: [takenByUserId], references: [id])
+  clientSyncId     String?           @unique // Idempotent offline sync identifier
+  takenAt          DateTime          @default(now())
+  isClosed         Boolean           @default(false)
+
+  details          AttendanceDetail[]
+
+  @@unique([courseDivisionId, date, shift, subjectId])
+}
+
+model AttendanceDetail {
+  id                  String              @id @default(uuid())
+  recordId            String
+  record              AttendanceRecord    @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  studentId           String
+  student             Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  state               AttendanceState     @default(PRESENTE)
+  fractionValue       Float               @default(0.0) // 0.0, 0.25, 0.5, 1.0
+  justificationStatus JustificationStatus @default(NOT_APPLICABLE)
+  medicalCertUrl      String?
+  justificationNotes  String?
+  approvedByUserId    String?
+  approvedAt          DateTime?
+
+  @@unique([recordId, studentId])
+}
+
+// ----------------------------------------------------
+// KINDERGARTEN (NIVEL INICIAL)
+// ----------------------------------------------------
+
+model DailyKindergartenLog {
+  id                  String       @id @default(uuid())
+  studentId           String
+  student             Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date                DateTime     @db.Date
+  mood                MoodState    @default(ALEGRE)
+  snackIntake         IntakeAmount @default(TODO)
+  lunchIntake         IntakeAmount?
+  napStart            String?      // "13:00"
+  napEnd              String?      // "14:30"
+  diaperLogs          Json         @default("[]") // Array of { time, type, notes }
+  observations        String?
+  recordedByUserId    String
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@unique([studentId, date])
+}
+
+// ----------------------------------------------------
+// GRADES & REPORT CARDS
+// ----------------------------------------------------
+
+model AcademicPeriod {
+  id             String          @id @default(uuid())
+  academicYearId String
+  academicYear   AcademicYear    @relation(fields: [academicYearId], references: [id])
+  name           String          // "1° Trimestre", "2° Trimestre"
+  startDate      DateTime
+  endDate        DateTime
+  status         PeriodStatus    @default(OPEN)
+  closedAt       DateTime?
+
+  grades         Grade[]
+  reportCards    ReportCard[]
+}
+
+model Grade {
+  id                   String         @id @default(uuid())
+  studentId            String
+  student              Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId            String
+  subject              Subject        @relation(fields: [subjectId], references: [id])
+  periodId             String
+  period               AcademicPeriod @relation(fields: [periodId], references: [id])
+  numericValue         Float?
+  conceptualValue      String?        // "Satisfactorio", "Excelente"
+  comments             String?
+  isUnlockedException  Boolean        @default(false)
+  unlockedReason       String?
+  unlockedByUserId     String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  @@unique([studentId, subjectId, periodId])
+}
+
+model ReportCard {
+  id                    String         @id @default(uuid())
+  studentId             String
+  student               Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  periodId              String
+  period                AcademicPeriod @relation(fields: [periodId], references: [id])
+  pdfUrl                String
+  generatedAt           DateTime       @default(now())
+  viewedByGuardianAt    DateTime?
+
+  @@unique([studentId, periodId])
+}
+
+// ----------------------------------------------------
+// OFFICIAL COMMUNICATIONS & PIN AUTHORIZATION
+// ----------------------------------------------------
+
+model OfficialCommunication {
+  id             String          @id @default(uuid())
+  senderUserId   String
+  title          String
+  content        String          @db.Text
+  targetLevel    EducationalLevel?
+  requiresPinAuth Boolean        @default(false) // For campamentos, salidas
+  authPrompt     String?         // "Autorizo el traslado en micro..."
+  createdAt      DateTime        @default(now())
+
+  recipients     CommunicationRecipient[]
+}
+
+model CommunicationRecipient {
+  id              String                @id @default(uuid())
+  communicationId String
+  communication   OfficialCommunication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+  guardianUserId  String
+  isDelivered     Boolean               @default(false)
+  deliveredAt     DateTime?
+  isRead          Boolean               @default(false)
+  readAt          DateTime?
+  isPinConfirmed  Boolean               @default(false)
+  pinConfirmedAt  DateTime?
+
+  @@unique([communicationId, guardianUserId])
+}
+
+// ----------------------------------------------------
+// IMMUTABLE AUDIT LOG
+// ----------------------------------------------------
+
+model AuditLog {
+  id          String      @id @default(uuid())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
+  ipAddress   String?
+  action      AuditAction
+  entityName  String
+  entityId    String
+  beforeState Json?
+  afterState  Json?
+  reason      String?
+  createdAt   DateTime    @default(now())
+
+  @@index([entityName, entityId])
+  @@index([userId, createdAt])
+}
+
