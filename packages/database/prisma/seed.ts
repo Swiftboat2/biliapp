@@ -8,13 +8,13 @@ async function main() {
 
   // 1. Institución
   const institution = await prisma.institution.upsert({
-    where: { code: 'COL-CENTRAL' },
+    where: { code: 'IRI-ER' },
     update: {},
     create: {
-      name: 'Colegio Bilingüe San Martín',
-      code: 'COL-CENTRAL',
-      address: 'Av. Libertador 4500',
-      phone: '+54 11 4000-0000',
+      name: 'Instituto República de Italia',
+      code: 'IRI-ER',
+      address: 'Entre Ríos, Argentina',
+      phone: '+54 343 400-0000',
     },
   });
 

@@ -1,31 +1,52 @@
+/**
+ * Paleta Institucional extraída del Escudo Oficial:
+ * "Instituto República de Italia - Entre Ríos"
+ * Combina el Verde Italia, el Celeste y Blanco Argentino, el Rojo Italia y el Borde Metálico Plateado.
+ */
 export const colors = {
-  primary: '#1D64F2',
-  primaryDark: '#1248B8',
-  primaryLight: '#EBF2FE',
-  primaryMuted: '#93B7FD',
+  // Verde Italia (Identidad Primaria Institucional)
+  primary: '#008C45',
+  primaryDark: '#005C2E',
+  primaryLight: '#E8F7EE',
+  primaryMuted: '#76CCA0',
 
-  background: '#F5F7FC',
+  // Celeste Argentina (Segunda Identidad / Enlace Cultural)
+  celeste: '#3898EC',
+  celesteDark: '#1E6BFF',
+  celesteLight: '#EFF6FF',
+
+  // Rojo Italia (Acentos de Alerta, Insignias y Notificaciones)
+  accentRed: '#CD212A',
+  accentRedLight: '#FEE2E2',
+  accentRedDark: '#991B1B',
+
+  // Fondos y Superficies
+  background: '#F6F8FA',
   cardBg: '#FFFFFF',
-  border: '#E3E8F2',
-  borderFocus: '#B8D1FC',
 
-  textPrimary: '#0F172A',
-  textSecondary: '#64748B',
-  textMuted: '#94A3B8',
+  // Aro Plateado / Bordes Metálicos
+  border: '#E2E8F0',
+  borderMetallic: '#9CA3AF',
+  borderFocus: '#76CCA0',
 
-  coral: '#EF4444',
+  // Tipografía
+  textPrimary: '#111827',
+  textSecondary: '#4B5563',
+  textMuted: '#9CA3AF',
+
+  // Acentos de Estado
+  coral: '#CD212A',
   coralLight: '#FEE2E2',
-  coralDark: '#B91C1C',
+  coralDark: '#991B1B',
 
   amber: '#F59E0B',
   amberLight: '#FEF3C7',
   amberDark: '#B45309',
 
-  emerald: '#10B981',
-  emeraldLight: '#DCFCE7',
-  emeraldDark: '#15803D',
+  emerald: '#008C45',
+  emeraldLight: '#E8F7EE',
+  emeraldDark: '#005C2E',
 
-  indigo: '#6366F1',
-  indigoLight: '#E0E7FF',
+  indigo: '#3898EC',
+  indigoLight: '#EFF6FF',
 };
-

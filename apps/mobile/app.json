@@ -1,26 +1,26 @@
 {
   "expo": {
-    "name": "BiliAPP Escolar",
-    "slug": "biliapp",
+    "name": "Instituto República de Italia",
+    "slug": "republica-de-italia",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo-colegio.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logo-colegio.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.biliapp.colegio"
+      "bundleIdentifier": "ar.edu.republicadeitalia.app"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo-colegio.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.biliapp.colegio"
+      "package": "ar.edu.republicadeitalia.app"
     },
     "plugins": [
       [
@@ -32,11 +32,9 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/notification-icon.png",
-          "color": "#1e40af"
+          "color": "#008C45"
         }
       ]
     ]
   }
 }
-

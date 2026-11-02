@@ -27,15 +27,17 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Top School Header */}
+      {/* Top Header Card */}
       <View style={styles.topHeader}>
         <View style={styles.schoolBrand}>
-          <View style={styles.schoolLogo}>
-            <Text style={styles.schoolLogoText}>🏛️</Text>
-          </View>
+          <Image
+            source={require('../../assets/logo-colegio.png')}
+            style={styles.schoolLogoImage}
+            resizeMode="contain"
+          />
           <View>
-            <Text style={styles.schoolName}>Colegio Bilingüe</Text>
-            <Text style={styles.schoolSub}>San Martín</Text>
+            <Text style={styles.schoolName}>República de Italia</Text>
+            <Text style={styles.schoolSub}>Entre Ríos · Nivel {activeStudent.educationalLevel === 'INICIAL' ? 'Inicial' : activeStudent.educationalLevel === 'PRIMARIA' ? 'Primario' : 'Secundario'}</Text>
           </View>
         </View>
 
@@ -49,7 +51,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       {/* Multi-Student Selection Carousel */}
       <StudentCarousel />
 
-      {/* Mode Switcher Tabs (Línea de tiempo / Tablero) */}
+      {/* Mode Switcher Tabs (Tablero / Línea de tiempo) */}
       <View style={styles.tabSwitcher}>
         <TouchableOpacity
           style={[styles.tabBtn, activeTab === 'TABLERO' && styles.activeTabBtn]}
@@ -84,12 +86,12 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <View style={styles.eventHeader}>
                   <Text style={styles.eventIcon}>🎂</Text>
                   <View style={styles.celebrationBadge}>
-                    <Text style={styles.celebrationText}>CELEBRACIÓN</Text>
+                    <Text style={styles.celebrationText}>FESTEJO</Text>
                   </View>
                 </View>
                 <Text style={styles.eventTitle}>Cumpleaños en Sala</Text>
                 <Text style={styles.eventDesc}>
-                  El viernes festejaremos los cumpleaños del mes. Traer merienda especial.
+                  El viernes festejaremos los cumpleaños del mes. Traer merienda compartida.
                 </Text>
                 <View style={styles.eventDatePill}>
                   <Text style={styles.eventDateText}>📅 Viernes, 06 Noviembre</Text>
@@ -101,12 +103,12 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <View style={styles.eventHeader}>
                   <Text style={styles.eventIcon}>🤝</Text>
                   <View style={styles.meetingBadge}>
-                    <Text style={styles.meetingText}>CITA COLEGIO</Text>
+                    <Text style={styles.meetingText}>ENTREVISTA</Text>
                   </View>
                 </View>
-                <Text style={styles.eventTitle}>Entrevista de Familias</Text>
+                <Text style={styles.eventTitle}>Reunión Institucional</Text>
                 <Text style={styles.eventDesc}>
-                  Reunión semestral con directivos y gabinete psicopedagógico.
+                  Entrevista de seguimiento con docentes de grado y preceptoría.
                 </Text>
                 <View style={styles.eventDatePill}>
                   <Text style={styles.eventDateText}>⏰ Jueves, 10:30 hs</Text>
@@ -155,21 +157,21 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <View style={styles.gradeCard}>
               <View style={styles.gradeLeft}>
                 <View style={styles.gradeSubjectIcon}>
-                  <Text style={styles.gradeSubjectEmoji}>📐</Text>
+                  <Text style={styles.gradeSubjectEmoji}>🇮🇹</Text>
                 </View>
                 <View style={styles.gradeInfo}>
                   <Text style={styles.gradeSubjectName}>
-                    {isKindergarten ? 'Área Cognitiva y Lenguaje' : 'Matemáticas'}
+                    {isKindergarten ? 'Área Expresiva y Lengua Italiana' : 'Lengua y Cultura Italiana'}
                   </Text>
                   <Text style={styles.gradeExamDesc}>
-                    {isKindergarten ? 'Informe conceptual 1° cuatrimestre' : 'Examen de resolución y cálculo'}
+                    {isKindergarten ? 'Informe conceptual 1° cuatrimestre' : 'Examen oral de vocabulario y conversación'}
                   </Text>
                 </View>
               </View>
 
               <View style={styles.gradeScoreBadge}>
                 <Text style={styles.gradeScoreNumber}>
-                  {isKindergarten ? 'Sobresaliente' : '9.5'}
+                  {isKindergarten ? 'Sobresaliente' : '9.8'}
                 </Text>
               </View>
             </View>
@@ -189,23 +191,23 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <Text style={styles.galleryEmoji}>🎨</Text>
                 <Text style={styles.galleryLabel}>Taller de Arte</Text>
               </View>
-              <View style={[styles.galleryThumb, { backgroundColor: '#DBEAFE' }]}>
+              <View style={[styles.galleryThumb, { backgroundColor: '#EFF6FF' }]}>
                 <Text style={styles.galleryEmoji}>⚽</Text>
                 <Text style={styles.galleryLabel}>Educación Física</Text>
               </View>
-              <View style={[styles.galleryThumb, { backgroundColor: '#DCFCE7' }]}>
+              <View style={[styles.galleryThumb, { backgroundColor: '#E8F7EE' }]}>
                 <Text style={styles.galleryEmoji}>🌱</Text>
-                <Text style={styles.galleryLabel}>Proyecto Huerta</Text>
+                <Text style={styles.galleryLabel}>Huerta y Ciencias</Text>
               </View>
               <View style={[styles.galleryThumb, { backgroundColor: '#FEF3C7' }]}>
                 <Text style={styles.galleryEmoji}>📚</Text>
-                <Text style={styles.galleryLabel}>Rincón de Lectura</Text>
+                <Text style={styles.galleryLabel}>Biblioteca Escolar</Text>
               </View>
             </ScrollView>
           </View>
         </View>
       ) : (
-        /* Timeline View */
+        /* Timeline View (Nivel Inicial) */
         <View style={styles.timelineContainer}>
           <Text style={styles.blockTitle}>
             Novedades del día: {activeStudent.firstName}
@@ -220,9 +222,9 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </View>
             <View style={styles.timelineBodyCard}>
               <Text style={styles.momentTitle}>🚪 Ingreso al aula</Text>
-              <Text style={styles.momentText}>Entró contento con saludo a sus compañeros.</Text>
-              <View style={styles.tagPillYellow}>
-                <Text style={styles.tagPillYellowText}>😊 Estado: Alegre</Text>
+              <Text style={styles.momentText}>Entró contento con saludo en italiano a la maestra.</Text>
+              <View style={styles.tagPillGreen}>
+                <Text style={styles.tagPillGreenText}>😊 Estado: Alegre y participativo</Text>
               </View>
             </View>
           </View>
@@ -235,10 +237,10 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               <View style={styles.timeLine} />
             </View>
             <View style={styles.timelineBodyCard}>
-              <Text style={styles.momentTitle}>🍎 Colación de la Mañana</Text>
-              <Text style={styles.momentText}>Yogur con cereales y frutas cortadas.</Text>
-              <View style={styles.tagPillGreen}>
-                <Text style={styles.tagPillGreenText}>⭐ Ingesta: Comió TODO</Text>
+              <Text style={styles.momentTitle}>🍎 Colación de Media Mañana</Text>
+              <Text style={styles.momentText}>Fruta fresca y tostadas integrales.</Text>
+              <View style={styles.tagPillCeleste}>
+                <Text style={styles.tagPillCelesteText}>⭐ Ingesta: Comió TODO</Text>
               </View>
             </View>
           </View>
@@ -251,9 +253,9 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </View>
             <View style={styles.timelineBodyCard}>
               <Text style={styles.momentTitle}>🧷 Mudas e Higiene</Text>
-              <Text style={styles.momentText}>Cambio de pañal realizado. Higiene y lavado de manos.</Text>
-              <View style={styles.tagPillBlue}>
-                <Text style={styles.tagPillBlueText}>💧 Pañal cambiado (húmedo)</Text>
+              <Text style={styles.momentText}>Muda de pañal realizada con éxito. Higiene completa.</Text>
+              <View style={styles.tagPillGreen}>
+                <Text style={styles.tagPillGreenText}>💧 Limpio y seco</Text>
               </View>
             </View>
           </View>
@@ -292,18 +294,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
-  schoolLogo: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  schoolLogoText: {
-    fontSize: 18,
+  schoolLogoImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   schoolName: {
     fontSize: 14,
@@ -312,7 +306,8 @@ const styles = StyleSheet.create({
   },
   schoolSub: {
     fontSize: 11,
-    color: colors.textSecondary,
+    color: colors.primary,
+    fontWeight: '600',
   },
   profileBtn: {},
   profileAvatar: {
@@ -385,15 +380,15 @@ const styles = StyleSheet.create({
   },
   eventCard: {
     width: 250,
-    backgroundColor: '#EFF6FF',
+    backgroundColor: colors.primaryLight,
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#BFDBFE',
+    borderColor: colors.borderFocus,
   },
   eventCardAlt: {
-    backgroundColor: '#F0FDF4',
-    borderColor: '#BBF7D0',
+    backgroundColor: colors.celesteLight,
+    borderColor: '#BFDBFE',
   },
   eventHeader: {
     flexDirection: 'row',
@@ -405,7 +400,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   celebrationBadge: {
-    backgroundColor: '#DBEAFE',
+    backgroundColor: colors.primary,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -413,10 +408,10 @@ const styles = StyleSheet.create({
   celebrationText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#1E40AF',
+    color: '#FFFFFF',
   },
   meetingBadge: {
-    backgroundColor: '#DCFCE7',
+    backgroundColor: colors.celeste,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -424,7 +419,7 @@ const styles = StyleSheet.create({
   meetingText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#15803D',
+    color: '#FFFFFF',
   },
   eventTitle: {
     fontSize: 15,
@@ -456,7 +451,7 @@ const styles = StyleSheet.create({
   },
   alertCardRed: {
     flex: 1,
-    backgroundColor: colors.coralLight,
+    backgroundColor: colors.accentRedLight,
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
@@ -467,7 +462,7 @@ const styles = StyleSheet.create({
   alertTitleRed: {
     fontSize: 13,
     fontWeight: '800',
-    color: colors.coralDark,
+    color: colors.accentRedDark,
   },
   alertDateRed: {
     fontSize: 11,
@@ -485,11 +480,11 @@ const styles = StyleSheet.create({
   alertBadgeRedText: {
     fontSize: 10,
     fontWeight: '800',
-    color: colors.coralDark,
+    color: colors.accentRedDark,
   },
   alertCardBlue: {
     flex: 1,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.celesteLight,
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
@@ -500,7 +495,7 @@ const styles = StyleSheet.create({
   alertTitleBlue: {
     fontSize: 13,
     fontWeight: '800',
-    color: colors.primaryDark,
+    color: colors.celesteDark,
   },
   alertDateBlue: {
     fontSize: 11,
@@ -518,7 +513,7 @@ const styles = StyleSheet.create({
   alertBadgeBlueText: {
     fontSize: 10,
     fontWeight: '800',
-    color: colors.primaryDark,
+    color: colors.celesteDark,
   },
   gradeCard: {
     backgroundColor: '#FFFFFF',
@@ -652,21 +647,8 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginTop: 3,
   },
-  tagPillYellow: {
-    backgroundColor: colors.amberLight,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
-    marginTop: 8,
-  },
-  tagPillYellowText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.amberDark,
-  },
   tagPillGreen: {
-    backgroundColor: colors.emeraldLight,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -676,19 +658,19 @@ const styles = StyleSheet.create({
   tagPillGreenText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.emeraldDark,
+    color: colors.primaryDark,
   },
-  tagPillBlue: {
-    backgroundColor: colors.primaryLight,
+  tagPillCeleste: {
+    backgroundColor: colors.celesteLight,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
     alignSelf: 'flex-start',
     marginTop: 8,
   },
-  tagPillBlueText: {
+  tagPillCelesteText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.primaryDark,
+    color: colors.celesteDark,
   },
 });
