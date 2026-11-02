@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HomeScreen } from '../screens/HomeScreen';
 import { MessagesScreen } from '../screens/MessagesScreen';
 import { FilesScreen } from '../screens/FilesScreen';
@@ -7,11 +8,17 @@ import { GalleryScreen } from '../screens/GalleryScreen';
 import { PickupScreen } from '../screens/PickupScreen';
 import { AttendanceScreen } from '../screens/AttendanceScreen';
 import { colors } from '../theme/colors';
-import { Text } from 'react-native';
+import { Text, Platform } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 export const BottomTabNavigator: React.FC = () => {
+  const insets = useSafeAreaInsets();
+
+  // Dynamic bottom padding adapting to Home Bar on modern iOS/Android gesture nav
+  const bottomInset = insets.bottom > 0 ? insets.bottom : 8;
+  const tabHeight = (Platform.OS === 'ios' ? 56 : 60) + bottomInset;
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -22,13 +29,22 @@ export const BottomTabNavigator: React.FC = () => {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderTopColor: colors.border,
-          paddingBottom: 6,
-          paddingTop: 6,
-          height: 62,
+          paddingBottom: bottomInset,
+          paddingTop: 8,
+          height: tabHeight,
+          elevation: 8,
+          shadowColor: '#0F172A',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.06,
+          shadowRadius: 8,
         },
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '700',
+          marginTop: 2,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 2,
         },
       }}
     >
@@ -50,6 +66,10 @@ export const BottomTabNavigator: React.FC = () => {
             backgroundColor: colors.coral,
             fontSize: 10,
             fontWeight: '800',
+            minWidth: 18,
+            height: 18,
+            borderRadius: 9,
+            lineHeight: 14,
           },
         }}
       />

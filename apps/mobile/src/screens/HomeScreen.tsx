@@ -8,24 +8,32 @@ import {
   Image,
   useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useActiveStudent } from '../context/StudentContext';
 import { colors } from '../theme/colors';
 
 export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { students, setActiveStudent } = useActiveStudent();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
-  // Responsive card widths
+  // Dynamic responsive dimensions
+  const isSmallScreen = width < 380;
+  const topInsetPadding = Math.max(insets.top, 24) + 10;
   const eventCardWidth = Math.min(width * 0.78, 290);
-  const studentCardWidth = Math.min(width * 0.72, 270);
+  const studentCardWidth = Math.min(width * 0.74, 275);
 
   const mateo = students.find((s) => s.educationalLevel === 'INICIAL') || students[0];
   const sofia = students.find((s) => s.educationalLevel === 'PRIMARIA') || students[1] || students[0];
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* 1. HERO BANNER INSTITUCIONAL VERDE (#008C45) CON BORDES REDONDEADOS 32px */}
-      <View style={styles.heroHeader}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      bounces={true}
+    >
+      {/* 1. HERO BANNER INSTITUCIONAL VERDE (#008C45) */}
+      <View style={[styles.heroHeader, { paddingTop: topInsetPadding }]}>
         {/* Luces sutiles de fondo */}
         <View style={styles.heroCircleTopRight} />
         <View style={styles.heroCircleBottomLeft} />
@@ -35,11 +43,14 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           <View style={styles.heroBrand}>
             <Image
               source={require('../../assets/logo-colegio.png')}
-              style={styles.heroLogo}
+              style={[styles.heroLogo, isSmallScreen && styles.heroLogoSmall]}
               resizeMode="contain"
             />
             <View style={styles.heroBrandTextCol}>
-              <Text style={styles.heroTitle} numberOfLines={1}>
+              <Text
+                style={[styles.heroTitle, isSmallScreen && styles.heroTitleSmall]}
+                numberOfLines={1}
+              >
                 Instituto República de Italia
               </Text>
               <Text style={styles.heroBadgeSub}>ENTRE RÍOS · CICLO 2026</Text>
@@ -49,7 +60,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           <View style={styles.heroActionsRow}>
             {/* Botón Notificaciones con badge rojo */}
             <TouchableOpacity
-              style={styles.notifBtn}
+              style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}
               activeOpacity={0.85}
               onPress={() => navigation.navigate('Mensajes')}
             >
@@ -58,7 +69,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </TouchableOpacity>
 
             {/* Avatar Familia López */}
-            <View style={styles.familyAvatar}>
+            <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.familyAvatarText}>FL</Text>
             </View>
           </View>
@@ -66,7 +77,9 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         {/* Saludo Cálido y Resumen Familiar Multi-Hijo */}
         <View style={styles.heroGreeting}>
-          <Text style={styles.heroHello}>¡Hola, Familia López! 👋</Text>
+          <Text style={[styles.heroHello, isSmallScreen && styles.heroHelloSmall]}>
+            ¡Hola, Familia López! 👋
+          </Text>
           <View style={styles.heroChildrenSummaryRow}>
             <View style={styles.childPillHeader}>
               <Text style={styles.childPillEmoji}>🧒</Text>
@@ -97,6 +110,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.studentsScrollContainer}
           decelerationRate="fast"
+          snapToInterval={studentCardWidth + 12}
         >
           {/* Tarjeta Mateo López */}
           <TouchableOpacity
@@ -271,7 +285,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </ScrollView>
         </View>
 
-        {/* SECCIÓN 2: "¿QUÉ HA PASADO HOY?" (Estado de ambos chicos) */}
+        {/* SECCIÓN 2: "¿QUÉ HA PASADO HOY?" (Estado de ambos chicos con flexWrap) */}
         <View style={styles.sectionWrap}>
           <View>
             <Text style={styles.sectionTitle}>¿Qué ha pasado hoy?</Text>
@@ -288,10 +302,12 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                   <View style={styles.kidTagMateo}>
                     <Text style={styles.kidTagTextMateo}>🧒 Mateo</Text>
                   </View>
-                  <Text style={styles.dualDateText}>Hoy, 13:10 hs</Text>
+                  <Text style={styles.dualDateText}>13:10 hs</Text>
                 </View>
                 <Text style={styles.dualCardTitle}>Falta parcial</Text>
-                <Text style={styles.dualCardSub}>Ingreso posterior al horario</Text>
+                <Text style={styles.dualCardSub} numberOfLines={2}>
+                  Ingreso posterior al horario
+                </Text>
               </View>
               <View style={styles.dualBadgeContainer}>
                 <View style={styles.badgeTardanza}>
@@ -307,10 +323,12 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                   <View style={styles.kidTagSofia}>
                     <Text style={styles.kidTagTextSofia}>👧 Sofía</Text>
                   </View>
-                  <Text style={styles.dualDateText}>Hoy, 07:45 hs</Text>
+                  <Text style={styles.dualDateText}>07:45 hs</Text>
                 </View>
-                <Text style={styles.dualCardTitle}>Asistencia perfecta</Text>
-                <Text style={styles.dualCardSub}>Ingreso puntual en portería</Text>
+                <Text style={styles.dualCardTitle}>Puntual</Text>
+                <Text style={styles.dualCardSub} numberOfLines={2}>
+                  Ingreso registrado en puerta
+                </Text>
               </View>
               <View style={styles.dualBadgeContainer}>
                 <View style={styles.badgePresentePuntual}>
@@ -321,7 +339,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* SECCIÓN 3: CALIFICACIONES Y BOLETINES RECIENTES (Ambos Chicos) */}
+        {/* SECCIÓN 3: CALIFICACIONES Y BOLETINES RECIENTES */}
         <View style={styles.sectionWrap}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Calificaciones y Boletines</Text>
@@ -399,7 +417,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* SECCIÓN 4: GALERÍA DE LA SEMANA (Talleres de Mateo y Sofía) */}
+        {/* SECCIÓN 4: GALERÍA DE LA SEMANA */}
         <View style={styles.sectionWrap}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Galería de la semana</Text>
@@ -514,8 +532,7 @@ const styles = StyleSheet.create({
   /* 1. HERO BANNER */
   heroHeader: {
     backgroundColor: colors.primary,
-    paddingTop: 52,
-    paddingBottom: 40,
+    paddingBottom: 36,
     paddingHorizontal: 16,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -550,22 +567,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     zIndex: 10,
+    gap: 8,
   },
   heroBrand: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
     flex: 1,
   },
   heroLogo: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     padding: 2,
   },
+  heroLogoSmall: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
   heroBrandTextCol: {
     flex: 1,
+    justifyContent: 'center',
   },
   heroTitle: {
     fontSize: 15,
@@ -573,8 +597,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     letterSpacing: -0.3,
   },
+  heroTitleSmall: {
+    fontSize: 13,
+  },
   heroBadgeSub: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: 'rgba(255, 255, 255, 0.8)',
     letterSpacing: 0.8,
@@ -583,35 +610,40 @@ const styles = StyleSheet.create({
   heroActionsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   notifBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
+  actionBtnSmall: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+  },
   notifIcon: {
-    fontSize: 18,
+    fontSize: 16,
   },
   notifRedDot: {
     position: 'absolute',
-    top: 9,
-    right: 9,
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
+    top: 7,
+    right: 7,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: colors.coral,
     borderWidth: 1.5,
     borderColor: colors.primary,
   },
   familyAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
@@ -622,12 +654,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   familyAvatarText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '900',
     color: colors.primary,
   },
   heroGreeting: {
-    marginTop: 18,
+    marginTop: 16,
     zIndex: 10,
   },
   heroHello: {
@@ -636,11 +668,15 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     letterSpacing: -0.4,
   },
+  heroHelloSmall: {
+    fontSize: 19,
+  },
   heroChildrenSummaryRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     marginTop: 8,
+    flexWrap: 'wrap',
   },
   childPillHeader: {
     flexDirection: 'row',
@@ -671,6 +707,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 18,
     marginBottom: 8,
+    flexWrap: 'wrap',
+    gap: 4,
   },
   studentsHeaderLeft: {
     flexDirection: 'row',
@@ -736,16 +774,16 @@ const styles = StyleSheet.create({
   studentCardTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
     marginTop: 2,
   },
   studentAvatarWrap: {
     position: 'relative',
   },
   studentAvatarCircleGreen: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
@@ -753,9 +791,9 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
   },
   studentAvatarCircleCeleste: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
@@ -763,19 +801,19 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
   },
   studentAvatarEmoji: {
-    fontSize: 24,
+    fontSize: 22,
   },
   checkBadge: {
     position: 'absolute',
     bottom: -2,
     right: -2,
-    width: 17,
-    height: 17,
-    borderRadius: 8.5,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: '#FFFFFF',
   },
   checkBadgeText: {
@@ -793,35 +831,35 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   studentNameText: {
-    fontSize: 15,
+    fontSize: 14.5,
     fontWeight: '800',
     color: '#131B2E',
     flexShrink: 1,
   },
   asistBadgeGreen: {
     backgroundColor: '#E8F7EE',
-    paddingHorizontal: 7,
+    paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 9999,
   },
   asistBadgeTextGreen: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#005F2E',
   },
   asistBadgeCeleste: {
     backgroundColor: '#EFF6FF',
-    paddingHorizontal: 7,
+    paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 9999,
   },
   asistBadgeTextCeleste: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#1A73E8',
   },
   studentLevelText: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#64748B',
     marginTop: 2,
   },
@@ -841,15 +879,15 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   statusShiftEmoji: {
-    fontSize: 13,
+    fontSize: 12,
   },
   statusShiftText: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#475569',
     fontWeight: '500',
   },
   statusPresentGreen: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#005F2E',
     letterSpacing: 0.5,
@@ -858,7 +896,7 @@ const styles = StyleSheet.create({
   /* 3. CONTENT BODY */
   contentBody: {
     paddingHorizontal: 16,
-    gap: 20,
+    gap: 18,
     marginTop: 16,
   },
   sectionWrap: {
@@ -891,7 +929,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   sectionSubtitle: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#64748B',
     marginTop: 1,
   },
@@ -904,29 +942,29 @@ const styles = StyleSheet.create({
   eventCardCelebration: {
     backgroundColor: '#FEF9C3',
     borderRadius: 16,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#FDE047',
     justifyContent: 'space-between',
-    minHeight: 145,
+    minHeight: 140,
   },
   eventCardMeeting: {
     backgroundColor: '#EFF6FF',
     borderRadius: 16,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#BAE6FD',
     justifyContent: 'space-between',
-    minHeight: 145,
+    minHeight: 140,
   },
   eventCardGeneral: {
     backgroundColor: '#E8F7EE',
     borderRadius: 16,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#A7F3D0',
     justifyContent: 'space-between',
-    minHeight: 145,
+    minHeight: 140,
   },
   eventCardTopRow: {
     flexDirection: 'row',
@@ -936,77 +974,77 @@ const styles = StyleSheet.create({
   },
   eventChildBadgeMateo: {
     backgroundColor: '#FEF08A',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
     borderRadius: 9999,
   },
   eventChildTextMateo: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#854D0E',
   },
   eventChildBadgeSofia: {
     backgroundColor: '#D1E4FF',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
     borderRadius: 9999,
   },
   eventChildTextSofia: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#00497C',
   },
   eventChildBadgeFamily: {
     backgroundColor: '#D1FAE5',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
     borderRadius: 9999,
   },
   eventChildTextFamily: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#065F46',
   },
   eventIconCircleYellow: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: 'rgba(255, 255, 255, 0.85)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   eventIconCircleBlue: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   eventIconCircleGreen: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   eventEmoji: {
-    fontSize: 16,
+    fontSize: 15,
   },
   eventCardTitle: {
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '800',
     color: '#131B2E',
-    lineHeight: 19,
+    lineHeight: 18,
   },
   eventDatePill: {
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 9,
+    paddingVertical: 4.5,
     borderRadius: 9999,
     alignSelf: 'flex-start',
-    marginTop: 10,
+    marginTop: 8,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -1014,7 +1052,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   eventDateText: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontWeight: '700',
     color: '#131B2E',
   },
@@ -1022,7 +1060,7 @@ const styles = StyleSheet.create({
   /* DUAL CARDS (HOY) */
   dualGrid: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
   },
   dualCardMateo: {
     flex: 1,
@@ -1030,9 +1068,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#FECDD3',
     borderRadius: 16,
-    padding: 14,
+    padding: 12,
     justifyContent: 'space-between',
-    minHeight: 140,
+    minHeight: 135,
   },
   dualCardSofia: {
     flex: 1,
@@ -1040,35 +1078,37 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#BAE6FD',
     borderRadius: 16,
-    padding: 14,
+    padding: 12,
     justifyContent: 'space-between',
-    minHeight: 140,
+    minHeight: 135,
   },
   dualCardHeaderChild: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 6,
+    flexWrap: 'wrap',
+    gap: 4,
   },
   kidTagMateo: {
     backgroundColor: '#FFE4E6',
-    paddingHorizontal: 7,
+    paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 9999,
   },
   kidTagTextMateo: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#9F1239',
   },
   kidTagSofia: {
     backgroundColor: '#DBEAFE',
-    paddingHorizontal: 7,
+    paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 9999,
   },
   kidTagTextSofia: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#1E40AF',
   },
@@ -1077,15 +1117,15 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
   },
   dualCardTitle: {
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '800',
     color: '#131B2E',
   },
   dualCardSub: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#64748B',
     marginTop: 2,
-    lineHeight: 15,
+    lineHeight: 14,
   },
   dualBadgeContainer: {
     marginTop: 8,
@@ -1093,24 +1133,24 @@ const styles = StyleSheet.create({
   badgeTardanza: {
     backgroundColor: '#FFFFFF',
     paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     borderRadius: 9999,
     alignItems: 'center',
   },
   badgeTardanzaText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#9F1239',
   },
   badgePresentePuntual: {
     backgroundColor: '#FFFFFF',
     paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     borderRadius: 9999,
     alignItems: 'center',
   },
   badgePresentePuntualText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#1A73E8',
   },
@@ -1137,7 +1177,7 @@ const styles = StyleSheet.create({
   gradeCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 14,
+    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1154,10 +1194,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     flex: 1,
+    marginRight: 6,
   },
   gradeIconBoxGreen: {
-    width: 44,
-    height: 44,
+    width: 42,
+    height: 42,
     borderRadius: 12,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
@@ -1165,8 +1206,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   gradeIconBoxBlue: {
-    width: 44,
-    height: 44,
+    width: 42,
+    height: 42,
     borderRadius: 12,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',
@@ -1174,13 +1215,13 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   gradeBookEmoji: {
-    fontSize: 22,
+    fontSize: 20,
   },
   gradeFlagEmoji: {
     position: 'absolute',
     bottom: -2,
     right: -2,
-    fontSize: 11,
+    fontSize: 10,
   },
   gradeTextCol: {
     flex: 1,
@@ -1188,31 +1229,32 @@ const styles = StyleSheet.create({
   gradeChildTagRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
     marginBottom: 2,
+    flexWrap: 'wrap',
   },
   gradeTimeText: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#94A3B8',
   },
   gradeSubjectTitle: {
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '800',
     color: '#131B2E',
   },
   gradeAssessmentName: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#475569',
     marginTop: 1,
   },
   gradeScoreBadgeCol: {
     alignItems: 'center',
-    paddingLeft: 8,
+    minWidth: 50,
   },
   gradeScoreCircleGreen: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1220,9 +1262,9 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 140, 69, 0.2)',
   },
   gradeScoreCircleBlue: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1230,24 +1272,24 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(26, 115, 232, 0.2)',
   },
   gradeScoreNum: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
     color: colors.primary,
   },
   gradeScoreNumBlue: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
     color: '#1A73E8',
   },
   gradeScoreLabelGreen: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: '800',
     color: '#005F2E',
     textTransform: 'uppercase',
     marginTop: 2,
   },
   gradeScoreLabelBlue: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: '800',
     color: '#1E40AF',
     textTransform: 'uppercase',
@@ -1267,7 +1309,7 @@ const styles = StyleSheet.create({
   },
   galleryGrid: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
   },
   galleryCard: {
     flex: 1,
@@ -1283,47 +1325,47 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   galleryImageBoxArt: {
-    height: 105,
+    height: 100,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   galleryImageBoxGarden: {
-    height: 105,
+    height: 100,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   galleryPlaceholderEmoji: {
-    fontSize: 28,
+    fontSize: 26,
   },
   galleryPhotoBadge: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    top: 6,
+    right: 6,
     backgroundColor: 'rgba(19, 27, 46, 0.7)',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
     borderRadius: 9999,
   },
   galleryPhotoBadgeText: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: '800',
     color: '#FFFFFF',
   },
   galleryChildPill: {
     position: 'absolute',
     bottom: 6,
-    left: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.92)',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
+    left: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
     borderRadius: 9999,
   },
   galleryChildPillText: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: '800',
     color: '#131B2E',
   },
@@ -1331,12 +1373,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   galleryCardTitle: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '800',
     color: '#131B2E',
   },
   galleryCardSubtitle: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#94A3B8',
     marginTop: 2,
   },
@@ -1348,7 +1390,7 @@ const styles = StyleSheet.create({
   quickActionBtn: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 14,
+    padding: 13,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1361,25 +1403,25 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   quickActionIconCircleGreen: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     borderRadius: 12,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 10,
   },
   quickActionIconCircleRed: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     borderRadius: 12,
     backgroundColor: '#FFF1F2',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 10,
   },
   quickActionEmoji: {
-    fontSize: 18,
+    fontSize: 17,
   },
   quickActionTextCol: {
     flex: 1,
@@ -1401,9 +1443,9 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   quickActionArrow: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#94A3B8',
     fontWeight: '700',
-    marginLeft: 8,
+    marginLeft: 6,
   },
 });

@@ -9,7 +9,11 @@ import {
   TextInput,
   Image,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 import { useActiveStudent } from '../context/StudentContext';
 
@@ -24,6 +28,12 @@ interface AuthorizedPerson {
 }
 
 export const PickupScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 380;
+  const topInsetPadding = Math.max(insets.top, 24) + 10;
+  const qrSize = Math.min(width * 0.44, 160);
+
   const { students, activeStudent, setActiveStudent } = useActiveStudent();
 
   // Dynamic QR countdown timer
@@ -110,7 +120,7 @@ export const PickupScreen: React.FC = () => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* 1. HERO BANNER INSTITUCIONAL (#008C45) */}
-      <View style={styles.heroBanner}>
+      <View style={[styles.heroBanner, { paddingTop: topInsetPadding }]}>
         {/* Decorative Circles */}
         <View style={styles.heroCircle1} />
         <View style={styles.heroCircle2} />
@@ -120,11 +130,14 @@ export const PickupScreen: React.FC = () => {
           <View style={styles.heroBrandLeft}>
             <Image
               source={require('../../assets/logo-colegio.png')}
-              style={styles.heroLogo}
+              style={[styles.heroLogo, isSmallScreen && styles.heroLogoSmall]}
               resizeMode="contain"
             />
             <View style={styles.brandTitleCol}>
-              <Text style={styles.heroTitle} numberOfLines={1}>
+              <Text
+                style={[styles.heroTitle, isSmallScreen && styles.heroTitleSmall]}
+                numberOfLines={1}
+              >
                 Instituto República de Italia
               </Text>
               <Text style={styles.heroSubtitle}>ENTRE RÍOS · CICLO 2026</Text>
@@ -132,11 +145,11 @@ export const PickupScreen: React.FC = () => {
           </View>
 
           <View style={styles.heroActionsRight}>
-            <View style={styles.notifBtn}>
+            <View style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.notifIcon}>🔔</Text>
               <View style={styles.notifRedDot} />
             </View>
-            <View style={styles.familyAvatar}>
+            <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.familyAvatarText}>FL</Text>
             </View>
           </View>
@@ -150,7 +163,9 @@ export const PickupScreen: React.FC = () => {
               CONTROL DE ACCESO Y PUERTA
             </Text>
           </View>
-          <Text style={styles.heroMainTitle}>Seguridad y Retiros</Text>
+          <Text style={[styles.heroMainTitle, isSmallScreen && styles.heroMainTitleSmall]}>
+            Seguridad y Retiros
+          </Text>
           <Text style={styles.heroMainSubtitle}>
             Credenciales digitales, autorizaciones extraordinarias y registro de puerta.
           </Text>
@@ -239,7 +254,7 @@ export const PickupScreen: React.FC = () => {
           <View style={styles.qrGraphicContainer}>
             <View style={styles.qrGraphicWhiteBox}>
               {/* QR Code Mockup with Corner Positioners & Center Crest */}
-              <View style={styles.qrCodeMatrix}>
+              <View style={[styles.qrCodeMatrix, { width: qrSize, height: qrSize }]}>
                 <View style={styles.qrCornerTL}>
                   <View style={styles.qrCornerInner} />
                 </View>
@@ -533,7 +548,10 @@ export const PickupScreen: React.FC = () => {
 
       {/* MODAL: FORMULARIO DE RETIRO EXCEPCIONAL */}
       <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
           <View style={styles.modalSheet}>
             <View style={styles.modalSheetHeader}>
               <View>
@@ -549,7 +567,7 @@ export const PickupScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.modalSheetBody}>
+            <ScrollView style={styles.modalSheetBody} showsVerticalScrollIndicator={false}>
               <Text style={styles.fieldLabel}>Nombre y Apellido Autorizado:</Text>
               <TextInput
                 style={styles.textInput}
@@ -605,7 +623,7 @@ export const PickupScreen: React.FC = () => {
               </TouchableOpacity>
             </ScrollView>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </ScrollView>
   );
@@ -670,6 +688,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     padding: 2,
   },
+  heroLogoSmall: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
   brandTitleCol: {
     flex: 1,
   },
@@ -677,6 +700,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '900',
     color: '#FFFFFF',
+  },
+  heroTitleSmall: {
+    fontSize: 13,
   },
   heroSubtitle: {
     fontSize: 10,
@@ -697,6 +723,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+  },
+  actionBtnSmall: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
   },
   notifIcon: {
     fontSize: 17,
@@ -754,6 +785,9 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: -0.3,
+  },
+  heroMainTitleSmall: {
+    fontSize: 19,
   },
   heroMainSubtitle: {
     fontSize: 13,
@@ -1107,12 +1141,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     marginTop: 14,
+    flexWrap: 'wrap',
   },
   btnShareQr: {
     flex: 1,
+    minWidth: 130,
     backgroundColor: '#EFF6FF',
     borderRadius: 12,
     paddingVertical: 10,
+    paddingHorizontal: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1128,9 +1165,11 @@ const styles = StyleSheet.create({
   },
   btnFullscreenQr: {
     flex: 1,
+    minWidth: 130,
     backgroundColor: '#F1F5F9',
     borderRadius: 12,
     paddingVertical: 10,
+    paddingHorizontal: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

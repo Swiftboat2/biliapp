@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { StudentProvider } from './src/context/StudentContext';
 import { BottomTabNavigator } from './src/navigation/BottomTabNavigator';
@@ -30,22 +31,20 @@ const initialStudentsMock = [
 
 export default function App() {
   return (
-    <StudentProvider initialStudents={initialStudentsMock}>
-      <SafeAreaView style={styles.safeArea}>
+    <SafeAreaProvider style={styles.rootContainer}>
+      <StudentProvider initialStudents={initialStudentsMock}>
         <StatusBar style="light" />
-        
-        {/* Dynamic Multi-Tab Content with Seamless Curved Hero Headers */}
         <NavigationContainer>
           <BottomTabNavigator />
         </NavigationContainer>
-      </SafeAreaView>
-    </StudentProvider>
+      </StudentProvider>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  rootContainer: {
     flex: 1,
-    backgroundColor: colors.primary, // Matches top curved hero smoothly
+    backgroundColor: colors.primary,
   },
 });

@@ -10,7 +10,11 @@ import {
   Image,
   ScrollView,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 
 interface ConversationItem {
@@ -31,6 +35,11 @@ interface ConversationItem {
 }
 
 export const MessagesScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 380;
+  const topInsetPadding = Math.max(insets.top, 24) + 10;
+
   const [activeFilter, setActiveFilter] = useState<
     'TODOS' | 'MATEO' | 'SOFIA' | 'INSTITUCIONAL' | 'NO_LEIDOS'
   >('TODOS');
@@ -119,7 +128,6 @@ export const MessagesScreen: React.FC = () => {
 
   // Filter logic
   const filteredList = conversations.filter((c) => {
-    // Search query filter
     const matchQuery =
       c.senderName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -163,7 +171,7 @@ export const MessagesScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* 1. HERO BANNER INSTITUCIONAL VERDE (#008C45) */}
-      <View style={styles.heroBanner}>
+      <View style={[styles.heroBanner, { paddingTop: topInsetPadding }]}>
         {/* Luces sutiles de fondo */}
         <View style={styles.heroCircle1} />
         <View style={styles.heroCircle2} />
@@ -173,11 +181,14 @@ export const MessagesScreen: React.FC = () => {
           <View style={styles.heroBrandLeft}>
             <Image
               source={require('../../assets/logo-colegio.png')}
-              style={styles.heroLogo}
+              style={[styles.heroLogo, isSmallScreen && styles.heroLogoSmall]}
               resizeMode="contain"
             />
             <View style={styles.brandTitleCol}>
-              <Text style={styles.heroTitle} numberOfLines={1}>
+              <Text
+                style={[styles.heroTitle, isSmallScreen && styles.heroTitleSmall]}
+                numberOfLines={1}
+              >
                 Instituto República de Italia
               </Text>
               <Text style={styles.heroSubtitle}>ENTRE RÍOS · CICLO 2026</Text>
@@ -185,11 +196,11 @@ export const MessagesScreen: React.FC = () => {
           </View>
 
           <View style={styles.heroActionsRight}>
-            <View style={styles.notifBtn}>
+            <View style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.notifIcon}>🔔</Text>
               <View style={styles.notifRedDot} />
             </View>
-            <View style={styles.familyAvatar}>
+            <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.familyAvatarText}>FL</Text>
             </View>
           </View>
@@ -201,8 +212,10 @@ export const MessagesScreen: React.FC = () => {
             <Text style={styles.heroContextIcon}>💬</Text>
             <Text style={styles.heroContextText}>CANAL INSTITUCIONAL</Text>
           </View>
-          <Text style={styles.heroMainTitle}>Comunicaciones</Text>
-          <Text style={styles.heroMainSubtitle}>
+          <Text style={[styles.heroMainTitle, isSmallScreen && styles.heroMainTitleSmall]}>
+            Comunicaciones
+          </Text>
+          <Text style={styles.heroMainSubtitle} numberOfLines={1}>
             Mensajes directos para Mateo, Sofía y avisos generales
           </Text>
         </View>
@@ -540,12 +553,17 @@ export const MessagesScreen: React.FC = () => {
 
       {/* MODAL: VER MENSAJE Y RESPONDER */}
       <Modal visible={!!selectedChat} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
           <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
-              <View style={{ flex: 1 }}>
+              <View style={{ flex: 1, marginRight: 8 }}>
                 <View style={styles.modalSenderRow}>
-                  <Text style={styles.modalSender}>{selectedChat?.senderName}</Text>
+                  <Text style={styles.modalSender} numberOfLines={1}>
+                    {selectedChat?.senderName}
+                  </Text>
                   <View style={styles.modalChildBadge}>
                     <Text style={styles.modalChildBadgeText}>
                       {selectedChat?.childBadgeLabel}
@@ -580,12 +598,15 @@ export const MessagesScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* MODAL: REDACTAR NUEVO MENSAJE */}
       <Modal visible={isComposeOpen} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
           <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalSender}>Nuevo Mensaje Institucional</Text>
@@ -644,7 +665,7 @@ export const MessagesScreen: React.FC = () => {
                 placeholder="Escribe aquí el detalle de tu comunicación..."
                 placeholderTextColor="#94A3B8"
                 multiline
-                numberOfLines={5}
+                numberOfLines={4}
                 value={composeBody}
                 onChangeText={setComposeBody}
               />
@@ -659,7 +680,7 @@ export const MessagesScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -674,8 +695,7 @@ const styles = StyleSheet.create({
   /* 1. HERO BANNER */
   heroBanner: {
     backgroundColor: colors.primary,
-    paddingTop: 52,
-    paddingBottom: 24,
+    paddingBottom: 22,
     paddingHorizontal: 16,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -710,11 +730,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     zIndex: 10,
+    gap: 8,
   },
   heroBrandLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
     flex: 1,
   },
   heroLogo: {
@@ -724,16 +745,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     padding: 2,
   },
+  heroLogoSmall: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
   brandTitleCol: {
     flex: 1,
+    justifyContent: 'center',
   },
   heroTitle: {
     fontSize: 15,
     fontWeight: '900',
     color: '#FFFFFF',
   },
+  heroTitleSmall: {
+    fontSize: 13,
+  },
   heroSubtitle: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: 'rgba(255, 255, 255, 0.8)',
     letterSpacing: 0.8,
@@ -741,7 +771,7 @@ const styles = StyleSheet.create({
   heroActionsRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   notifBtn: {
     width: 38,
@@ -752,16 +782,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
   },
+  actionBtnSmall: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+  },
   notifIcon: {
-    fontSize: 17,
+    fontSize: 16,
   },
   notifRedDot: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
+    top: 7,
+    right: 7,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: colors.coral,
     borderWidth: 1.5,
     borderColor: colors.primary,
@@ -775,30 +810,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   familyAvatarText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '900',
     color: '#1A73E8',
   },
   heroTextSection: {
-    marginTop: 18,
+    marginTop: 16,
     zIndex: 10,
   },
   heroContextPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 5,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    paddingHorizontal: 10,
+    paddingHorizontal: 9,
     paddingVertical: 3,
     borderRadius: 9999,
     alignSelf: 'flex-start',
-    marginBottom: 6,
+    marginBottom: 5,
   },
   heroContextIcon: {
     fontSize: 11,
   },
   heroContextText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#FFFFFF',
     letterSpacing: 0.6,
@@ -809,8 +844,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     letterSpacing: -0.3,
   },
+  heroMainTitleSmall: {
+    fontSize: 19,
+  },
   heroMainSubtitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 2,
     fontWeight: '500',
@@ -822,9 +860,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginTop: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    marginTop: 16,
     shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
@@ -833,12 +871,12 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   searchIcon: {
-    fontSize: 16,
+    fontSize: 15,
     marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 12.5,
     color: '#131B2E',
     padding: 0,
   },
@@ -846,12 +884,12 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   filterTuneIcon: {
-    fontSize: 16,
+    fontSize: 15,
   },
 
   /* 2. FILTER CHIPS */
   filterChipsSection: {
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 4,
   },
   filterChipsScroll: {
@@ -863,8 +901,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     backgroundColor: '#FFFFFF',
-    paddingVertical: 8,
-    paddingHorizontal: 13,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -887,7 +925,7 @@ const styles = StyleSheet.create({
     borderColor: '#1A73E8',
   },
   filterChipText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
     color: '#475569',
   },
@@ -901,7 +939,7 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
   },
   chipCountText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#475569',
   },
@@ -912,7 +950,7 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
   },
   chipCountTextGreen: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#005F2E',
   },
@@ -923,7 +961,7 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
   },
   chipCountTextBlue: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#1A73E8',
   },
@@ -934,7 +972,7 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
   },
   chipRedBadgeText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#FFFFFF',
   },
@@ -943,13 +981,15 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingHorizontal: 16,
     paddingBottom: 90,
-    gap: 12,
+    gap: 10,
   },
   listHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 6,
+    flexWrap: 'wrap',
+    gap: 4,
   },
   listHeaderLeft: {
     flexDirection: 'row',
@@ -957,7 +997,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   listHeaderCategory: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontWeight: '800',
     color: '#475569',
     letterSpacing: 0.5,
@@ -969,19 +1009,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   listHeaderCount: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#94A3B8',
   },
   markReadLink: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '800',
     color: '#1A73E8',
   },
 
   conversationCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 14,
+    borderRadius: 18,
+    padding: 13,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
@@ -998,15 +1038,15 @@ const styles = StyleSheet.create({
   cardFlexRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
+    gap: 10,
   },
   avatarBoxWrap: {
     position: 'relative',
   },
   avatarCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1022,15 +1062,15 @@ const styles = StyleSheet.create({
     borderColor: '#BAE6FD',
   },
   avatarEmoji: {
-    fontSize: 24,
+    fontSize: 22,
   },
   onlineDot: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    width: 13,
+    height: 13,
+    borderRadius: 6.5,
     borderWidth: 2,
     borderColor: '#FFFFFF',
   },
@@ -1044,13 +1084,14 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   cardSenderName: {
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '800',
     color: '#131B2E',
     flex: 1,
+    marginRight: 6,
   },
   cardTimeText: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#94A3B8',
     fontWeight: '500',
   },
@@ -1065,15 +1106,15 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   childIdentifierBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: 7,
+    paddingVertical: 1.5,
     borderRadius: 9999,
   },
   childIdentifierBadgeMateo: {
     backgroundColor: '#FFE4E6',
   },
   childIdentifierTextMateo: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#9F1239',
   },
@@ -1081,7 +1122,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DBEAFE',
   },
   childIdentifierTextSofia: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#1E40AF',
   },
@@ -1089,16 +1130,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F5F9',
   },
   childIdentifierTextGeneral: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#475569',
   },
   childIdentifierText: {
-    fontSize: 10,
+    fontSize: 9.5,
   },
 
   cardSubject: {
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '600',
     color: '#334155',
     marginTop: 2,
@@ -1108,25 +1149,27 @@ const styles = StyleSheet.create({
     color: '#0F172A',
   },
   cardExcerpt: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#64748B',
-    marginTop: 3,
-    lineHeight: 16,
+    marginTop: 2,
+    lineHeight: 15,
   },
   cardBottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 10,
-    paddingTop: 6,
+    marginTop: 8,
+    paddingTop: 4,
+    flexWrap: 'wrap',
+    gap: 4,
   },
   tagPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 2.5,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
     borderRadius: 9999,
   },
   tagPillText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
   },
   tagPillGreen: {
@@ -1154,82 +1197,77 @@ const styles = StyleSheet.create({
     color: '#0369A1',
   },
   unreadCounterBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     backgroundColor: colors.coral,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.coral,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
   },
   unreadCounterText: {
     color: '#FFFFFF',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '900',
   },
   attachmentIcon: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#94A3B8',
   },
   doubleCheckRead: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '900',
     color: colors.primary,
   },
 
   /* Banner Horario de Atención */
   scheduleInfoBanner: {
-    marginTop: 10,
+    marginTop: 8,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 14,
+    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   scheduleIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
   },
   scheduleIconEmoji: {
-    fontSize: 18,
+    fontSize: 16,
   },
   scheduleTextCol: {
     flex: 1,
   },
   scheduleTitle: {
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '800',
     color: '#131B2E',
   },
   scheduleDesc: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#64748B',
     marginTop: 2,
-    lineHeight: 15,
+    lineHeight: 14,
   },
 
   /* 4. FAB FLOTANTE */
   composeFab: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 20,
     right: 16,
     backgroundColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
+    gap: 6,
+    paddingVertical: 11,
+    paddingHorizontal: 16,
     borderRadius: 9999,
     shadowColor: '#005F2E',
     shadowOffset: { width: 0, height: 4 },
@@ -1238,11 +1276,11 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   composeFabIcon: {
-    fontSize: 16,
+    fontSize: 15,
   },
   composeFabText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '800',
   },
 
@@ -1256,69 +1294,69 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 20,
-    maxHeight: '80%',
+    padding: 18,
+    maxHeight: '85%',
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    paddingBottom: 14,
+    paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
   },
   modalSenderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
     flexWrap: 'wrap',
   },
   modalSender: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
     color: '#131B2E',
   },
   modalChildBadge: {
     backgroundColor: '#EFF6FF',
-    paddingHorizontal: 8,
+    paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 9999,
   },
   modalChildBadgeText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#1A73E8',
   },
   modalRole: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#64748B',
     marginTop: 2,
   },
   modalCloseText: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#94A3B8',
     padding: 4,
     fontWeight: '700',
   },
   modalBody: {
-    paddingVertical: 14,
+    paddingVertical: 12,
   },
   modalSubject: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
     color: '#131B2E',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   modalExcerpt: {
-    fontSize: 13,
+    fontSize: 12.5,
     color: '#475569',
-    lineHeight: 20,
+    lineHeight: 18,
   },
   modalFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    paddingTop: 12,
+    gap: 8,
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: '#E2E8F0',
   },
@@ -1327,30 +1365,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
     borderRadius: 12,
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 13,
+    paddingVertical: 9,
+    fontSize: 12.5,
     color: '#131B2E',
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   sendReplyBtn: {
     backgroundColor: colors.primary,
-    paddingHorizontal: 16,
-    paddingVertical: 11,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     borderRadius: 12,
   },
   sendReplyBtnText: {
     color: '#FFFFFF',
     fontWeight: '800',
-    fontSize: 13,
+    fontSize: 12.5,
   },
 
   /* Compose Modal */
   composeLabel: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '800',
     color: '#475569',
-    marginTop: 10,
+    marginTop: 8,
     marginBottom: 4,
   },
   composeChildSelectRow: {
@@ -1376,17 +1414,17 @@ const styles = StyleSheet.create({
     borderColor: '#BAE6FD',
   },
   composeChildBtnText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
     color: '#131B2E',
   },
   composeInputBox: {
     backgroundColor: '#F1F5F9',
-    padding: 10,
+    padding: 8,
     borderRadius: 10,
   },
   composeDestText: {
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '700',
     color: '#1E293B',
   },
@@ -1394,25 +1432,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    padding: 10,
+    padding: 8,
     borderRadius: 10,
-    fontSize: 13,
+    fontSize: 12.5,
     color: '#131B2E',
   },
   composeBodyInput: {
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    padding: 10,
+    padding: 8,
     borderRadius: 10,
-    fontSize: 13,
+    fontSize: 12.5,
     color: '#131B2E',
     textAlignVertical: 'top',
-    height: 95,
+    height: 80,
   },
   sendNewBtn: {
     backgroundColor: colors.primary,
-    paddingVertical: 12,
+    paddingVertical: 11,
     borderRadius: 12,
     alignItems: 'center',
     width: '100%',
@@ -1420,6 +1458,6 @@ const styles = StyleSheet.create({
   sendNewBtnText: {
     color: '#FFFFFF',
     fontWeight: '900',
-    fontSize: 14,
+    fontSize: 13,
   },
 });

@@ -9,10 +9,20 @@ import {
   Image,
   Modal,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 
 export const FilesScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 380;
+  const topInsetPadding = Math.max(insets.top, 24) + 10;
+  const pinBoxWidth = Math.min((width - 96) / 6, 42);
+
   const [activeCategory, setActiveCategory] = useState<
     'TODOS' | 'BOLETINES' | 'AUTORIZACIONES' | 'CIRCULARES' | 'FICHAS'
   >('TODOS');
@@ -59,8 +69,7 @@ export const FilesScreen: React.FC = () => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* 1. HERO WAVE BANNER INSTITUCIONAL */}
-      <View style={styles.heroBanner}>
-        {/* Subtle Decorative Background Accents */}
+      <View style={[styles.heroBanner, { paddingTop: topInsetPadding }]}>
         <View style={styles.heroCircle1} />
         <View style={styles.heroCircle2} />
 
@@ -69,11 +78,14 @@ export const FilesScreen: React.FC = () => {
           <View style={styles.heroBrandLeft}>
             <Image
               source={require('../../assets/logo-colegio.png')}
-              style={styles.heroLogo}
+              style={[styles.heroLogo, isSmallScreen && styles.heroLogoSmall]}
               resizeMode="contain"
             />
             <View style={styles.brandTitleCol}>
-              <Text style={styles.heroTitle} numberOfLines={1}>
+              <Text
+                style={[styles.heroTitle, isSmallScreen && styles.heroTitleSmall]}
+                numberOfLines={1}
+              >
                 Instituto República de Italia
               </Text>
               <Text style={styles.heroSubtitle}>ENTRE RÍOS · CICLO 2026</Text>
@@ -81,11 +93,11 @@ export const FilesScreen: React.FC = () => {
           </View>
 
           <View style={styles.heroActionsRight}>
-            <View style={styles.notifBtn}>
+            <View style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.notifIcon}>🔔</Text>
               <View style={styles.notifRedDot} />
             </View>
-            <View style={styles.familyAvatar}>
+            <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.familyAvatarText}>FL</Text>
             </View>
           </View>
@@ -99,8 +111,10 @@ export const FilesScreen: React.FC = () => {
               GESTIÓN DOCUMENTAL / SECRETARÍA
             </Text>
           </View>
-          <Text style={styles.heroMainTitle}>Archivos y Documentos</Text>
-          <Text style={styles.heroMainSubtitle}>
+          <Text style={[styles.heroMainTitle, isSmallScreen && styles.heroMainTitleSmall]}>
+            Archivos y Documentos
+          </Text>
+          <Text style={styles.heroMainSubtitle} numberOfLines={1}>
             Circulares oficiales, autorizaciones, boletines y constancias.
           </Text>
         </View>
@@ -368,7 +382,7 @@ export const FilesScreen: React.FC = () => {
                     <Text style={styles.reportSizeText}>2.4 MB</Text>
                   </View>
                   <Text style={styles.reportTitle}>Boletín Calificaciones 1° Ciclo</Text>
-                  <Text style={styles.reportStudent}>Sofía López · 2° Grado "A"</Text>
+                  <Text style={styles.reportStudent}>Sofía López · 4° Grado "B"</Text>
                   <Text style={styles.reportDate}>2° Trimestre · Emitido: 08 Oct</Text>
                 </View>
               </View>
@@ -477,7 +491,7 @@ export const FilesScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* 4. SUBIR O ADJUNTAR DOCUMENTO (Módulo Familias) */}
+        {/* 4. SUBIR O ADJUNTAR DOCUMENTO */}
         <View style={styles.uploadSectionBanner}>
           <View style={styles.uploadTopRow}>
             <View style={styles.uploadIconCircle}>
@@ -522,14 +536,17 @@ export const FilesScreen: React.FC = () => {
       </View>
 
       {/* Espaciado de cortesía para el scroll */}
-      <View style={{ height: 32 }} />
+      <View style={{ height: 36 }} />
 
-      {/* MODAL: FIRMA DIGITAL CON PIN INSTITUCIONAL */}
+      {/* MODAL: FIRMA DIGITAL CON PIN */}
       <Modal visible={isPinModalOpen} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
           <View style={styles.modalSheet}>
             <View style={styles.modalSheetHeader}>
-              <View>
+              <View style={{ flex: 1, marginRight: 8 }}>
                 <Text style={styles.modalSheetTitle}>Firma Digital Institucional</Text>
                 <Text style={styles.modalSheetSub}>
                   Autorización Salida Didáctica: Museo Provincial
@@ -545,12 +562,12 @@ export const FilesScreen: React.FC = () => {
                 Ingresa tu PIN personal de 6 dígitos para validar la conformidad como tutor legal de Mateo López:
               </Text>
 
-              {/* 6 Digit Inputs */}
+              {/* 6 Responsive Digit Inputs */}
               <View style={styles.pinDigitsRow}>
                 {pinDigits.map((digit, i) => (
                   <TextInput
                     key={i}
-                    style={styles.pinInputBox}
+                    style={[styles.pinInputBox, { width: pinBoxWidth }]}
                     maxLength={1}
                     keyboardType="number-pad"
                     secureTextEntry
@@ -575,12 +592,15 @@ export const FilesScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* MODAL: SUBIR DOCUMENTO / FOTO */}
       <Modal visible={isUploadModalOpen} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
           <View style={styles.modalSheet}>
             <View style={styles.modalSheetHeader}>
               <Text style={styles.modalSheetTitle}>
@@ -593,7 +613,7 @@ export const FilesScreen: React.FC = () => {
 
             <View style={styles.modalSheetBody}>
               <Text style={styles.pinInstructions}>
-                Selecciona el estudiante y tipo de comprobante (médico, apto físico natación o pago):
+                Selecciona el estudiante y tipo de comprobante:
               </Text>
 
               <View style={styles.uploadStudentSelectRow}>
@@ -601,7 +621,7 @@ export const FilesScreen: React.FC = () => {
                   <Text style={styles.uploadStudentPillActiveText}>🧒 Mateo López (Sala 4)</Text>
                 </View>
                 <View style={styles.uploadStudentPill}>
-                  <Text style={styles.uploadStudentPillText}>👧 Sofía López (2° Grado)</Text>
+                  <Text style={styles.uploadStudentPillText}>👧 Sofía López (4° Grado)</Text>
                 </View>
               </View>
 
@@ -633,7 +653,7 @@ export const FilesScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </ScrollView>
   );
@@ -648,8 +668,7 @@ const styles = StyleSheet.create({
   /* 1. HERO BANNER */
   heroBanner: {
     backgroundColor: colors.primary,
-    paddingTop: 52,
-    paddingBottom: 24,
+    paddingBottom: 22,
     paddingHorizontal: 16,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -684,11 +703,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     zIndex: 10,
+    gap: 8,
   },
   heroBrandLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
     flex: 1,
   },
   heroLogo: {
@@ -698,16 +718,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     padding: 2,
   },
+  heroLogoSmall: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
   brandTitleCol: {
     flex: 1,
+    justifyContent: 'center',
   },
   heroTitle: {
     fontSize: 15,
     fontWeight: '900',
     color: '#FFFFFF',
   },
+  heroTitleSmall: {
+    fontSize: 13,
+  },
   heroSubtitle: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: 'rgba(255, 255, 255, 0.8)',
     letterSpacing: 0.8,
@@ -715,7 +744,7 @@ const styles = StyleSheet.create({
   heroActionsRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   notifBtn: {
     width: 38,
@@ -726,16 +755,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
   },
+  actionBtnSmall: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+  },
   notifIcon: {
-    fontSize: 17,
+    fontSize: 16,
   },
   notifRedDot: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
+    top: 7,
+    right: 7,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: colors.coral,
     borderWidth: 1.5,
     borderColor: colors.primary,
@@ -749,30 +783,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   familyAvatarText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '900',
     color: colors.primary,
   },
   heroTextSection: {
-    marginTop: 18,
+    marginTop: 16,
     zIndex: 10,
   },
   heroContextPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 5,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    paddingHorizontal: 10,
+    paddingHorizontal: 9,
     paddingVertical: 3,
     borderRadius: 9999,
     alignSelf: 'flex-start',
-    marginBottom: 6,
+    marginBottom: 5,
   },
   heroContextIcon: {
     fontSize: 11,
   },
   heroContextText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#FFFFFF',
     letterSpacing: 0.6,
@@ -783,8 +817,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     letterSpacing: -0.3,
   },
+  heroMainTitleSmall: {
+    fontSize: 19,
+  },
   heroMainSubtitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 2,
     fontWeight: '500',
@@ -794,9 +831,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginTop: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    marginTop: 16,
     shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
@@ -805,12 +842,12 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   searchIcon: {
-    fontSize: 16,
+    fontSize: 15,
     marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 12.5,
     color: '#131B2E',
     padding: 0,
   },
@@ -818,12 +855,12 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   filterTuneIcon: {
-    fontSize: 16,
+    fontSize: 15,
   },
 
   /* 2. FILTER CHIPS */
   filterChipsSection: {
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 4,
   },
   filterChipsScroll: {
@@ -835,8 +872,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     backgroundColor: '#FFFFFF',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingVertical: 7,
+    paddingHorizontal: 13,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -851,7 +888,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   filterChipText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
     color: '#475569',
   },
@@ -862,8 +899,8 @@ const styles = StyleSheet.create({
   /* BODY */
   bodyContent: {
     paddingHorizontal: 16,
-    paddingTop: 12,
-    gap: 20,
+    paddingTop: 10,
+    gap: 18,
   },
   sectionBlock: {
     gap: 10,
@@ -872,6 +909,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 4,
   },
   sectionTitleWithIcon: {
     flexDirection: 'row',
@@ -902,11 +941,11 @@ const styles = StyleSheet.create({
   urgentBadge: {
     backgroundColor: '#FFF1F2',
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 2.5,
     borderRadius: 9999,
   },
   urgentBadgeText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#9F1239',
   },
@@ -915,7 +954,7 @@ const styles = StyleSheet.create({
   urgentCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
@@ -931,7 +970,7 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    width: 5,
+    width: 4,
     backgroundColor: colors.coral,
   },
   urgentCardTop: {
@@ -942,64 +981,65 @@ const styles = StyleSheet.create({
   },
   urgentCardInfo: {
     flex: 1,
+    marginRight: 6,
   },
   pendingTagRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
     marginBottom: 4,
+    flexWrap: 'wrap',
   },
   pendingTag: {
     backgroundColor: '#FFF1F2',
-    paddingHorizontal: 8,
+    paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 9999,
   },
   pendingTagText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     color: '#9F1239',
   },
   pendingDueText: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#94A3B8',
   },
   urgentTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
     color: '#131B2E',
-    lineHeight: 20,
+    lineHeight: 19,
   },
   urgentStudent: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: colors.primary,
     fontWeight: '700',
-    marginTop: 3,
+    marginTop: 2,
   },
   urgentIconBox: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     borderRadius: 12,
     backgroundColor: '#FFF1F2',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8,
   },
   urgentIcon: {
-    fontSize: 20,
+    fontSize: 18,
   },
   urgentDesc: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#475569',
-    lineHeight: 17,
-    marginTop: 8,
+    lineHeight: 16,
+    marginTop: 6,
     paddingLeft: 6,
   },
   urgentButtonsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginTop: 12,
+    gap: 8,
+    marginTop: 10,
     paddingLeft: 6,
   },
   signButton: {
@@ -1008,9 +1048,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 10,
-    borderRadius: 12,
+    gap: 6,
+    paddingVertical: 9,
+    borderRadius: 11,
     shadowColor: colors.coral,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -1018,33 +1058,33 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   signButtonIcon: {
-    fontSize: 14,
+    fontSize: 13,
   },
   signButtonText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '800',
   },
   previewBtnSmall: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
+    width: 38,
+    height: 38,
+    borderRadius: 11,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
   },
   previewBtnIcon: {
-    fontSize: 18,
+    fontSize: 16,
   },
 
   /* REPORT CARDS */
   cardsStack: {
-    gap: 12,
+    gap: 10,
   },
   reportCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 16,
+    padding: 13,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
@@ -1056,11 +1096,11 @@ const styles = StyleSheet.create({
   reportTopRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
+    gap: 10,
   },
   pdfIconBox: {
-    width: 44,
-    height: 44,
+    width: 42,
+    height: 42,
     borderRadius: 12,
     backgroundColor: '#FFF1F2',
     alignItems: 'center',
@@ -1086,42 +1126,42 @@ const styles = StyleSheet.create({
   },
   officialBadge: {
     backgroundColor: '#E8F7EE',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: 7,
+    paddingVertical: 1.5,
     borderRadius: 9999,
   },
   officialBadgeText: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: '800',
     color: '#005F2E',
   },
   reportSizeText: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#94A3B8',
   },
   reportTitle: {
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '800',
     color: '#131B2E',
     marginTop: 2,
   },
   reportStudent: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#475569',
     marginTop: 1,
     fontWeight: '600',
   },
   reportDate: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#94A3B8',
     marginTop: 2,
   },
   reportBottomButtonsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginTop: 14,
-    paddingTop: 10,
+    gap: 8,
+    marginTop: 12,
+    paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
   },
@@ -1129,19 +1169,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FAFC',
     borderRadius: 10,
-    paddingVertical: 9,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 4,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   btnSecondaryIcon: {
-    fontSize: 13,
+    fontSize: 12,
   },
   btnSecondaryText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
     color: '#334155',
   },
@@ -1149,17 +1189,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#EFF6FF',
     borderRadius: 10,
-    paddingVertical: 9,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 4,
   },
   btnCelesteIcon: {
-    fontSize: 13,
+    fontSize: 12,
   },
   btnCelesteText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
     color: '#1A73E8',
   },
@@ -1168,7 +1208,7 @@ const styles = StyleSheet.create({
   docRowCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 14,
+    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1183,127 +1223,122 @@ const styles = StyleSheet.create({
   docRowLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
     flex: 1,
+    marginRight: 8,
   },
   docIconBoxCeleste: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 38,
+    height: 38,
+    borderRadius: 11,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   docIconBoxGreen: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 38,
+    height: 38,
+    borderRadius: 11,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
   },
   docIconEmoji: {
-    fontSize: 18,
+    fontSize: 17,
   },
   docTextCol: {
     flex: 1,
   },
   docTitle: {
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '800',
     color: '#131B2E',
   },
   docMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 5,
     marginTop: 2,
   },
   docMetaDate: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#94A3B8',
   },
   docMetaDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
     backgroundColor: '#CBD5E1',
   },
   docMetaSize: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#475569',
     fontWeight: '500',
   },
   cloudDownloadBtn: {
-    width: 38,
-    height: 38,
+    width: 36,
+    height: 36,
     borderRadius: 10,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8,
   },
   cloudDownloadIcon: {
-    fontSize: 14,
+    fontSize: 13,
   },
 
   /* 4. UPLOAD MODULE */
   uploadSectionBanner: {
     backgroundColor: '#E8F7EE',
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#C6F6D5',
-    shadowColor: '#005F2E',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
   },
   uploadTopRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
+    gap: 10,
   },
   uploadIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   uploadIconEmoji: {
-    fontSize: 18,
+    fontSize: 17,
   },
   uploadTextCol: {
     flex: 1,
   },
   uploadTitle: {
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '800',
     color: '#131B2E',
   },
   uploadDesc: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#475569',
     marginTop: 2,
-    lineHeight: 16,
+    lineHeight: 15,
   },
   uploadActionsGrid: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: 14,
+    gap: 8,
+    marginTop: 12,
   },
   btnUploadPhoto: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: 9,
+    borderRadius: 11,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 5,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -1311,32 +1346,27 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   btnUploadPhotoText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
     color: '#131B2E',
   },
   btnUploadPdf: {
     flex: 1,
     backgroundColor: colors.primary,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: 9,
+    borderRadius: 11,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
+    gap: 5,
   },
   btnUploadPdfText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '800',
     color: '#FFFFFF',
   },
   uploadActionIcon: {
-    fontSize: 14,
+    fontSize: 13,
   },
 
   /* PIN MODAL */
@@ -1349,136 +1379,135 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 20,
+    padding: 18,
     maxHeight: '85%',
   },
   modalSheetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: 14,
+    paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
   },
   modalSheetTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
     color: '#131B2E',
   },
   modalSheetSub: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: '#64748B',
     marginTop: 2,
   },
   modalCloseText: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#94A3B8',
     padding: 4,
     fontWeight: '700',
   },
   modalSheetBody: {
-    paddingVertical: 16,
+    paddingVertical: 14,
   },
   pinInstructions: {
-    fontSize: 13,
+    fontSize: 12.5,
     color: '#475569',
-    lineHeight: 19,
+    lineHeight: 18,
   },
   pinDigitsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 8,
-    marginVertical: 20,
+    gap: 6,
+    marginVertical: 18,
   },
   pinInputBox: {
-    width: 44,
-    height: 52,
-    borderRadius: 12,
+    height: 48,
+    borderRadius: 10,
     borderWidth: 1.5,
     borderColor: '#CBD5E1',
     backgroundColor: '#F8FAFC',
     textAlign: 'center',
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '900',
     color: '#0F172A',
   },
   pinAuditNotice: {
     backgroundColor: '#EFF6FF',
     borderRadius: 12,
-    padding: 12,
+    padding: 10,
     borderWidth: 1,
     borderColor: '#BAE6FD',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   pinAuditText: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#0369A1',
-    lineHeight: 16,
+    lineHeight: 15,
   },
   confirmPinBtn: {
     backgroundColor: colors.primary,
-    paddingVertical: 13,
+    paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
   },
   confirmPinBtnText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '900',
   },
 
   /* Upload Modal Options */
   uploadStudentSelectRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginVertical: 14,
+    gap: 6,
+    marginVertical: 12,
   },
   uploadStudentPillActive: {
     backgroundColor: '#E8F7EE',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: colors.primary,
   },
   uploadStudentPillActiveText: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontWeight: '800',
     color: '#005F2E',
   },
   uploadStudentPill: {
     backgroundColor: '#F1F5F9',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
     borderRadius: 9999,
   },
   uploadStudentPillText: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#64748B',
   },
   uploadDropZone: {
     borderWidth: 2,
     borderStyle: 'dashed',
     borderColor: '#CBD5E1',
-    borderRadius: 16,
-    padding: 24,
+    borderRadius: 14,
+    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F8FAFC',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   uploadDropIcon: {
-    fontSize: 32,
-    marginBottom: 6,
+    fontSize: 28,
+    marginBottom: 4,
   },
   uploadDropTitle: {
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '700',
     color: '#131B2E',
   },
   uploadDropSubtitle: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#94A3B8',
-    marginTop: 3,
+    marginTop: 2,
   },
 });

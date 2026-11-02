@@ -8,10 +8,19 @@ import {
   TextInput,
   Image,
   Alert,
+  useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 
 export const GalleryScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 380;
+  const topInsetPadding = Math.max(insets.top, 24) + 10;
+  const mediaBoxHeight = Math.min(width * 0.48, 200);
+  const gridBoxHeight = Math.min(width * 0.28, 115);
+
   const [activePill, setActivePill] = useState<string>('TODAS');
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState<{ [key: string]: boolean }>({});
@@ -41,7 +50,7 @@ export const GalleryScreen: React.FC = () => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* 1. HERO WAVE BANNER INSTITUCIONAL (#008C45) */}
-      <View style={styles.heroBanner}>
+      <View style={[styles.heroBanner, { paddingTop: topInsetPadding }]}>
         {/* Decorative Background Elements */}
         <View style={styles.heroCircle1} />
         <View style={styles.heroCircle2} />
@@ -51,11 +60,14 @@ export const GalleryScreen: React.FC = () => {
           <View style={styles.heroBrandLeft}>
             <Image
               source={require('../../assets/logo-colegio.png')}
-              style={styles.heroLogo}
+              style={[styles.heroLogo, isSmallScreen && styles.heroLogoSmall]}
               resizeMode="contain"
             />
             <View style={styles.brandTitleCol}>
-              <Text style={styles.heroTitle} numberOfLines={1}>
+              <Text
+                style={[styles.heroTitle, isSmallScreen && styles.heroTitleSmall]}
+                numberOfLines={1}
+              >
                 Instituto República de Italia
               </Text>
               <Text style={styles.heroSubtitle}>ENTRE RÍOS · CICLO 2026</Text>
@@ -63,11 +75,11 @@ export const GalleryScreen: React.FC = () => {
           </View>
 
           <View style={styles.heroActionsRight}>
-            <View style={styles.notifBtn}>
+            <View style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.notifIcon}>🔔</Text>
               <View style={styles.notifRedDot} />
             </View>
-            <View style={styles.familyAvatar}>
+            <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.familyAvatarText}>FL</Text>
             </View>
           </View>
@@ -81,7 +93,9 @@ export const GalleryScreen: React.FC = () => {
               REGISTRO PEDAGÓGICO / TALLERES
             </Text>
           </View>
-          <Text style={styles.heroMainTitle}>Galería de Actividades</Text>
+          <Text style={[styles.heroMainTitle, isSmallScreen && styles.heroMainTitleSmall]}>
+            Galería de Actividades
+          </Text>
           <Text style={styles.heroMainSubtitle}>
             Momentos escolares, talleres biculturales y proyectos de tus hijos.
           </Text>
@@ -212,7 +226,7 @@ export const GalleryScreen: React.FC = () => {
         {/* 3. DESTACADO DE LA SEMANA (Álbum Principal) */}
         <View style={styles.featuredAlbumCard}>
           {/* Media Header / Image Box with Overlays */}
-          <View style={styles.featuredMediaBox}>
+          <View style={[styles.featuredMediaBox, { height: mediaBoxHeight }]}>
             <Text style={styles.featuredEmojiPlaceholder}>🇮🇹🎨🖼️</Text>
 
             {/* Overlays */}
@@ -292,7 +306,7 @@ export const GalleryScreen: React.FC = () => {
               activeOpacity={0.88}
               onPress={() => handleOpenAlbum('Huerta Escolar Bilingüe')}
             >
-              <View style={styles.gridImageBoxGarden}>
+              <View style={[styles.gridImageBoxGarden, { height: gridBoxHeight }]}>
                 <Text style={styles.gridEmoji}>🌱🥕🍅</Text>
 
                 <View style={styles.gridPhotoBadge}>
@@ -331,7 +345,7 @@ export const GalleryScreen: React.FC = () => {
               activeOpacity={0.88}
               onPress={() => handleOpenAlbum('Torneo de Atletismo y Básquet')}
             >
-              <View style={styles.gridImageBoxSports}>
+              <View style={[styles.gridImageBoxSports, { height: gridBoxHeight }]}>
                 <Text style={styles.gridEmoji}>🏃‍♂️🏀🏅</Text>
 
                 <View style={styles.gridPhotoBadgeBlue}>
@@ -460,6 +474,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     padding: 2,
   },
+  heroLogoSmall: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
   brandTitleCol: {
     flex: 1,
   },
@@ -467,6 +486,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '900',
     color: '#FFFFFF',
+  },
+  heroTitleSmall: {
+    fontSize: 13,
   },
   heroSubtitle: {
     fontSize: 10,
@@ -487,6 +509,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+  },
+  actionBtnSmall: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
   },
   notifIcon: {
     fontSize: 17,
@@ -544,6 +571,9 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: -0.3,
+  },
+  heroMainTitleSmall: {
+    fontSize: 19,
   },
   heroMainSubtitle: {
     fontSize: 13,
