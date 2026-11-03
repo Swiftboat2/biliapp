@@ -267,3 +267,4 @@ export const Icon: React.FC<IconProps> = ({
       return null;
   }
 };
+

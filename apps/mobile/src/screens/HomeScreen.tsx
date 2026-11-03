@@ -76,451 +76,430 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Saludo Cálido y Resumen Familiar Multi-Hijo */}
+        {/* Saludo Cálido */}
         <View style={styles.heroGreeting}>
           <Text style={[styles.heroHello, isSmallScreen && styles.heroHelloSmall]}>
             ¡Hola, Familia López! 👋
           </Text>
-          <View style={styles.heroChildrenSummaryRow}>
-            <View style={styles.childPillHeader}>
-              <Text style={styles.childPillEmoji}>🧒</Text>
-              <Text style={styles.childPillText}>Mateo (Sala 4)</Text>
-            </View>
-            <View style={styles.childPillHeader}>
-              <Text style={styles.childPillEmoji}>👧</Text>
-              <Text style={styles.childPillText}>Sofía (4° Grado)</Text>
-            </View>
-          </View>
         </View>
       </View>
 
       {/* 2. ESTUDIANTES A CARGO (Tarjetas de Mateo y Sofía en el Tablero) */}
-      <View style={styles.floatingStudentsSection}>
-        <View style={styles.studentsHeaderRow}>
-          <View style={styles.studentsHeaderLeft}>
-            <Text style={styles.studentsHeaderTitle}>Estudiantes a cargo</Text>
-            <View style={styles.badgeTwoKids}>
-              <Text style={styles.badgeTwoKidsText}>2 hijos</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.studentsScrollContainer}
+        decelerationRate="fast"
+        snapToInterval={studentCardWidth + 12}
+      >
+        {/* Tarjeta Mateo López */}
+        <TouchableOpacity
+          style={[styles.studentCard, { width: studentCardWidth }]}
+          activeOpacity={0.9}
+          onPress={() => {
+            if (mateo) setActiveStudent(mateo);
+          }}
+        >
+          <View style={styles.studentCardAccentGreen} />
+
+          <View style={styles.studentCardTopRow}>
+            <View style={styles.studentAvatarWrap}>
+              <View style={styles.studentAvatarCircleGreen}>
+                <Text style={styles.studentAvatarEmoji}>🧒</Text>
+              </View>
+              <View style={styles.checkBadge}>
+                <Icon name="check" size={9} color="#FFFFFF" />
+              </View>
+            </View>
+
+            <View style={styles.studentDetailsCol}>
+              <View style={styles.studentNameAndRateRow}>
+                <Text style={styles.studentNameText} numberOfLines={1}>
+                  Mateo López
+                </Text>
+                <View style={styles.asistBadgeGreen}>
+                  <Text style={styles.asistBadgeTextGreen}>96% ASIST.</Text>
+                </View>
+              </View>
+              <Text style={styles.studentLevelText} numberOfLines={1}>
+                Sala de 4 · Nivel Inicial
+              </Text>
             </View>
           </View>
-          <Text style={styles.studentsHeaderHint}>Resumen diario unificado</Text>
-        </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.studentsScrollContainer}
-          decelerationRate="fast"
-          snapToInterval={studentCardWidth + 12}
+          <View style={styles.studentStatusStrip}>
+            <View style={styles.studentStatusLeft}>
+              <Text style={styles.statusShiftEmoji}>🏫</Text>
+              <Text style={styles.statusShiftText}>Turno Tarde</Text>
+            </View>
+            <Text style={styles.statusPresentGreen}>PRESENTE HOY</Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Tarjeta Sofía López */}
+        <TouchableOpacity
+          style={[styles.studentCard, { width: studentCardWidth }]}
+          activeOpacity={0.9}
+          onPress={() => {
+            if (sofia) setActiveStudent(sofia);
+          }}
         >
-          {/* Tarjeta Mateo López */}
-          <TouchableOpacity
-            style={[styles.studentCard, { width: studentCardWidth }]}
-            activeOpacity={0.9}
-            onPress={() => {
-              if (mateo) setActiveStudent(mateo);
-            }}
-          >
-            <View style={styles.studentCardAccentGreen} />
+          <View style={styles.studentCardAccentCeleste} />
 
-            <View style={styles.studentCardTopRow}>
-              <View style={styles.studentAvatarWrap}>
-                <View style={styles.studentAvatarCircleGreen}>
-                  <Text style={styles.studentAvatarEmoji}>🧒</Text>
-                </View>
-                <View style={styles.checkBadge}>
-                  <Icon name="check" size={9} color="#FFFFFF" />
-                </View>
+          <View style={styles.studentCardTopRow}>
+            <View style={styles.studentAvatarWrap}>
+              <View style={styles.studentAvatarCircleCeleste}>
+                <Text style={styles.studentAvatarEmoji}>👧</Text>
               </View>
+              <View style={styles.checkBadge}>
+                <Icon name="check" size={9} color="#FFFFFF" />
+              </View>
+            </View>
 
-              <View style={styles.studentDetailsCol}>
-                <View style={styles.studentNameAndRateRow}>
-                  <Text style={styles.studentNameText} numberOfLines={1}>
-                    Mateo López
-                  </Text>
-                  <View style={styles.asistBadgeGreen}>
-                    <Text style={styles.asistBadgeTextGreen}>96% ASIST.</Text>
-                  </View>
-                </View>
-                <Text style={styles.studentLevelText} numberOfLines={1}>
-                  Sala de 4 · Nivel Inicial
+            <View style={styles.studentDetailsCol}>
+              <View style={styles.studentNameAndRateRow}>
+                <Text style={styles.studentNameText} numberOfLines={1}>
+                  Sofía López
                 </Text>
-              </View>
-            </View>
-
-            <View style={styles.studentStatusStrip}>
-              <View style={styles.studentStatusLeft}>
-                <Text style={styles.statusShiftEmoji}>🏫</Text>
-                <Text style={styles.statusShiftText}>Turno Tarde</Text>
-              </View>
-              <Text style={styles.statusPresentGreen}>PRESENTE HOY</Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* Tarjeta Sofía López */}
-          <TouchableOpacity
-            style={[styles.studentCard, { width: studentCardWidth }]}
-            activeOpacity={0.9}
-            onPress={() => {
-              if (sofia) setActiveStudent(sofia);
-            }}
-          >
-            <View style={styles.studentCardAccentCeleste} />
-
-            <View style={styles.studentCardTopRow}>
-              <View style={styles.studentAvatarWrap}>
-                <View style={styles.studentAvatarCircleCeleste}>
-                  <Text style={styles.studentAvatarEmoji}>👧</Text>
-                </View>
-                <View style={styles.checkBadge}>
-                  <Icon name="check" size={9} color="#FFFFFF" />
+                <View style={styles.asistBadgeCeleste}>
+                  <Text style={styles.asistBadgeTextCeleste}>98% ASIST.</Text>
                 </View>
               </View>
-
-              <View style={styles.studentDetailsCol}>
-                <View style={styles.studentNameAndRateRow}>
-                  <Text style={styles.studentNameText} numberOfLines={1}>
-                    Sofía López
-                  </Text>
-                  <View style={styles.asistBadgeCeleste}>
-                    <Text style={styles.asistBadgeTextCeleste}>98% ASIST.</Text>
-                  </View>
-                </View>
-                <Text style={styles.studentLevelText} numberOfLines={1}>
-                  4° Grado "B" · Primaria
-                </Text>
-              </View>
+              <Text style={styles.studentLevelText} numberOfLines={1}>
+                4° Grado "B" · Primaria
+              </Text>
             </View>
+          </View>
 
-            <View style={styles.studentStatusStrip}>
-              <View style={styles.studentStatusLeft}>
-                <Text style={styles.statusShiftEmoji}>🏫</Text>
-                <Text style={styles.statusShiftText}>Turno Mañana</Text>
-              </View>
-              <Text style={styles.statusPresentGreen}>PRESENTE HOY</Text>
+          <View style={styles.studentStatusStrip}>
+            <View style={styles.studentStatusLeft}>
+              <Text style={styles.statusShiftEmoji}>🏫</Text>
+              <Text style={styles.statusShiftText}>Turno Mañana</Text>
             </View>
-          </TouchableOpacity>
-        </ScrollView>
+            <Text style={styles.statusPresentGreen}>PRESENTE HOY</Text>
+          </View>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
+
+      {/* 3. CONTENIDO DEL TABLERO UNIFICADO */ }
+  <View style={styles.contentBody}>
+    {/* SECCIÓN 1: PRÓXIMOS EVENTOS (Distinguidos por hijo) */}
+    <View style={styles.sectionWrap}>
+      <View style={styles.sectionHeaderRow}>
+        <View style={styles.sectionTitleWithDot}>
+          <Text style={styles.sectionTitle}>Próximos eventos</Text>
+          <View style={styles.greenTitleDot} />
+        </View>
+        <TouchableOpacity activeOpacity={0.8}>
+          <Text style={styles.sectionLinkGreen}>Ver calendario ›</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* 3. CONTENIDO DEL TABLERO UNIFICADO */}
-      <View style={styles.contentBody}>
-        {/* SECCIÓN 1: PRÓXIMOS EVENTOS (Distinguidos por hijo) */}
-        <View style={styles.sectionWrap}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionTitleWithDot}>
-              <Text style={styles.sectionTitle}>Próximos eventos</Text>
-              <View style={styles.greenTitleDot} />
-            </View>
-            <TouchableOpacity activeOpacity={0.8}>
-              <Text style={styles.sectionLinkGreen}>Ver calendario ›</Text>
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.eventsScrollContainer}
-            decelerationRate="fast"
-            snapToInterval={eventCardWidth + 12}
-          >
-            {/* Evento 1: Para Mateo (Jardín) */}
-            <View style={[styles.eventCardCelebration, { width: eventCardWidth }]}>
-              <View>
-                <View style={styles.eventCardTopRow}>
-                  <View style={styles.eventChildBadgeMateo}>
-                    <Text style={styles.eventChildTextMateo}>🧒 Mateo · Sala de 4</Text>
-                  </View>
-                  <View style={styles.eventIconCircleYellow}>
-                    <Icon name="novedades" size={15} color="#854D0E" />
-                  </View>
-                </View>
-                <Text style={styles.eventCardTitle} numberOfLines={2}>
-                  Festa della Repubblica & Muestra de Arte
-                </Text>
-              </View>
-              <View style={styles.eventDatePill}>
-                <Text style={styles.eventDateText}>📅 Viernes, 06 Noviembre</Text>
-              </View>
-            </View>
-
-            {/* Evento 2: Para Sofía (Primaria) */}
-            <View style={[styles.eventCardMeeting, { width: eventCardWidth }]}>
-              <View>
-                <View style={styles.eventCardTopRow}>
-                  <View style={styles.eventChildBadgeSofia}>
-                    <Text style={styles.eventChildTextSofia}>👧 Sofía · 4° Grado</Text>
-                  </View>
-                  <View style={styles.eventIconCircleBlue}>
-                    <Icon name="deportes" size={16} color="#1A73E8" />
-                  </View>
-                </View>
-                <Text style={styles.eventCardTitle} numberOfLines={2}>
-                  Torneo Intercolegial de Atletismo y Postas
-                </Text>
-              </View>
-              <View style={styles.eventDatePill}>
-                <Text style={styles.eventDateText}>📅 Jueves, 12 Noviembre</Text>
-              </View>
-            </View>
-
-            {/* Evento 3: Toda la Familia */}
-            <View style={[styles.eventCardGeneral, { width: eventCardWidth }]}>
-              <View>
-                <View style={styles.eventCardTopRow}>
-                  <View style={styles.eventChildBadgeFamily}>
-                    <Text style={styles.eventChildTextFamily}>👨‍👩‍👧‍👦 Toda la Familia</Text>
-                  </View>
-                  <View style={styles.eventIconCircleGreen}>
-                    <Icon name="graduacion" size={16} color={colors.primary} />
-                  </View>
-                </View>
-                <Text style={styles.eventCardTitle} numberOfLines={2}>
-                  Reunión de Padres y Balance Pedagógico
-                </Text>
-              </View>
-              <View style={styles.eventDatePill}>
-                <Text style={styles.eventDateText}>📅 Martes, 17 Noviembre</Text>
-              </View>
-            </View>
-          </ScrollView>
-        </View>
-
-        {/* SECCIÓN 2: "¿QUÉ HA PASADO HOY?" (Estado de ambos chicos con flexWrap) */}
-        <View style={styles.sectionWrap}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.eventsScrollContainer}
+        decelerationRate="fast"
+        snapToInterval={eventCardWidth + 12}
+      >
+        {/* Evento 1: Para Mateo (Jardín) */}
+        <View style={[styles.eventCardCelebration, { width: eventCardWidth }]}>
           <View>
-            <Text style={styles.sectionTitle}>¿Qué ha pasado hoy?</Text>
-            <Text style={styles.sectionSubtitle}>
-              Asistencia y novedades del día para Mateo y Sofía
+            <View style={styles.eventCardTopRow}>
+              <View style={styles.eventChildBadgeMateo}>
+                <Text style={styles.eventChildTextMateo}>🧒 Mateo · Sala de 4</Text>
+              </View>
+              <View style={styles.eventIconCircleYellow}>
+                <Icon name="novedades" size={15} color="#854D0E" />
+              </View>
+            </View>
+            <Text style={styles.eventCardTitle} numberOfLines={2}>
+              Festa della Repubblica & Muestra de Arte
             </Text>
           </View>
-
-          <View style={styles.dualGrid}>
-            {/* Card Mateo: Tardanza */}
-            <View style={styles.dualCardMateo}>
-              <View>
-                <View style={styles.dualCardHeaderChild}>
-                  <View style={styles.kidTagMateo}>
-                    <Text style={styles.kidTagTextMateo}>🧒 Mateo</Text>
-                  </View>
-                  <Text style={styles.dualDateText}>13:10 hs</Text>
-                </View>
-                <Text style={styles.dualCardTitle}>Falta parcial</Text>
-                <Text style={styles.dualCardSub} numberOfLines={2}>
-                  Ingreso posterior al horario
-                </Text>
-              </View>
-              <View style={styles.dualBadgeContainer}>
-                <View style={styles.badgeTardanza}>
-                  <Text style={styles.badgeTardanzaText}>Tardanza (1/4)</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Card Sofía: Asistencia Completa */}
-            <View style={styles.dualCardSofia}>
-              <View>
-                <View style={styles.dualCardHeaderChild}>
-                  <View style={styles.kidTagSofia}>
-                    <Text style={styles.kidTagTextSofia}>👧 Sofía</Text>
-                  </View>
-                  <Text style={styles.dualDateText}>07:45 hs</Text>
-                </View>
-                <Text style={styles.dualCardTitle}>Puntual</Text>
-                <Text style={styles.dualCardSub} numberOfLines={2}>
-                  Ingreso registrado en puerta
-                </Text>
-              </View>
-              <View style={styles.dualBadgeContainer}>
-                <View style={styles.badgePresentePuntual}>
-                  <Text style={styles.badgePresentePuntualText}>Presente ✓</Text>
-                </View>
-              </View>
-            </View>
+          <View style={styles.eventDatePill}>
+            <Text style={styles.eventDateText}>📅 Viernes, 06 Noviembre</Text>
           </View>
         </View>
 
-        {/* SECCIÓN 3: CALIFICACIONES Y BOLETINES RECIENTES */}
-        <View style={styles.sectionWrap}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Calificaciones y Boletines</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Archivos')}
-              style={styles.viewReportLink}
-            >
-              <Text style={styles.viewReportText}>Ver boletines</Text>
-              <Text style={styles.viewReportArrow}>→</Text>
-            </TouchableOpacity>
+        {/* Evento 2: Para Sofía (Primaria) */}
+        <View style={[styles.eventCardMeeting, { width: eventCardWidth }]}>
+          <View>
+            <View style={styles.eventCardTopRow}>
+              <View style={styles.eventChildBadgeSofia}>
+                <Text style={styles.eventChildTextSofia}>👧 Sofía · 4° Grado</Text>
+              </View>
+              <View style={styles.eventIconCircleBlue}>
+                <Icon name="deportes" size={16} color="#1A73E8" />
+              </View>
+            </View>
+            <Text style={styles.eventCardTitle} numberOfLines={2}>
+              Torneo Intercolegial de Atletismo y Postas
+            </Text>
           </View>
-
-          <View style={styles.gradesStack}>
-            {/* Calificación Mateo: Lengua Italiana */}
-            <View style={styles.gradeCard}>
-              <View style={styles.gradeLeft}>
-                <View style={styles.gradeIconBoxGreen}>
-                  <Icon name="boletin" size={22} color={colors.primary} />
-                  <Text style={styles.gradeFlagEmoji}>🇮🇹</Text>
-                </View>
-                <View style={styles.gradeTextCol}>
-                  <View style={styles.gradeChildTagRow}>
-                    <View style={styles.kidTagMateo}>
-                      <Text style={styles.kidTagTextMateo}>🧒 Mateo · Sala de 4</Text>
-                    </View>
-                    <Text style={styles.gradeTimeText}>Ayer, 11:30</Text>
-                  </View>
-                  <Text style={styles.gradeSubjectTitle} numberOfLines={1}>
-                    Lengua y Cultura Italiana
-                  </Text>
-                  <Text style={styles.gradeAssessmentName} numberOfLines={1}>
-                    Examen trimestral oral: Tradizioni e Famiglia
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.gradeScoreBadgeCol}>
-                <View style={styles.gradeScoreCircleGreen}>
-                  <Text style={styles.gradeScoreNum}>9.8</Text>
-                </View>
-                <Text style={styles.gradeScoreLabelGreen}>Sobresaliente</Text>
-              </View>
-            </View>
-
-            {/* Calificación Sofía: Matemática */}
-            <View style={styles.gradeCard}>
-              <View style={styles.gradeLeft}>
-                <View style={styles.gradeIconBoxBlue}>
-                  <Icon name="certificado" size={22} color="#1A73E8" />
-                  <Text style={styles.gradeFlagEmoji}>🇦🇷</Text>
-                </View>
-                <View style={styles.gradeTextCol}>
-                  <View style={styles.gradeChildTagRow}>
-                    <View style={styles.kidTagSofia}>
-                      <Text style={styles.kidTagTextSofia}>👧 Sofía · 4° Grado "B"</Text>
-                    </View>
-                    <Text style={styles.gradeTimeText}>Hace 2 días</Text>
-                  </View>
-                  <Text style={styles.gradeSubjectTitle} numberOfLines={1}>
-                    Matemática y Geometría
-                  </Text>
-                  <Text style={styles.gradeAssessmentName} numberOfLines={1}>
-                    Evaluación Escrita: Fracciones y Ángulos
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.gradeScoreBadgeCol}>
-                <View style={styles.gradeScoreCircleBlue}>
-                  <Text style={styles.gradeScoreNumBlue}>9.5</Text>
-                </View>
-                <Text style={styles.gradeScoreLabelBlue}>Distinguido</Text>
-              </View>
-            </View>
+          <View style={styles.eventDatePill}>
+            <Text style={styles.eventDateText}>📅 Jueves, 12 Noviembre</Text>
           </View>
         </View>
 
-        {/* SECCIÓN 4: GALERÍA DE LA SEMANA */}
-        <View style={styles.sectionWrap}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Galería de la semana</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Galería')}
-              style={styles.viewReportLink}
-            >
-              <Text style={styles.galleryExploreText}>Explorar todas</Text>
-              <Text style={styles.galleryExploreArrow}>›</Text>
-            </TouchableOpacity>
+        {/* Evento 3: Toda la Familia */}
+        <View style={[styles.eventCardGeneral, { width: eventCardWidth }]}>
+          <View>
+            <View style={styles.eventCardTopRow}>
+              <View style={styles.eventChildBadgeFamily}>
+                <Text style={styles.eventChildTextFamily}>👨‍👩‍👧‍👦 Toda la Familia</Text>
+              </View>
+              <View style={styles.eventIconCircleGreen}>
+                <Icon name="graduacion" size={16} color={colors.primary} />
+              </View>
+            </View>
+            <Text style={styles.eventCardTitle} numberOfLines={2}>
+              Reunión de Padres y Balance Pedagógico
+            </Text>
           </View>
-
-          <View style={styles.galleryGrid}>
-            {/* Album Mateo */}
-            <TouchableOpacity
-              style={styles.galleryCard}
-              activeOpacity={0.88}
-              onPress={() => navigation.navigate('Galería')}
-            >
-              <View style={styles.galleryImageBoxArt}>
-                <Text style={styles.galleryPlaceholderEmoji}>🎨🖼️</Text>
-                <View style={styles.galleryPhotoBadge}>
-                  <Text style={styles.galleryPhotoBadgeText}>📷 18</Text>
-                </View>
-                <View style={styles.galleryChildPill}>
-                  <Text style={styles.galleryChildPillText}>🧒 Mateo</Text>
-                </View>
-              </View>
-              <View style={styles.galleryCardBody}>
-                <Text style={styles.galleryCardTitle} numberOfLines={1}>
-                  Taller Expresión Artística
-                </Text>
-                <Text style={styles.galleryCardSubtitle}>Sala de 4 · Hace 2 días</Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* Album Sofía */}
-            <TouchableOpacity
-              style={styles.galleryCard}
-              activeOpacity={0.88}
-              onPress={() => navigation.navigate('Galería')}
-            >
-              <View style={styles.galleryImageBoxGarden}>
-                <Text style={styles.galleryPlaceholderEmoji}>🌱🌻</Text>
-                <View style={styles.galleryPhotoBadge}>
-                  <Text style={styles.galleryPhotoBadgeText}>📷 24</Text>
-                </View>
-                <View style={styles.galleryChildPill}>
-                  <Text style={styles.galleryChildPillText}>👧 Sofía</Text>
-                </View>
-              </View>
-              <View style={styles.galleryCardBody}>
-                <Text style={styles.galleryCardTitle} numberOfLines={1}>
-                  Huerta Escolar y Ciencias
-                </Text>
-                <Text style={styles.galleryCardSubtitle}>4° Grado · Hace 3 días</Text>
-              </View>
-            </TouchableOpacity>
+          <View style={styles.eventDatePill}>
+            <Text style={styles.eventDateText}>📅 Martes, 17 Noviembre</Text>
           </View>
         </View>
+      </ScrollView>
+    </View>
 
-        {/* SECCIÓN 5: ACCESOS RÁPIDOS INSTITUCIONALES */}
-        <View style={styles.quickAccessSection}>
-          <TouchableOpacity
-            style={styles.quickActionBtn}
-            activeOpacity={0.85}
-            onPress={() => navigation.navigate('Seguridad')}
-          >
-            <View style={styles.quickActionIconCircleGreen}>
-              <Icon name="seguridad" size={20} color={colors.primary} />
-            </View>
-            <View style={styles.quickActionTextCol}>
-              <Text style={styles.quickActionTitle}>Pases QR de Puerta</Text>
-              <Text style={styles.quickActionSub}>
-                Habilitar retiros para Mateo o Sofía
-              </Text>
-            </View>
-            <Text style={styles.quickActionArrow}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.quickActionBtn}
-            activeOpacity={0.85}
-            onPress={() => navigation.navigate('Archivos')}
-          >
-            <View style={styles.quickActionIconCircleRed}>
-              <Icon name="firma-digital" size={20} color={colors.coral} />
-            </View>
-            <View style={styles.quickActionTextCol}>
-              <Text style={styles.quickActionTitle}>Autorización Pendiente</Text>
-              <Text style={styles.quickActionSubRed}>
-                Salida Museo Provincial (Firma PIN)
-              </Text>
-            </View>
-            <Text style={styles.quickActionArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
+    {/* SECCIÓN 2: "¿QUÉ HA PASADO HOY?" (Estado de ambos chicos con flexWrap) */}
+    <View style={styles.sectionWrap}>
+      <View>
+        <Text style={styles.sectionTitle}>¿Qué ha pasado hoy?</Text>
+        <Text style={styles.sectionSubtitle}>
+          Asistencia y novedades del día para Mateo y Sofía
+        </Text>
       </View>
 
-      {/* Espaciado de cortesía para el scroll */}
-      <View style={{ height: 36 }} />
-    </ScrollView>
+      <View style={styles.dualGrid}>
+        {/* Card Mateo: Tardanza */}
+        <View style={styles.dualCardMateo}>
+          <View>
+            <View style={styles.dualCardHeaderChild}>
+              <View style={styles.kidTagMateo}>
+                <Text style={styles.kidTagTextMateo}>🧒 Mateo</Text>
+              </View>
+              <Text style={styles.dualDateText}>13:10 hs</Text>
+            </View>
+            <Text style={styles.dualCardTitle}>Falta parcial</Text>
+            <Text style={styles.dualCardSub} numberOfLines={2}>
+              Ingreso posterior al horario
+            </Text>
+          </View>
+          <View style={styles.dualBadgeContainer}>
+            <View style={styles.badgeTardanza}>
+              <Text style={styles.badgeTardanzaText}>Tardanza (1/4)</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Card Sofía: Asistencia Completa */}
+        <View style={styles.dualCardSofia}>
+          <View>
+            <View style={styles.dualCardHeaderChild}>
+              <View style={styles.kidTagSofia}>
+                <Text style={styles.kidTagTextSofia}>👧 Sofía</Text>
+              </View>
+              <Text style={styles.dualDateText}>07:45 hs</Text>
+            </View>
+            <Text style={styles.dualCardTitle}>Puntual</Text>
+            <Text style={styles.dualCardSub} numberOfLines={2}>
+              Ingreso registrado en puerta
+            </Text>
+          </View>
+          <View style={styles.dualBadgeContainer}>
+            <View style={styles.badgePresentePuntual}>
+              <Text style={styles.badgePresentePuntualText}>Presente ✓</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+
+    {/* SECCIÓN 3: CALIFICACIONES Y BOLETINES RECIENTES */}
+    <View style={styles.sectionWrap}>
+      <View style={styles.sectionHeaderRow}>
+        <Text style={styles.sectionTitle}>Calificaciones y Boletines</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Archivos')}
+          style={styles.viewReportLink}
+        >
+          <Text style={styles.viewReportText}>Ver boletines</Text>
+          <Text style={styles.viewReportArrow}>→</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.gradesStack}>
+        {/* Calificación Mateo: Lengua Italiana */}
+        <View style={styles.gradeCard}>
+          <View style={styles.gradeLeft}>
+            <View style={styles.gradeIconBoxGreen}>
+              <Icon name="boletin" size={22} color={colors.primary} />
+              <Text style={styles.gradeFlagEmoji}>🇮🇹</Text>
+            </View>
+            <View style={styles.gradeTextCol}>
+              <View style={styles.gradeChildTagRow}>
+                <View style={styles.kidTagMateo}>
+                  <Text style={styles.kidTagTextMateo}>🧒 Mateo · Sala de 4</Text>
+                </View>
+                <Text style={styles.gradeTimeText}>Ayer, 11:30</Text>
+              </View>
+              <Text style={styles.gradeSubjectTitle} numberOfLines={1}>
+                Lengua y Cultura Italiana
+              </Text>
+              <Text style={styles.gradeAssessmentName} numberOfLines={1}>
+                Examen trimestral oral: Tradizioni e Famiglia
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.gradeScoreBadgeCol}>
+            <View style={styles.gradeScoreCircleGreen}>
+              <Text style={styles.gradeScoreNum}>9.8</Text>
+            </View>
+            <Text style={styles.gradeScoreLabelGreen}>Sobresaliente</Text>
+          </View>
+        </View>
+
+        {/* Calificación Sofía: Matemática */}
+        <View style={styles.gradeCard}>
+          <View style={styles.gradeLeft}>
+            <View style={styles.gradeIconBoxBlue}>
+              <Icon name="certificado" size={22} color="#1A73E8" />
+              <Text style={styles.gradeFlagEmoji}>🇦🇷</Text>
+            </View>
+            <View style={styles.gradeTextCol}>
+              <View style={styles.gradeChildTagRow}>
+                <View style={styles.kidTagSofia}>
+                  <Text style={styles.kidTagTextSofia}>👧 Sofía · 4° Grado "B"</Text>
+                </View>
+                <Text style={styles.gradeTimeText}>Hace 2 días</Text>
+              </View>
+              <Text style={styles.gradeSubjectTitle} numberOfLines={1}>
+                Matemática y Geometría
+              </Text>
+              <Text style={styles.gradeAssessmentName} numberOfLines={1}>
+                Evaluación Escrita: Fracciones y Ángulos
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.gradeScoreBadgeCol}>
+            <View style={styles.gradeScoreCircleBlue}>
+              <Text style={styles.gradeScoreNumBlue}>9.5</Text>
+            </View>
+            <Text style={styles.gradeScoreLabelBlue}>Distinguido</Text>
+          </View>
+        </View>
+      </View>
+    </View>
+
+    {/* SECCIÓN 4: GALERÍA DE LA SEMANA */}
+    <View style={styles.sectionWrap}>
+      <View style={styles.sectionHeaderRow}>
+        <Text style={styles.sectionTitle}>Galería de la semana</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Galería')}
+          style={styles.viewReportLink}
+        >
+          <Text style={styles.galleryExploreText}>Explorar todas</Text>
+          <Text style={styles.galleryExploreArrow}>›</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.galleryGrid}>
+        {/* Album Mateo */}
+        <TouchableOpacity
+          style={styles.galleryCard}
+          activeOpacity={0.88}
+          onPress={() => navigation.navigate('Galería')}
+        >
+          <View style={styles.galleryImageBoxArt}>
+            <Text style={styles.galleryPlaceholderEmoji}>🎨🖼️</Text>
+            <View style={styles.galleryPhotoBadge}>
+              <Text style={styles.galleryPhotoBadgeText}>📷 18</Text>
+            </View>
+            <View style={styles.galleryChildPill}>
+              <Text style={styles.galleryChildPillText}>🧒 Mateo</Text>
+            </View>
+          </View>
+          <View style={styles.galleryCardBody}>
+            <Text style={styles.galleryCardTitle} numberOfLines={1}>
+              Taller Expresión Artística
+            </Text>
+            <Text style={styles.galleryCardSubtitle}>Sala de 4 · Hace 2 días</Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Album Sofía */}
+        <TouchableOpacity
+          style={styles.galleryCard}
+          activeOpacity={0.88}
+          onPress={() => navigation.navigate('Galería')}
+        >
+          <View style={styles.galleryImageBoxGarden}>
+            <Text style={styles.galleryPlaceholderEmoji}>🌱🌻</Text>
+            <View style={styles.galleryPhotoBadge}>
+              <Text style={styles.galleryPhotoBadgeText}>📷 24</Text>
+            </View>
+            <View style={styles.galleryChildPill}>
+              <Text style={styles.galleryChildPillText}>👧 Sofía</Text>
+            </View>
+          </View>
+          <View style={styles.galleryCardBody}>
+            <Text style={styles.galleryCardTitle} numberOfLines={1}>
+              Huerta Escolar y Ciencias
+            </Text>
+            <Text style={styles.galleryCardSubtitle}>4° Grado · Hace 3 días</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
+
+    {/* SECCIÓN 5: ACCESOS RÁPIDOS INSTITUCIONALES */}
+    <View style={styles.quickAccessSection}>
+      <TouchableOpacity
+        style={styles.quickActionBtn}
+        activeOpacity={0.85}
+        onPress={() => navigation.navigate('Seguridad')}
+      >
+        <View style={styles.quickActionIconCircleGreen}>
+          <Icon name="seguridad" size={20} color={colors.primary} />
+        </View>
+        <View style={styles.quickActionTextCol}>
+          <Text style={styles.quickActionTitle}>Pases QR de Puerta</Text>
+          <Text style={styles.quickActionSub}>
+            Habilitar retiros para Mateo o Sofía
+          </Text>
+        </View>
+        <Text style={styles.quickActionArrow}>›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.quickActionBtn}
+        activeOpacity={0.85}
+        onPress={() => navigation.navigate('Archivos')}
+      >
+        <View style={styles.quickActionIconCircleRed}>
+          <Icon name="firma-digital" size={20} color={colors.coral} />
+        </View>
+        <View style={styles.quickActionTextCol}>
+          <Text style={styles.quickActionTitle}>Autorización Pendiente</Text>
+          <Text style={styles.quickActionSubRed}>
+            Salida Museo Provincial (Firma PIN)
+          </Text>
+        </View>
+        <Text style={styles.quickActionArrow}>›</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+
+  {/* Espaciado de cortesía para el scroll */ }
+  <View style={{ height: 36 }} />
+    </ScrollView >
   );
 };
 
@@ -533,7 +512,7 @@ const styles = StyleSheet.create({
   /* 1. HERO BANNER */
   heroHeader: {
     backgroundColor: colors.primary,
-    paddingBottom: 36,
+    paddingBottom: 26,
     paddingHorizontal: 16,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -660,7 +639,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   heroGreeting: {
-    marginTop: 16,
+    marginTop: 14,
     zIndex: 10,
   },
   heroHello: {
@@ -672,69 +651,20 @@ const styles = StyleSheet.create({
   heroHelloSmall: {
     fontSize: 19,
   },
-  heroChildrenSummaryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 8,
-    flexWrap: 'wrap',
-  },
-  childPillHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 9999,
-  },
-  childPillEmoji: {
-    fontSize: 13,
-  },
-  childPillText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
 
   /* 2. ESTUDIANTES A CARGO */
   floatingStudentsSection: {
-    marginTop: -22,
+    marginTop: -14,
     zIndex: 20,
   },
   studentsHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 18,
     marginBottom: 8,
-    flexWrap: 'wrap',
-    gap: 4,
-  },
-  studentsHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
   },
   studentsHeaderTitle: {
     fontSize: 14,
     fontWeight: '900',
     color: '#131B2E',
-  },
-  badgeTwoKids: {
-    backgroundColor: '#E8F7EE',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 9999,
-  },
-  badgeTwoKidsText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#005F2E',
-  },
-  studentsHeaderHint: {
-    fontSize: 11,
-    color: '#64748B',
   },
   studentsScrollContainer: {
     paddingHorizontal: 16,
