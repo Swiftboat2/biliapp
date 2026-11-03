@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
+import { Icon } from '../components/Icon';
 
 export const FilesScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -94,7 +95,7 @@ export const FilesScreen: React.FC = () => {
 
           <View style={styles.heroActionsRight}>
             <View style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}>
-              <Text style={styles.notifIcon}>🔔</Text>
+              <Icon name="notificaciones" size={19} color="#FFFFFF" />
               <View style={styles.notifRedDot} />
             </View>
             <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
@@ -106,7 +107,7 @@ export const FilesScreen: React.FC = () => {
         {/* Title and Category Tag */}
         <View style={styles.heroTextSection}>
           <View style={styles.heroContextPill}>
-            <Text style={styles.heroContextIcon}>📁</Text>
+            <Icon name="carpetas" size={12} color="#FFFFFF" />
             <Text style={styles.heroContextText}>
               GESTIÓN DOCUMENTAL / SECRETARÍA
             </Text>
@@ -121,7 +122,7 @@ export const FilesScreen: React.FC = () => {
 
         {/* Integrated Floating Search Bar */}
         <View style={styles.searchBarWrapper}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Icon name="buscar" size={16} color="#94A3B8" style={{ marginRight: 8 }} />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar circular, autorización o informe..."
@@ -130,7 +131,7 @@ export const FilesScreen: React.FC = () => {
             onChangeText={setSearchQuery}
           />
           <TouchableOpacity style={styles.filterTuneBtn} activeOpacity={0.8}>
-            <Text style={styles.filterTuneIcon}>⚙️</Text>
+            <Icon name="filtros" size={16} color="#64748B" />
           </TouchableOpacity>
         </View>
       </View>
@@ -241,7 +242,7 @@ export const FilesScreen: React.FC = () => {
           <View style={styles.sectionBlock}>
             <View style={styles.sectionHeaderRow}>
               <View style={styles.sectionTitleWithIcon}>
-                <Text style={styles.urgentAlertIcon}>⚠️</Text>
+                <Icon name="firma-digital" size={18} color={colors.coral} />
                 <Text style={styles.sectionTitle}>Acción Requerida</Text>
               </View>
               <View style={styles.urgentBadge}>
@@ -269,7 +270,7 @@ export const FilesScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.urgentIconBox}>
-                  <Text style={styles.urgentIcon}>📜</Text>
+                  <Icon name="firma-digital" size={24} color={colors.coral} />
                 </View>
               </View>
 
@@ -283,7 +284,7 @@ export const FilesScreen: React.FC = () => {
                   activeOpacity={0.88}
                   onPress={() => setIsPinModalOpen(true)}
                 >
-                  <Text style={styles.signButtonIcon}>✍️</Text>
+                  <Icon name="firma-digital" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
                   <Text style={styles.signButtonText}>Revisar y Firmar</Text>
                 </TouchableOpacity>
 
@@ -296,7 +297,7 @@ export const FilesScreen: React.FC = () => {
                     )
                   }
                 >
-                  <Text style={styles.previewBtnIcon}>👁️</Text>
+                  <Icon name="buscar" size={16} color="#1E40AF" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -307,7 +308,7 @@ export const FilesScreen: React.FC = () => {
         <View style={styles.sectionBlock}>
           <View style={styles.sectionHeaderRow}>
             <View style={styles.sectionTitleWithIcon}>
-              <Text style={styles.sectionTitleIcon}>📋</Text>
+              <Icon name="boletin" size={18} color={colors.primary} />
               <Text style={styles.sectionTitle}>Boletines e Informes</Text>
             </View>
             <TouchableOpacity activeOpacity={0.8}>
@@ -320,7 +321,7 @@ export const FilesScreen: React.FC = () => {
             <View style={styles.reportCard}>
               <View style={styles.reportTopRow}>
                 <View style={styles.pdfIconBox}>
-                  <Text style={styles.pdfEmoji}>📄</Text>
+                  <Icon name="boletin" size={20} color={colors.primary} />
                   <Text style={styles.pdfBadgeText}>PDF</Text>
                 </View>
 
@@ -347,7 +348,7 @@ export const FilesScreen: React.FC = () => {
                     )
                   }
                 >
-                  <Text style={styles.btnSecondaryIcon}>👁️</Text>
+                  <Icon name="buscar" size={14} color="#475569" style={{ marginRight: 4 }} />
                   <Text style={styles.btnSecondaryText}>Vista previa</Text>
                 </TouchableOpacity>
 
@@ -360,7 +361,7 @@ export const FilesScreen: React.FC = () => {
                     )
                   }
                 >
-                  <Text style={styles.btnCelesteIcon}>⬇️</Text>
+                  <Icon name="descargar-pdf" size={15} color="#FFFFFF" style={{ marginRight: 4 }} />
                   <Text style={styles.btnCelesteText}>Descargar</Text>
                 </TouchableOpacity>
               </View>
@@ -370,7 +371,7 @@ export const FilesScreen: React.FC = () => {
             <View style={styles.reportCard}>
               <View style={styles.reportTopRow}>
                 <View style={styles.pdfIconBox}>
-                  <Text style={styles.pdfEmoji}>📄</Text>
+                  <Icon name="certificado" size={20} color="#1A73E8" />
                   <Text style={styles.pdfBadgeText}>PDF</Text>
                 </View>
 
@@ -397,7 +398,7 @@ export const FilesScreen: React.FC = () => {
                     )
                   }
                 >
-                  <Text style={styles.btnSecondaryIcon}>👁️</Text>
+                  <Icon name="buscar" size={14} color="#475569" style={{ marginRight: 4 }} />
                   <Text style={styles.btnSecondaryText}>Vista previa</Text>
                 </TouchableOpacity>
 
@@ -410,7 +411,7 @@ export const FilesScreen: React.FC = () => {
                     )
                   }
                 >
-                  <Text style={styles.btnCelesteIcon}>⬇️</Text>
+                  <Icon name="descargar-pdf" size={15} color="#FFFFFF" style={{ marginRight: 4 }} />
                   <Text style={styles.btnCelesteText}>Descargar</Text>
                 </TouchableOpacity>
               </View>
@@ -422,7 +423,7 @@ export const FilesScreen: React.FC = () => {
         <View style={styles.sectionBlock}>
           <View style={styles.sectionHeaderRow}>
             <View style={styles.sectionTitleWithIcon}>
-              <Text style={styles.sectionTitleIcon}>📢</Text>
+              <Icon name="novedades" size={18} color="#854D0E" />
               <Text style={styles.sectionTitle}>Circulares & Reglamentos</Text>
             </View>
             <TouchableOpacity activeOpacity={0.8}>
@@ -435,7 +436,7 @@ export const FilesScreen: React.FC = () => {
             <View style={styles.docRowCard}>
               <View style={styles.docRowLeft}>
                 <View style={styles.docIconBoxCeleste}>
-                  <Text style={styles.docIconEmoji}>💳</Text>
+                  <Icon name="novedades" size={18} color="#1A73E8" />
                 </View>
                 <View style={styles.docTextCol}>
                   <Text style={styles.docTitle} numberOfLines={1}>
@@ -456,7 +457,7 @@ export const FilesScreen: React.FC = () => {
                   handleSimulateDownload('Circular N° 14 - Rematriculación 2027.pdf')
                 }
               >
-                <Text style={styles.cloudDownloadIcon}>☁️⬇️</Text>
+                <Icon name="descargar-pdf" size={18} color="#1A73E8" />
               </TouchableOpacity>
             </View>
 
@@ -464,7 +465,7 @@ export const FilesScreen: React.FC = () => {
             <View style={styles.docRowCard}>
               <View style={styles.docRowLeft}>
                 <View style={styles.docIconBoxGreen}>
-                  <Text style={styles.docIconEmoji}>⚖️</Text>
+                  <Icon name="carpetas" size={18} color={colors.primary} />
                 </View>
                 <View style={styles.docTextCol}>
                   <Text style={styles.docTitle} numberOfLines={1}>
@@ -485,7 +486,7 @@ export const FilesScreen: React.FC = () => {
                   handleSimulateDownload('Reglamento Convivencia & Uniformes 2026.pdf')
                 }
               >
-                <Text style={styles.cloudDownloadIcon}>☁️⬇️</Text>
+                <Icon name="descargar-pdf" size={18} color={colors.primary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -516,7 +517,7 @@ export const FilesScreen: React.FC = () => {
                 setIsUploadModalOpen(true);
               }}
             >
-              <Text style={styles.uploadActionIcon}>📷</Text>
+              <Icon name="camara" size={16} color="#1A73E8" style={{ marginRight: 6 }} />
               <Text style={styles.btnUploadPhotoText}>Tomar Foto</Text>
             </TouchableOpacity>
 
@@ -528,7 +529,7 @@ export const FilesScreen: React.FC = () => {
                 setIsUploadModalOpen(true);
               }}
             >
-              <Text style={styles.uploadActionIcon}>📎</Text>
+              <Icon name="adjunto" size={16} color="#475569" style={{ marginRight: 6 }} />
               <Text style={styles.btnUploadPdfText}>Adjuntar PDF</Text>
             </TouchableOpacity>
           </View>
@@ -553,7 +554,7 @@ export const FilesScreen: React.FC = () => {
                 </Text>
               </View>
               <TouchableOpacity onPress={() => setIsPinModalOpen(false)}>
-                <Text style={styles.modalCloseText}>✕</Text>
+                <Icon name="cerrar" size={20} color="#94A3B8" />
               </TouchableOpacity>
             </View>
 
@@ -578,8 +579,12 @@ export const FilesScreen: React.FC = () => {
               </View>
 
               <View style={styles.pinAuditNotice}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                  <Icon name="candado" size={14} color="#92400E" />
+                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#92400E' }}>Seguridad Criptográfica</Text>
+                </View>
                 <Text style={styles.pinAuditText}>
-                  🛡️ Esta firma genera un registro de auditoría inmutable con tu DNI, fecha, hora y hash criptográfico institucional.
+                  Esta firma genera un registro de auditoría inmutable con tu DNI, fecha, hora y hash criptográfico institucional.
                 </Text>
               </View>
 
@@ -607,7 +612,7 @@ export const FilesScreen: React.FC = () => {
                 {uploadType === 'PHOTO' ? 'Tomar Foto de Certificado' : 'Adjuntar Documento PDF'}
               </Text>
               <TouchableOpacity onPress={() => setIsUploadModalOpen(false)}>
-                <Text style={styles.modalCloseText}>✕</Text>
+                <Icon name="cerrar" size={20} color="#94A3B8" />
               </TouchableOpacity>
             </View>
 
@@ -626,9 +631,12 @@ export const FilesScreen: React.FC = () => {
               </View>
 
               <View style={styles.uploadDropZone}>
-                <Text style={styles.uploadDropIcon}>
-                  {uploadType === 'PHOTO' ? '📸' : '📑'}
-                </Text>
+                <Icon
+                  name={uploadType === 'PHOTO' ? 'camara' : 'descargar-pdf'}
+                  size={36}
+                  color={colors.primary}
+                  style={{ marginBottom: 6 }}
+                />
                 <Text style={styles.uploadDropTitle}>
                   {uploadType === 'PHOTO'
                     ? 'Toca para abrir la cámara'

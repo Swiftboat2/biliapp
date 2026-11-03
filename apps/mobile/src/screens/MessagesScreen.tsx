@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
+import { Icon } from '../components/Icon';
 
 interface ConversationItem {
   id: string;
@@ -197,7 +198,7 @@ export const MessagesScreen: React.FC = () => {
 
           <View style={styles.heroActionsRight}>
             <View style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}>
-              <Text style={styles.notifIcon}>🔔</Text>
+              <Icon name="notificaciones" size={19} color="#FFFFFF" />
               <View style={styles.notifRedDot} />
             </View>
             <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
@@ -209,7 +210,7 @@ export const MessagesScreen: React.FC = () => {
         {/* Title and Context Tag */}
         <View style={styles.heroTextSection}>
           <View style={styles.heroContextPill}>
-            <Text style={styles.heroContextIcon}>💬</Text>
+            <Icon name="chat" size={12} color="#FFFFFF" />
             <Text style={styles.heroContextText}>CANAL INSTITUCIONAL</Text>
           </View>
           <Text style={[styles.heroMainTitle, isSmallScreen && styles.heroMainTitleSmall]}>
@@ -222,7 +223,7 @@ export const MessagesScreen: React.FC = () => {
 
         {/* Integrated Floating Search Bar */}
         <View style={styles.searchBarWrapper}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Icon name="buscar" size={16} color="#94A3B8" style={{ marginRight: 8 }} />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar por hijo, docente o tema..."
@@ -231,7 +232,7 @@ export const MessagesScreen: React.FC = () => {
             onChangeText={setSearchQuery}
           />
           <TouchableOpacity style={styles.filterTuneBtn} activeOpacity={0.8}>
-            <Text style={styles.filterTuneIcon}>⚙️</Text>
+            <Icon name="filtros" size={16} color="#64748B" />
           </TouchableOpacity>
         </View>
       </View>
@@ -513,9 +514,9 @@ export const MessagesScreen: React.FC = () => {
                         </Text>
                       </View>
                     ) : item.hasAttachment ? (
-                      <Text style={styles.attachmentIcon}>📎</Text>
+                      <Icon name="adjunto" size={15} color="#94A3B8" />
                     ) : item.isRead ? (
-                      <Text style={styles.doubleCheckRead}>✓✓</Text>
+                      <Icon name="leido" size={16} color={colors.primary} />
                     ) : null}
                   </View>
                 </View>
@@ -527,7 +528,7 @@ export const MessagesScreen: React.FC = () => {
           /* Banner Horario de Atención de Mensajería */
           <View style={styles.scheduleInfoBanner}>
             <View style={styles.scheduleIconCircle}>
-              <Text style={styles.scheduleIconEmoji}>⏰</Text>
+              <Icon name="historial" size={18} color="#1A73E8" />
             </View>
             <View style={styles.scheduleTextCol}>
               <Text style={styles.scheduleTitle}>
@@ -547,7 +548,7 @@ export const MessagesScreen: React.FC = () => {
         activeOpacity={0.85}
         onPress={() => setIsComposeOpen(true)}
       >
-        <Text style={styles.composeFabIcon}>✏️</Text>
+        <Icon name="redactar" size={18} color="#FFFFFF" />
         <Text style={styles.composeFabText}>Nuevo mensaje</Text>
       </TouchableOpacity>
 
@@ -573,7 +574,7 @@ export const MessagesScreen: React.FC = () => {
                 <Text style={styles.modalRole}>{selectedChat?.senderRole}</Text>
               </View>
               <TouchableOpacity onPress={() => setSelectedChat(null)}>
-                <Text style={styles.modalCloseText}>✕</Text>
+                <Icon name="cerrar" size={20} color="#94A3B8" />
               </TouchableOpacity>
             </View>
 
@@ -611,7 +612,7 @@ export const MessagesScreen: React.FC = () => {
             <View style={styles.modalHeader}>
               <Text style={styles.modalSender}>Nuevo Mensaje Institucional</Text>
               <TouchableOpacity onPress={() => setIsComposeOpen(false)}>
-                <Text style={styles.modalCloseText}>✕</Text>
+                <Icon name="cerrar" size={20} color="#94A3B8" />
               </TouchableOpacity>
             </View>
 

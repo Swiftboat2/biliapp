@@ -244,3 +244,73 @@ graph TD
 4. **Vectores y Recursos:**
    - Ubicación del escudo oficial: [`apps/mobile/assets/logo-colegio.png`](file:///c:/Users/Pc/Desktop/BiliAPP/apps/mobile/assets/logo-colegio.png).
 
+---
+
+## 8. Biblioteca Oficial de Iconos Vectoriales (2px Stroke Vector)
+
+Todos los iconos del sistema de diseño se rigen por el estándar de trazo regular de **2px (2px stroke Vector)** con terminaciones redondeadas (*round caps & joins*), garantizando máxima legibilidad y sobriedad institucional.
+
+```
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ 1. NAVEGACIÓN   │ │ 2. SEGURIDAD QR │ │ 3. ACADÉMICO    │
+│  Home, Chat,    │ │  Pase QR, Lock, │ │  Boletín, PDF,  │
+│  Carpetas,      │ │  Autorizar,     │ │  Firma Digital, │
+│  Galería,       │ │  Historial,     │ │  Graduación,    │
+│  Seguridad      │ │  Guardia        │ │  Certificado    │
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ 4. VIDA DIARIA  │ │ 5. COMUNICACIÓN │ │ 6. MULTIMEDIA   │
+│  Comedor,       │ │  Notificaciones,│ │  Buscar, Filtro,│
+│  Descanso,      │ │  Redactar,      │ │  Cámara, Share, │
+│  Primeros Aux,  │ │  Novedades,     │ │  Favorito,      │
+│  Deporte, Taller│ │  Adjunto, Leído │ │  Fullscreen     │
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+```
+
+### 8.1. Matriz de Iconos por Categoría
+
+| Categoría | Nombre del Ícono | Glifo / Referencia Visual | Token en Código | Biblioteca Base |
+| :--- | :--- | :--- | :--- | :--- |
+| **Navegación** | Home | Casa con tejado y puerta | `'home'` | Feather (`home`) |
+| **Navegación** | Chat | Burbuja de diálogo circular | `'chat'` | Feather (`message-circle`) |
+| **Navegación** | Carpetas | Carpeta con pestaña izquierda | `'carpetas'` | Feather (`folder`) |
+| **Navegación** | Galería | Marco fotográfico con montaña y sol | `'galeria'` | Feather (`image`) |
+| **Navegación** | Seguridad | Escudo con tilde interno de verificación | `'seguridad'` | MaterialCommunityIcons (`shield-check-outline`) |
+| **Seguridad QR**| Pase QR | Código QR con corchetes de visor | `'pase-qr'` | MaterialCommunityIcons (`qrcode-scan`) |
+| **Seguridad QR**| Autorizar | Círculo con tilde de confirmación | `'autorizar'` | Feather (`check-circle`) |
+| **Seguridad QR**| Historial | Reloj con flecha circular contra reloj | `'historial'` | MaterialCommunityIcons (`history`) |
+| **Seguridad QR**| Guardia | Agente escolar con gorra institucional | `'guardia'` | MaterialCommunityIcons (`shield-account-outline`) |
+| **Seguridad QR**| Candado | Candado cerrado de seguridad criptográfica | `'candado'` | Feather (`lock`) |
+| **Académico** | Boletín | Portapapeles con lista de verificación | `'boletin'` | MaterialCommunityIcons (`clipboard-check-outline`) |
+| **Académico** | Firma Digital | Pluma / bolígrafo trazando firma | `'firma-digital'` | Feather (`edit-3`) |
+| **Académico** | Descargar PDF | Bandeja con flecha descendente | `'descargar-pdf'` | Feather (`download`) |
+| **Académico** | Graduación | Birrete académico institucional | `'graduacion'` | Ionicons (`school-outline`) |
+| **Académico** | Certificado | Diploma oficial con medalla y cintas | `'certificado'` | MaterialCommunityIcons (`certificate-outline`) |
+| **Vida Diaria** | Comedor | Tenedor y cuchara paralelos | `'comedor'` | MaterialCommunityIcons (`silverware-fork-knife`) |
+| **Vida Diaria** | Descanso | Cama con cabecero y almohada | `'descanso'` | MaterialCommunityIcons (`bed-outline`) |
+| **Vida Diaria** | Primeros Auxilios| Maletín médico de emergencia con cruz | `'primeros-auxilios'`| MaterialCommunityIcons (`medical-bag`) |
+| **Vida Diaria** | Deportes | Atleta corriendo en zancada | `'deportes'` | MaterialCommunityIcons (`run`) |
+| **Vida Diaria** | Talleres | Llave inglesa cruzada con destornillador | `'talleres'` | MaterialCommunityIcons (`tools`) |
+| **Comunicación** | Notificaciones | Campana de alerta con punto superior | `'notificaciones'` | Feather (`bell`) |
+| **Comunicación** | Redactar | Cuadrado de documento con lápiz | `'redactar'` | Feather (`edit`) |
+| **Comunicación** | Novedades | Megáfono / altavoz escolar | `'novedades'` | Ionicons (`megaphone-outline`) |
+| **Comunicación** | Adjunto | Clip sujetapapeles metálico | `'adjunto'` | Feather (`paperclip`) |
+| **Comunicación** | Leído | Doble tilde de confirmación de lectura | `'leido'` | Ionicons (`checkmark-done`) |
+| **Multimedia** | Buscar | Lupa con mango diagonal | `'buscar'` | Feather (`search`) |
+| **Multimedia** | Filtros | Embudo de segmentación | `'filtros'` | Feather (`filter`) |
+| **Multimedia** | Cámara | Cuerpo de cámara fotográfica | `'camara'` | Feather (`camera`) |
+| **Multimedia** | Compartir | Flecha curva saliente | `'compartir'` | Feather (`share-2`) |
+| **Multimedia** | Favorito | Silueta de corazón / Me gusta | `'favorito'` | Feather (`heart`) / Ionicons (`heart`) |
+| **Multimedia** | Pantalla Completa| 4 esquinas expansivas hacia afuera | `'pantalla-completa'`| Feather (`maximize-2`) |
+
+### 8.2. Uso en React Native
+```tsx
+import { Icon } from '../components/Icon';
+
+// Ejemplo en botón o cabecera:
+<Icon name="home" size={22} color={colors.primary} />
+<Icon name="pase-qr" size={24} color="#1A73E8" />
+<Icon name="firma-digital" size={20} color={colors.coral} />
+```
+
+

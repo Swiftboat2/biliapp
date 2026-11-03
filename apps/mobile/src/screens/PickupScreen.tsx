@@ -16,6 +16,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 import { useActiveStudent } from '../context/StudentContext';
+import { Icon } from '../components/Icon';
 
 interface AuthorizedPerson {
   id: string;
@@ -146,7 +147,7 @@ export const PickupScreen: React.FC = () => {
 
           <View style={styles.heroActionsRight}>
             <View style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}>
-              <Text style={styles.notifIcon}>🔔</Text>
+              <Icon name="notificaciones" size={19} color="#FFFFFF" />
               <View style={styles.notifRedDot} />
             </View>
             <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
@@ -158,7 +159,7 @@ export const PickupScreen: React.FC = () => {
         {/* Title and Context Tag */}
         <View style={styles.heroTextSection}>
           <View style={styles.heroContextPill}>
-            <Text style={styles.heroContextIcon}>🔒</Text>
+            <Icon name="candado" size={12} color="#FFFFFF" />
             <Text style={styles.heroContextText}>
               CONTROL DE ACCESO Y PUERTA
             </Text>
@@ -221,7 +222,7 @@ export const PickupScreen: React.FC = () => {
                   {isMateo ? '🧒' : '👧'}
                 </Text>
                 <View style={styles.qrAvatarCheck}>
-                  <Text style={styles.qrAvatarCheckText}>✓</Text>
+                  <Icon name="check" size={9} color="#FFFFFF" />
                 </View>
               </View>
 
@@ -267,7 +268,7 @@ export const PickupScreen: React.FC = () => {
 
                 {/* Central Emblem Badge */}
                 <View style={styles.qrCenterBadge}>
-                  <Text style={styles.qrCenterBadgeText}>🇮🇹</Text>
+                  <Icon name="pase-qr" size={20} color={colors.primary} />
                 </View>
 
                 {/* Simulated Data Dots */}
@@ -279,7 +280,7 @@ export const PickupScreen: React.FC = () => {
               </View>
 
               <View style={styles.qrHashRow}>
-                <Text style={styles.qrHashIcon}>🔐</Text>
+                <Icon name="candado" size={12} color="#64748B" />
                 <Text style={styles.qrHashText}>
                   TOKEN CRIPTOGRÁFICO SHA-256 SEGURO
                 </Text>
@@ -289,14 +290,14 @@ export const PickupScreen: React.FC = () => {
             {/* Timer and Expiration */}
             <View style={styles.qrTimerRow}>
               <View style={styles.qrValidUntilCol}>
-                <Text style={styles.qrTimerIcon}>⏱️</Text>
+                <Icon name="historial" size={13} color="#475569" />
                 <Text style={styles.qrValidText}>
                   Válido hasta: <Text style={styles.qrValidBold}>17:45 hs</Text>
                 </Text>
               </View>
 
               <View style={styles.qrRefreshCol}>
-                <Text style={styles.qrSyncIcon}>🔄</Text>
+                <Icon name="historial" size={12} color="#94A3B8" />
                 <Text style={styles.qrRefreshText}>
                   Actualiza en {secondsLeft}s
                 </Text>
@@ -316,7 +317,7 @@ export const PickupScreen: React.FC = () => {
                 )
               }
             >
-              <Text style={styles.btnShareIcon}>📤</Text>
+              <Icon name="compartir" size={14} color="#1A73E8" />
               <Text style={styles.btnShareText}>Compartir código</Text>
             </TouchableOpacity>
 
@@ -330,7 +331,7 @@ export const PickupScreen: React.FC = () => {
                 )
               }
             >
-              <Text style={styles.btnFullscreenIcon}>⛶</Text>
+              <Icon name="pantalla-completa" size={14} color="#334155" />
               <Text style={styles.btnFullscreenText}>Pantalla completa</Text>
             </TouchableOpacity>
           </View>
@@ -344,7 +345,7 @@ export const PickupScreen: React.FC = () => {
         >
           <View style={styles.exceptionalLeftRow}>
             <View style={styles.exceptionalIconCircle}>
-              <Text style={styles.exceptionalIconText}>➕👤</Text>
+              <Icon name="guardia" size={22} color="#FFFFFF" />
             </View>
             <View style={styles.exceptionalTextCol}>
               <Text style={styles.exceptionalTitle}>
@@ -434,7 +435,7 @@ export const PickupScreen: React.FC = () => {
         <View style={styles.sectionCard}>
           <View style={styles.sectionHeaderRow}>
             <View style={styles.sectionTitleWithCount}>
-              <Text style={styles.historyIcon}>🕒</Text>
+              <Icon name="historial" size={17} color="#131B2E" />
               <Text style={styles.sectionTitle}>Historial de Puerta</Text>
             </View>
             <TouchableOpacity
@@ -511,7 +512,7 @@ export const PickupScreen: React.FC = () => {
         <View style={styles.safetyProtocolCard}>
           <View style={styles.safetyProtocolTop}>
             <View style={styles.safetyShieldCircle}>
-              <Text style={styles.safetyShieldEmoji}>🛡️</Text>
+              <Icon name="seguridad" size={20} color="#FFFFFF" />
             </View>
             <View style={styles.safetyTextCol}>
               <Text style={styles.safetyProtocolTitle}>
@@ -563,7 +564,7 @@ export const PickupScreen: React.FC = () => {
                 </Text>
               </View>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text style={styles.modalCloseText}>✕</Text>
+                <Icon name="cerrar" size={20} color="#94A3B8" />
               </TouchableOpacity>
             </View>
 

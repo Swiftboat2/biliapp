@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
+import { Icon } from '../components/Icon';
 
 export const GalleryScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -76,7 +77,7 @@ export const GalleryScreen: React.FC = () => {
 
           <View style={styles.heroActionsRight}>
             <View style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}>
-              <Text style={styles.notifIcon}>🔔</Text>
+              <Icon name="notificaciones" size={19} color="#FFFFFF" />
               <View style={styles.notifRedDot} />
             </View>
             <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
@@ -88,7 +89,7 @@ export const GalleryScreen: React.FC = () => {
         {/* Title and Context Tag */}
         <View style={styles.heroTextSection}>
           <View style={styles.heroContextPill}>
-            <Text style={styles.heroContextIcon}>📷</Text>
+            <Icon name="camara" size={12} color="#FFFFFF" />
             <Text style={styles.heroContextText}>
               REGISTRO PEDAGÓGICO / TALLERES
             </Text>
@@ -103,7 +104,7 @@ export const GalleryScreen: React.FC = () => {
 
         {/* Integrated Floating Search Bar */}
         <View style={styles.searchBarWrapper}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Icon name="buscar" size={16} color="#94A3B8" style={{ marginRight: 8 }} />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar por sala, evento o fecha..."
@@ -112,7 +113,7 @@ export const GalleryScreen: React.FC = () => {
             onChangeText={setSearchQuery}
           />
           <TouchableOpacity style={styles.filterTuneBtn} activeOpacity={0.8}>
-            <Text style={styles.filterTuneIcon}>⚙️</Text>
+            <Icon name="filtros" size={16} color="#64748B" />
           </TouchableOpacity>
         </View>
       </View>
@@ -280,7 +281,7 @@ export const GalleryScreen: React.FC = () => {
                 activeOpacity={0.85}
                 onPress={handleDownloadSelection}
               >
-                <Text style={styles.btnDownloadHDIcon}>⬇️</Text>
+                <Icon name="descargar-pdf" size={18} color="#1A73E8" />
               </TouchableOpacity>
             </View>
           </View>
@@ -310,16 +311,19 @@ export const GalleryScreen: React.FC = () => {
                 <Text style={styles.gridEmoji}>🌱🥕🍅</Text>
 
                 <View style={styles.gridPhotoBadge}>
-                  <Text style={styles.gridPhotoBadgeText}>📷 16</Text>
+                  <Icon name="camara" size={11} color="#131B2E" style={{ marginRight: 3 }} />
+                  <Text style={styles.gridPhotoBadgeText}>16</Text>
                 </View>
 
                 <TouchableOpacity
                   style={styles.favHeartBtn}
                   onPress={() => toggleFavorite('huerta')}
                 >
-                  <Text style={styles.favHeartText}>
-                    {favorites['huerta'] ? '❤️' : '🤍'}
-                  </Text>
+                  <Icon
+                    name={favorites['huerta'] ? 'favorito-fill' : 'favorito'}
+                    size={15}
+                    color={favorites['huerta'] ? colors.coral : '#FFFFFF'}
+                  />
                 </TouchableOpacity>
               </View>
 
@@ -349,16 +353,19 @@ export const GalleryScreen: React.FC = () => {
                 <Text style={styles.gridEmoji}>🏃‍♂️🏀🏅</Text>
 
                 <View style={styles.gridPhotoBadgeBlue}>
-                  <Text style={styles.gridPhotoBadgeText}>📷 32</Text>
+                  <Icon name="camara" size={11} color="#131B2E" style={{ marginRight: 3 }} />
+                  <Text style={styles.gridPhotoBadgeText}>32</Text>
                 </View>
 
                 <TouchableOpacity
                   style={styles.favHeartBtn}
                   onPress={() => toggleFavorite('torneo')}
                 >
-                  <Text style={styles.favHeartText}>
-                    {favorites['torneo'] ? '❤️' : '🤍'}
-                  </Text>
+                  <Icon
+                    name={favorites['torneo'] ? 'favorito-fill' : 'favorito'}
+                    size={15}
+                    color={favorites['torneo'] ? colors.coral : '#FFFFFF'}
+                  />
                 </TouchableOpacity>
               </View>
 
@@ -384,7 +391,7 @@ export const GalleryScreen: React.FC = () => {
         <View style={styles.privacyBanner}>
           <View style={styles.privacyTopRow}>
             <View style={styles.privacyIconCircle}>
-              <Text style={styles.privacyIconEmoji}>🛡️</Text>
+              <Icon name="seguridad" size={18} color="#FFFFFF" />
             </View>
             <View style={styles.privacyTextCol}>
               <Text style={styles.privacyTitle}>Privacidad Protegida</Text>
@@ -400,7 +407,7 @@ export const GalleryScreen: React.FC = () => {
               activeOpacity={0.85}
               onPress={handleRequestPrivacy}
             >
-              <Text style={styles.privacyLockIcon}>🔓</Text>
+              <Icon name="candado" size={12} color="#005F2E" style={{ marginRight: 4 }} />
               <Text style={styles.privacyRequestBtnText}>
                 Solicitar permiso de difusión
               </Text>
@@ -885,6 +892,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 9999,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   gridPhotoBadgeBlue: {
     position: 'absolute',
@@ -894,6 +903,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 9999,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   gridPhotoBadgeText: {
     fontSize: 9,

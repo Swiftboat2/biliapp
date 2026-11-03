@@ -11,6 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useActiveStudent } from '../context/StudentContext';
 import { colors } from '../theme/colors';
+import { Icon } from '../components/Icon';
 
 export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { students, setActiveStudent } = useActiveStudent();
@@ -64,7 +65,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               activeOpacity={0.85}
               onPress={() => navigation.navigate('Mensajes')}
             >
-              <Text style={styles.notifIcon}>🔔</Text>
+              <Icon name="notificaciones" size={19} color="#FFFFFF" />
               <View style={styles.notifRedDot} />
             </TouchableOpacity>
 
@@ -128,7 +129,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                   <Text style={styles.studentAvatarEmoji}>🧒</Text>
                 </View>
                 <View style={styles.checkBadge}>
-                  <Text style={styles.checkBadgeText}>✓</Text>
+                  <Icon name="check" size={9} color="#FFFFFF" />
                 </View>
               </View>
 
@@ -172,7 +173,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                   <Text style={styles.studentAvatarEmoji}>👧</Text>
                 </View>
                 <View style={styles.checkBadge}>
-                  <Text style={styles.checkBadgeText}>✓</Text>
+                  <Icon name="check" size={9} color="#FFFFFF" />
                 </View>
               </View>
 
@@ -231,7 +232,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <Text style={styles.eventChildTextMateo}>🧒 Mateo · Sala de 4</Text>
                   </View>
                   <View style={styles.eventIconCircleYellow}>
-                    <Text style={styles.eventEmoji}>🎉</Text>
+                    <Icon name="novedades" size={15} color="#854D0E" />
                   </View>
                 </View>
                 <Text style={styles.eventCardTitle} numberOfLines={2}>
@@ -251,7 +252,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <Text style={styles.eventChildTextSofia}>👧 Sofía · 4° Grado</Text>
                   </View>
                   <View style={styles.eventIconCircleBlue}>
-                    <Text style={styles.eventEmoji}>🏃‍♀️</Text>
+                    <Icon name="deportes" size={16} color="#1A73E8" />
                   </View>
                 </View>
                 <Text style={styles.eventCardTitle} numberOfLines={2}>
@@ -271,7 +272,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <Text style={styles.eventChildTextFamily}>👨‍👩‍👧‍👦 Toda la Familia</Text>
                   </View>
                   <View style={styles.eventIconCircleGreen}>
-                    <Text style={styles.eventEmoji}>🏫</Text>
+                    <Icon name="graduacion" size={16} color={colors.primary} />
                   </View>
                 </View>
                 <Text style={styles.eventCardTitle} numberOfLines={2}>
@@ -357,7 +358,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <View style={styles.gradeCard}>
               <View style={styles.gradeLeft}>
                 <View style={styles.gradeIconBoxGreen}>
-                  <Text style={styles.gradeBookEmoji}>📖</Text>
+                  <Icon name="boletin" size={22} color={colors.primary} />
                   <Text style={styles.gradeFlagEmoji}>🇮🇹</Text>
                 </View>
                 <View style={styles.gradeTextCol}>
@@ -388,7 +389,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <View style={styles.gradeCard}>
               <View style={styles.gradeLeft}>
                 <View style={styles.gradeIconBoxBlue}>
-                  <Text style={styles.gradeBookEmoji}>📐</Text>
+                  <Icon name="certificado" size={22} color="#1A73E8" />
                   <Text style={styles.gradeFlagEmoji}>🇦🇷</Text>
                 </View>
                 <View style={styles.gradeTextCol}>
@@ -487,7 +488,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             onPress={() => navigation.navigate('Seguridad')}
           >
             <View style={styles.quickActionIconCircleGreen}>
-              <Text style={styles.quickActionEmoji}>🛡️</Text>
+              <Icon name="seguridad" size={20} color={colors.primary} />
             </View>
             <View style={styles.quickActionTextCol}>
               <Text style={styles.quickActionTitle}>Pases QR de Puerta</Text>
@@ -504,7 +505,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             onPress={() => navigation.navigate('Archivos')}
           >
             <View style={styles.quickActionIconCircleRed}>
-              <Text style={styles.quickActionEmoji}>✍️</Text>
+              <Icon name="firma-digital" size={20} color={colors.coral} />
             </View>
             <View style={styles.quickActionTextCol}>
               <Text style={styles.quickActionTitle}>Autorización Pendiente</Text>

@@ -8,7 +8,8 @@ import { GalleryScreen } from '../screens/GalleryScreen';
 import { PickupScreen } from '../screens/PickupScreen';
 import { AttendanceScreen } from '../screens/AttendanceScreen';
 import { colors } from '../theme/colors';
-import { Text, Platform } from 'react-native';
+import { Platform } from 'react-native';
+import { Icon } from '../components/Icon';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,7 +53,7 @@ export const BottomTabNavigator: React.FC = () => {
         name="Inicio"
         component={HomeScreen}
         options={{
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text>,
+          tabBarIcon: ({ color }) => <Icon name="home" size={22} color={color} />,
         }}
       />
 
@@ -60,7 +61,7 @@ export const BottomTabNavigator: React.FC = () => {
         name="Mensajes"
         component={MessagesScreen}
         options={{
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>💬</Text>,
+          tabBarIcon: ({ color }) => <Icon name="chat" size={22} color={color} />,
           tabBarBadge: 3,
           tabBarBadgeStyle: {
             backgroundColor: colors.coral,
@@ -78,7 +79,7 @@ export const BottomTabNavigator: React.FC = () => {
         name="Archivos"
         component={FilesScreen}
         options={{
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📁</Text>,
+          tabBarIcon: ({ color }) => <Icon name="carpetas" size={22} color={color} />,
         }}
       />
 
@@ -86,7 +87,7 @@ export const BottomTabNavigator: React.FC = () => {
         name="Galería"
         component={GalleryScreen}
         options={{
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🖼️</Text>,
+          tabBarIcon: ({ color }) => <Icon name="galeria" size={22} color={color} />,
         }}
       />
 
@@ -94,7 +95,7 @@ export const BottomTabNavigator: React.FC = () => {
         name="Seguridad"
         component={PickupScreen}
         options={{
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🛡️</Text>,
+          tabBarIcon: ({ color }) => <Icon name="seguridad" size={22} color={color} />,
         }}
       />
 

@@ -12,6 +12,7 @@
   "dependencies": {
     "@biliapp/shared-types": "workspace:*",
     "@biliapp/validators": "workspace:*",
+    "@expo/vector-icons": "^15.1.1",
     "@react-navigation/bottom-tabs": "^7.2.1",
     "@react-navigation/native": "^7.1.0",
     "expo": "~58.0.22",
