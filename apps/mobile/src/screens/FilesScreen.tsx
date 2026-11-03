@@ -151,13 +151,18 @@ export const FilesScreen: React.FC = () => {
             onPress={() => setActiveCategory('TODOS')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="carpetas"
+              size={13}
+              color={activeCategory === 'TODOS' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeCategory === 'TODOS' && styles.filterChipTextActive,
               ]}
             >
-              📊 Todos
+              Todos
             </Text>
           </TouchableOpacity>
 
@@ -169,13 +174,18 @@ export const FilesScreen: React.FC = () => {
             onPress={() => setActiveCategory('BOLETINES')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="boletin"
+              size={13}
+              color={activeCategory === 'BOLETINES' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeCategory === 'BOLETINES' && styles.filterChipTextActive,
               ]}
             >
-              🏫 Boletines
+              Boletines
             </Text>
           </TouchableOpacity>
 
@@ -187,13 +197,18 @@ export const FilesScreen: React.FC = () => {
             onPress={() => setActiveCategory('AUTORIZACIONES')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="firma-digital"
+              size={13}
+              color={activeCategory === 'AUTORIZACIONES' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeCategory === 'AUTORIZACIONES' && styles.filterChipTextActive,
               ]}
             >
-              ✍️ Autorizaciones
+              Autorizaciones
             </Text>
           </TouchableOpacity>
 
@@ -205,13 +220,18 @@ export const FilesScreen: React.FC = () => {
             onPress={() => setActiveCategory('CIRCULARES')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="novedades"
+              size={13}
+              color={activeCategory === 'CIRCULARES' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeCategory === 'CIRCULARES' && styles.filterChipTextActive,
               ]}
             >
-              📢 Circulares
+              Circulares
             </Text>
           </TouchableOpacity>
 
@@ -223,13 +243,18 @@ export const FilesScreen: React.FC = () => {
             onPress={() => setActiveCategory('FICHAS')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="primeros-auxilios"
+              size={13}
+              color={activeCategory === 'FICHAS' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeCategory === 'FICHAS' && styles.filterChipTextActive,
               ]}
             >
-              🩺 Fichas Médicas
+              Fichas Médicas
             </Text>
           </TouchableOpacity>
         </ScrollView>
@@ -264,9 +289,12 @@ export const FilesScreen: React.FC = () => {
                   <Text style={styles.urgentTitle}>
                     Autorización Salida Didáctica: Museo Provincial
                   </Text>
-                  <Text style={styles.urgentStudent}>
-                    🧒 Mateo López · Sala de 4 Años
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 3 }}>
+                    <Icon name="graduacion" size={13} color="#005F2E" />
+                    <Text style={styles.urgentStudent}>
+                      Mateo López · Sala de 4 Años
+                    </Text>
+                  </View>
                 </View>
 
                 <View style={styles.urgentIconBox}>
@@ -496,7 +524,7 @@ export const FilesScreen: React.FC = () => {
         <View style={styles.uploadSectionBanner}>
           <View style={styles.uploadTopRow}>
             <View style={styles.uploadIconCircle}>
-              <Text style={styles.uploadIconEmoji}>📤</Text>
+              <Icon name="subir" size={20} color={colors.primary} />
             </View>
             <View style={styles.uploadTextCol}>
               <Text style={styles.uploadTitle}>
@@ -622,11 +650,13 @@ export const FilesScreen: React.FC = () => {
               </Text>
 
               <View style={styles.uploadStudentSelectRow}>
-                <View style={styles.uploadStudentPillActive}>
-                  <Text style={styles.uploadStudentPillActiveText}>🧒 Mateo López (Sala 4)</Text>
+                <View style={[styles.uploadStudentPillActive, { flexDirection: 'row', alignItems: 'center', gap: 5 }]}>
+                  <Icon name="graduacion" size={13} color="#005F2E" />
+                  <Text style={styles.uploadStudentPillActiveText}>Mateo López (Sala 4)</Text>
                 </View>
-                <View style={styles.uploadStudentPill}>
-                  <Text style={styles.uploadStudentPillText}>👧 Sofía López (4° Grado)</Text>
+                <View style={[styles.uploadStudentPill, { flexDirection: 'row', alignItems: 'center', gap: 5 }]}>
+                  <Icon name="graduacion" size={13} color="#1A73E8" />
+                  <Text style={styles.uploadStudentPillText}>Sofía López (4° Grado)</Text>
                 </View>
               </View>
 

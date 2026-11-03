@@ -134,13 +134,18 @@ export const GalleryScreen: React.FC = () => {
             onPress={() => setActivePill('TODAS')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="galeria"
+              size={13}
+              color={activePill === 'TODAS' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterPillText,
                 activePill === 'TODAS' && styles.filterPillTextActive,
               ]}
             >
-              🖼️ Todas las fotos
+              Todas las fotos
             </Text>
           </TouchableOpacity>
 
@@ -153,17 +158,22 @@ export const GalleryScreen: React.FC = () => {
             onPress={() => setActivePill('MATEO')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="graduacion"
+              size={13}
+              color={activePill === 'MATEO' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterPillText,
                 activePill === 'MATEO' && styles.filterPillTextActive,
               ]}
             >
-              🧒 Sala de 4 (Mateo)
+              Sala de 4 (Mateo)
             </Text>
           </TouchableOpacity>
 
-          {/* 2° Grado (Sofía) */}
+          {/* 4° Grado (Sofía) */}
           <TouchableOpacity
             style={[
               styles.filterPill,
@@ -172,13 +182,18 @@ export const GalleryScreen: React.FC = () => {
             onPress={() => setActivePill('SOFIA')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="graduacion"
+              size={13}
+              color={activePill === 'SOFIA' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterPillText,
                 activePill === 'SOFIA' && styles.filterPillTextActive,
               ]}
             >
-              👧 2° Grado (Sofía)
+              4° Grado (Sofía)
             </Text>
           </TouchableOpacity>
 
@@ -191,13 +206,18 @@ export const GalleryScreen: React.FC = () => {
             onPress={() => setActivePill('ITALIANO')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="talleres"
+              size={13}
+              color={activePill === 'ITALIANO' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterPillText,
                 activePill === 'ITALIANO' && styles.filterPillTextActive,
               ]}
             >
-              🇮🇹 Talleres de Italiano
+              Talleres de Italiano
             </Text>
           </TouchableOpacity>
 
@@ -210,13 +230,18 @@ export const GalleryScreen: React.FC = () => {
             onPress={() => setActivePill('DEPORTES')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="deportes"
+              size={13}
+              color={activePill === 'DEPORTES' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterPillText,
                 activePill === 'DEPORTES' && styles.filterPillTextActive,
               ]}
             >
-              ⚽ Deportes
+              Deportes
             </Text>
           </TouchableOpacity>
         </ScrollView>
@@ -228,12 +253,12 @@ export const GalleryScreen: React.FC = () => {
         <View style={styles.featuredAlbumCard}>
           {/* Media Header / Image Box with Overlays */}
           <View style={[styles.featuredMediaBox, { height: mediaBoxHeight }]}>
-            <Text style={styles.featuredEmojiPlaceholder}>🇮🇹🎨🖼️</Text>
+            <Icon name="camara" size={42} color="rgba(255, 255, 255, 0.4)" />
 
             {/* Overlays */}
             <View style={styles.featuredTopOverlayRow}>
               <View style={styles.newAlbumBadge}>
-                <Text style={styles.newAlbumBadgeText}>✨ NUEVO ÁLBUM</Text>
+                <Text style={styles.newAlbumBadgeText}>NUEVO ÁLBUM</Text>
               </View>
               <View style={styles.mediaCountBadge}>
                 <Text style={styles.mediaCountBadgeText}>24 FOTOS · 2 VIDEOS</Text>
@@ -251,7 +276,7 @@ export const GalleryScreen: React.FC = () => {
           {/* Card Body */}
           <View style={styles.featuredBody}>
             <View style={styles.featuredMetaRow}>
-              <Text style={styles.metaIcon}>👥</Text>
+              <Icon name="usuario" size={13} color="#64748B" style={{ marginRight: 4 }} />
               <Text style={styles.metaClass}>Sala de 4 Años</Text>
               <Text style={styles.metaDot}>·</Text>
               <Text style={styles.metaTeacher}>Seño Valentina</Text>
@@ -308,7 +333,7 @@ export const GalleryScreen: React.FC = () => {
               onPress={() => handleOpenAlbum('Huerta Escolar Bilingüe')}
             >
               <View style={[styles.gridImageBoxGarden, { height: gridBoxHeight }]}>
-                <Text style={styles.gridEmoji}>🌱🥕🍅</Text>
+                <Icon name="galeria" size={32} color="rgba(0, 140, 69, 0.45)" />
 
                 <View style={styles.gridPhotoBadge}>
                   <Icon name="camara" size={11} color="#131B2E" style={{ marginRight: 3 }} />
@@ -350,7 +375,7 @@ export const GalleryScreen: React.FC = () => {
               onPress={() => handleOpenAlbum('Torneo de Atletismo y Básquet')}
             >
               <View style={[styles.gridImageBoxSports, { height: gridBoxHeight }]}>
-                <Text style={styles.gridEmoji}>🏃‍♂️🏀🏅</Text>
+                <Icon name="deportes" size={32} color="rgba(26, 115, 232, 0.45)" />
 
                 <View style={styles.gridPhotoBadgeBlue}>
                   <Icon name="camara" size={11} color="#131B2E" style={{ marginRight: 3 }} />
@@ -630,6 +655,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   filterPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: '#FFFFFF',
     paddingVertical: 8,
     paddingHorizontal: 14,

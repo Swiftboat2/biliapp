@@ -9,6 +9,7 @@ export type IconName =
   | 'carpetas'
   | 'galeria'
   | 'seguridad'
+  | 'usuario'
   // 2. SEGURIDAD Y ACCESO QR
   | 'pase-qr'
   | 'autorizar'
@@ -19,6 +20,8 @@ export type IconName =
   | 'boletin'
   | 'firma-digital'
   | 'descargar-pdf'
+  | 'subir'
+  | 'archivo'
   | 'graduacion'
   | 'certificado'
   // 4. VIDA DIARIA
@@ -27,6 +30,7 @@ export type IconName =
   | 'primeros-auxilios'
   | 'deportes'
   | 'talleres'
+  | 'calendario'
   // 5. COMUNICACIÓN
   | 'notificaciones'
   | 'redactar'
@@ -88,6 +92,8 @@ export const Icon: React.FC<IconProps> = ({
           style={style}
         />
       );
+    case 'usuario':
+      return <Feather name="user" size={size} color={color} style={style} />;
 
     /* 2. SEGURIDAD Y ACCESO QR */
     case 'pase-qr':
@@ -139,6 +145,12 @@ export const Icon: React.FC<IconProps> = ({
     case 'descargar-pdf':
       return (
         <Feather name="download" size={size} color={color} style={style} />
+      );
+    case 'subir':
+      return <Feather name="upload" size={size} color={color} style={style} />;
+    case 'archivo':
+      return (
+        <Feather name="file-text" size={size} color={color} style={style} />
       );
     case 'graduacion':
       return (
@@ -204,6 +216,10 @@ export const Icon: React.FC<IconProps> = ({
           color={color}
           style={style}
         />
+      );
+    case 'calendario':
+      return (
+        <Feather name="calendar" size={size} color={color} style={style} />
       );
 
     /* 5. COMUNICACIÓN */

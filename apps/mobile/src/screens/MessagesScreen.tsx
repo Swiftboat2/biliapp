@@ -59,8 +59,8 @@ export const MessagesScreen: React.FC = () => {
       senderName: 'Seño Valentina · Sala de 4',
       senderRole: 'Docente Nivel Inicial',
       childScope: 'MATEO',
-      childBadgeLabel: '🧒 Mateo · Sala de 4',
-      subject: 'Resumen semanal y taller bicultural de arte 🎨🇮🇹',
+      childBadgeLabel: 'Mateo · Sala de 4',
+      subject: 'Resumen semanal y taller bicultural de arte',
       excerpt:
         '¡Hola familia! Les comparto que Mateo participó con entusiasmo cantando en italiano y preparando su propia obra con témperas...',
       time: '12:45 PM',
@@ -75,8 +75,8 @@ export const MessagesScreen: React.FC = () => {
       senderName: 'Prof. Carlos Gómez · Ed. Física',
       senderRole: 'Educación Física Escolar',
       childScope: 'SOFIA',
-      childBadgeLabel: '👧 Sofía · 4° Grado',
-      subject: '🏊 Ficha médica y apto físico para natación',
+      childBadgeLabel: 'Sofía · 4° Grado',
+      subject: 'Ficha médica y apto físico para natación',
       excerpt:
         'Recordamos enviar el apto médico actualizado de Sofía antes del viernes para habilitar el ingreso al natatorio del club...',
       time: 'Ayer',
@@ -91,7 +91,7 @@ export const MessagesScreen: React.FC = () => {
       senderName: 'Lic. Andrea Paz · Psicopedagogía',
       senderRole: 'Gabinete Psicopedagógico',
       childScope: 'MATEO',
-      childBadgeLabel: '🧒 Mateo · Sala de 4',
+      childBadgeLabel: 'Mateo · Sala de 4',
       subject: 'Devolución de observación evolutiva',
       excerpt:
         'Coordinamos una breve reunión virtual para repasar los avances de adaptación y dinámicas de socialización observadas en Mateo...',
@@ -107,8 +107,8 @@ export const MessagesScreen: React.FC = () => {
       senderName: 'Secretaría Administrativa',
       senderRole: 'Administración y Aranceles',
       childScope: 'GENERAL',
-      childBadgeLabel: '🏛️ Toda la Familia',
-      subject: '📢 Circular N° 14: Cuotas y rematriculación 2027',
+      childBadgeLabel: 'Toda la Familia',
+      subject: 'Circular N° 14: Cuotas y rematriculación 2027',
       excerpt:
         'Se encuentra disponible en la sección Archivos la planilla de confirmación de vacante y aranceles para el próximo ciclo lectivo...',
       time: '22 Oct',
@@ -253,13 +253,18 @@ export const MessagesScreen: React.FC = () => {
             onPress={() => setActiveFilter('TODOS')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="chat"
+              size={13}
+              color={activeFilter === 'TODOS' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeFilter === 'TODOS' && styles.filterChipTextActive,
               ]}
             >
-              📥 Todos
+              Todos
             </Text>
             <View style={styles.chipCountBadge}>
               <Text style={styles.chipCountText}>{conversations.length}</Text>
@@ -275,13 +280,18 @@ export const MessagesScreen: React.FC = () => {
             onPress={() => setActiveFilter('MATEO')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="graduacion"
+              size={13}
+              color={activeFilter === 'MATEO' ? '#FFFFFF' : '#005F2E'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeFilter === 'MATEO' && styles.filterChipTextActive,
               ]}
             >
-              🧒 Mateo
+              Mateo
             </Text>
             <View style={styles.chipCountBadgeGreen}>
               <Text style={styles.chipCountTextGreen}>{mateoCount}</Text>
@@ -297,13 +307,18 @@ export const MessagesScreen: React.FC = () => {
             onPress={() => setActiveFilter('SOFIA')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="graduacion"
+              size={13}
+              color={activeFilter === 'SOFIA' ? '#FFFFFF' : '#1A73E8'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeFilter === 'SOFIA' && styles.filterChipTextActive,
               ]}
             >
-              👧 Sofía
+              Sofía
             </Text>
             <View style={styles.chipCountBadgeBlue}>
               <Text style={styles.chipCountTextBlue}>{sofiaCount}</Text>
@@ -319,13 +334,18 @@ export const MessagesScreen: React.FC = () => {
             onPress={() => setActiveFilter('NO_LEIDOS')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="notificaciones"
+              size={13}
+              color={activeFilter === 'NO_LEIDOS' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeFilter === 'NO_LEIDOS' && styles.filterChipTextActive,
               ]}
             >
-              ✉️ No leídos
+              No leídos
             </Text>
             {unreadCountTotal > 0 && (
               <View style={styles.chipRedBadge}>
@@ -343,13 +363,18 @@ export const MessagesScreen: React.FC = () => {
             onPress={() => setActiveFilter('INSTITUCIONAL')}
             activeOpacity={0.85}
           >
+            <Icon
+              name="novedades"
+              size={13}
+              color={activeFilter === 'INSTITUCIONAL' ? '#FFFFFF' : '#475569'}
+            />
             <Text
               style={[
                 styles.filterChipText,
                 activeFilter === 'INSTITUCIONAL' && styles.filterChipTextActive,
               ]}
             >
-              🏛️ General
+              General
             </Text>
             <View style={styles.chipCountBadge}>
               <Text style={styles.chipCountText}>{generalCount}</Text>
@@ -408,15 +433,15 @@ export const MessagesScreen: React.FC = () => {
                       isForSofia && styles.avatarCircleBlue,
                     ]}
                   >
-                    <Text style={styles.avatarEmoji}>
-                      {item.tagType === 'INICIAL'
-                        ? '👩‍🏫'
-                        : item.tagType === 'DEPORTE'
-                        ? '⚽'
-                        : item.tagType === 'GABINETE'
-                        ? '🧠'
-                        : '🏛️'}
-                    </Text>
+                    {item.tagType === 'INICIAL' ? (
+                      <Icon name="graduacion" size={18} color="#005F2E" />
+                    ) : item.tagType === 'DEPORTE' ? (
+                      <Icon name="deportes" size={18} color="#1A73E8" />
+                    ) : item.tagType === 'GABINETE' ? (
+                      <Icon name="primeros-auxilios" size={18} color="#D97706" />
+                    ) : (
+                      <Icon name="novedades" size={18} color="#475569" />
+                    )}
                   </View>
                   {item.onlineDotColor && (
                     <View
@@ -629,7 +654,12 @@ export const MessagesScreen: React.FC = () => {
                     setComposeTo('Seño Valentina (Sala de 4)');
                   }}
                 >
-                  <Text style={styles.composeChildBtnText}>🧒 Mateo (Sala 4)</Text>
+                  <Icon
+                    name="graduacion"
+                    size={13}
+                    color={composeChild === 'MATEO' ? '#005F2E' : '#475569'}
+                  />
+                  <Text style={styles.composeChildBtnText}>Mateo (Sala 4)</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -642,7 +672,12 @@ export const MessagesScreen: React.FC = () => {
                     setComposeTo('Prof. Carlos Gómez (Ed. Física)');
                   }}
                 >
-                  <Text style={styles.composeChildBtnText}>👧 Sofía (4° Grado)</Text>
+                  <Icon
+                    name="graduacion"
+                    size={13}
+                    color={composeChild === 'SOFIA' ? '#1A73E8' : '#475569'}
+                  />
+                  <Text style={styles.composeChildBtnText}>Sofía (4° Grado)</Text>
                 </TouchableOpacity>
               </View>
 
@@ -1399,6 +1434,9 @@ const styles = StyleSheet.create({
   },
   composeChildBtn: {
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 5,
     backgroundColor: '#F1F5F9',
     paddingVertical: 8,
     borderRadius: 10,
