@@ -9,17 +9,22 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useActiveStudent } from '../context/StudentContext';
 import { colors } from '../theme/colors';
 import { Icon } from '../components/Icon';
 
 export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const { students, setActiveStudent } = useActiveStudent();
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
-  // Dynamic responsive dimensions
   const isSmallScreen = width < 380;
   const topInsetPadding = Math.max(insets.top, 24) + 10;
   const eventCardWidth = Math.min(width * 0.78, 290);
+  const studentCardWidth = Math.min(width * 0.74, 275);
+
+  const mateo = students.find((s) => s.educationalLevel === 'INICIAL') || students[0];
+  const sofia = students.find((s) => s.educationalLevel === 'PRIMARIA') || students[1] || students[0];
 
   return (
     <ScrollView
@@ -29,11 +34,9 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     >
       {/* 1. HERO BANNER INSTITUCIONAL VERDE (#008C45) */}
       <View style={[styles.heroHeader, { paddingTop: topInsetPadding }]}>
-        {/* Luces sutiles de fondo */}
         <View style={styles.heroCircleTopRight} />
         <View style={styles.heroCircleBottomLeft} />
 
-        {/* Cabecera Superior: Escudo + Título + Notificaciones y Avatar Familiar */}
         <View style={styles.heroTopRow}>
           <View style={styles.heroBrand}>
             <Image
@@ -53,7 +56,6 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
 
           <View style={styles.heroActionsRow}>
-            {/* Botón Notificaciones con badge rojo */}
             <TouchableOpacity
               style={[styles.notifBtn, isSmallScreen && styles.actionBtnSmall]}
               activeOpacity={0.85}
@@ -63,14 +65,12 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               <View style={styles.notifRedDot} />
             </TouchableOpacity>
 
-            {/* Avatar Familia López */}
             <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
               <Text style={styles.familyAvatarText}>FL</Text>
             </View>
           </View>
         </View>
 
-        {/* Saludo Cálido */}
         <View style={styles.heroGreeting}>
           <Text style={[styles.heroHello, isSmallScreen && styles.heroHelloSmall]}>
             ¡Hola, Familia López! 👋
@@ -78,9 +78,93 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         </View>
       </View>
 
-      {/* CONTENIDO DEL TABLERO UNIFICADO */}
+      {/* 2. TARJETAS DE ESTUDIANTES */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.studentsScrollContainer}
+        decelerationRate="fast"
+        snapToInterval={studentCardWidth + 12}
+      >
+        {/* Tarjeta Mateo */}
+        <TouchableOpacity
+          style={[styles.studentCard, { width: studentCardWidth }]}
+          activeOpacity={0.9}
+          onPress={() => { if (mateo) setActiveStudent(mateo); }}
+        >
+          <View style={styles.studentCardAccentGreen} />
+          <View style={styles.studentCardTopRow}>
+            <View style={styles.studentAvatarWrap}>
+              <View style={styles.studentAvatarCircleGreen}>
+                <Icon name="usuario" size={22} color="#005F2E" />
+              </View>
+              <View style={styles.checkBadge}>
+                <Icon name="check" size={9} color="#FFFFFF" />
+              </View>
+            </View>
+            <View style={styles.studentDetailsCol}>
+              <View style={styles.studentNameAndRateRow}>
+                <Text style={styles.studentNameText} numberOfLines={1}>Mateo López</Text>
+                <View style={styles.asistBadgeGreen}>
+                  <Text style={styles.asistBadgeTextGreen}>96% ASIST.</Text>
+                </View>
+              </View>
+              <Text style={styles.studentLevelText} numberOfLines={1}>
+                Sala de 4 · Nivel Inicial
+              </Text>
+            </View>
+          </View>
+          <View style={styles.studentStatusStrip}>
+            <View style={styles.studentStatusLeft}>
+              <Icon name="graduacion" size={13} color="#005F2E" />
+              <Text style={styles.statusShiftText}>Turno Tarde</Text>
+            </View>
+            <Text style={styles.statusPresentGreen}>PRESENTE HOY</Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Tarjeta Sofía */}
+        <TouchableOpacity
+          style={[styles.studentCard, { width: studentCardWidth }]}
+          activeOpacity={0.9}
+          onPress={() => { if (sofia) setActiveStudent(sofia); }}
+        >
+          <View style={styles.studentCardAccentCeleste} />
+          <View style={styles.studentCardTopRow}>
+            <View style={styles.studentAvatarWrap}>
+              <View style={styles.studentAvatarCircleCeleste}>
+                <Icon name="usuario" size={22} color="#1A73E8" />
+              </View>
+              <View style={styles.checkBadge}>
+                <Icon name="check" size={9} color="#FFFFFF" />
+              </View>
+            </View>
+            <View style={styles.studentDetailsCol}>
+              <View style={styles.studentNameAndRateRow}>
+                <Text style={styles.studentNameText} numberOfLines={1}>Sofía López</Text>
+                <View style={styles.asistBadgeCeleste}>
+                  <Text style={styles.asistBadgeTextCeleste}>98% ASIST.</Text>
+                </View>
+              </View>
+              <Text style={styles.studentLevelText} numberOfLines={1}>
+                4° Grado "B" · Primaria
+              </Text>
+            </View>
+          </View>
+          <View style={styles.studentStatusStrip}>
+            <View style={styles.studentStatusLeft}>
+              <Icon name="graduacion" size={13} color="#1A73E8" />
+              <Text style={styles.statusShiftText}>Turno Mañana</Text>
+            </View>
+            <Text style={styles.statusPresentGreen}>PRESENTE HOY</Text>
+          </View>
+        </TouchableOpacity>
+      </ScrollView>
+
+      {/* 3. CONTENIDO DEL TABLERO UNIFICADO */}
       <View style={styles.contentBody}>
-        {/* SECCIÓN 1: PRÓXIMOS EVENTOS (Distinguidos por hijo) */}
+
+        {/* SECCIÓN 1: PRÓXIMOS EVENTOS */}
         <View style={styles.sectionWrap}>
           <View style={styles.sectionHeaderRow}>
             <View style={styles.sectionTitleWithDot}>
@@ -99,66 +183,60 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             decelerationRate="fast"
             snapToInterval={eventCardWidth + 12}
           >
-            {/* Evento 1: Para Mateo (Jardín) */}
+            {/* Evento 1: Mateo */}
             <View style={[styles.eventCardCelebration, { width: eventCardWidth }]}>
-              <View>
-                <View style={styles.eventCardTopRow}>
-                  <View style={[styles.eventChildBadgeMateo, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
-                    <Icon name="graduacion" size={11} color="#92400E" />
-                    <Text style={styles.eventChildTextMateo}>Mateo · Sala de 4</Text>
-                  </View>
-                  <View style={styles.eventIconCircleYellow}>
-                    <Icon name="novedades" size={15} color="#854D0E" />
-                  </View>
+              <View style={styles.eventCardTopRow}>
+                <View style={[styles.eventChildBadgeMateo, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+                  <Icon name="graduacion" size={11} color="#92400E" />
+                  <Text style={styles.eventChildTextMateo}>Mateo · Sala de 4</Text>
                 </View>
-                <Text style={styles.eventCardTitle} numberOfLines={2}>
-                  Festa della Repubblica & Muestra de Arte
-                </Text>
+                <View style={styles.eventIconCircleYellow}>
+                  <Icon name="novedades" size={15} color="#854D0E" />
+                </View>
               </View>
+              <Text style={styles.eventCardTitle} numberOfLines={2}>
+                Festa della Repubblica &amp; Muestra de Arte
+              </Text>
               <View style={[styles.eventDatePill, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
                 <Icon name="calendario" size={11} color="#64748B" />
                 <Text style={styles.eventDateText}>Viernes, 06 Noviembre</Text>
               </View>
             </View>
 
-            {/* Evento 2: Para Sofía (Primaria) */}
+            {/* Evento 2: Sofía */}
             <View style={[styles.eventCardMeeting, { width: eventCardWidth }]}>
-              <View>
-                <View style={styles.eventCardTopRow}>
-                  <View style={[styles.eventChildBadgeSofia, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
-                    <Icon name="graduacion" size={11} color="#1E40AF" />
-                    <Text style={styles.eventChildTextSofia}>Sofía · 4° Grado</Text>
-                  </View>
-                  <View style={styles.eventIconCircleBlue}>
-                    <Icon name="deportes" size={16} color="#1A73E8" />
-                  </View>
+              <View style={styles.eventCardTopRow}>
+                <View style={[styles.eventChildBadgeSofia, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+                  <Icon name="graduacion" size={11} color="#1E40AF" />
+                  <Text style={styles.eventChildTextSofia}>Sofía · 4° Grado</Text>
                 </View>
-                <Text style={styles.eventCardTitle} numberOfLines={2}>
-                  Torneo Intercolegial de Atletismo y Postas
-                </Text>
+                <View style={styles.eventIconCircleBlue}>
+                  <Icon name="deportes" size={16} color="#1A73E8" />
+                </View>
               </View>
+              <Text style={styles.eventCardTitle} numberOfLines={2}>
+                Torneo Intercolegial de Atletismo y Postas
+              </Text>
               <View style={[styles.eventDatePill, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
                 <Icon name="calendario" size={11} color="#64748B" />
                 <Text style={styles.eventDateText}>Jueves, 12 Noviembre</Text>
               </View>
             </View>
 
-            {/* Evento 3: Toda la Familia */}
+            {/* Evento 3: Familia */}
             <View style={[styles.eventCardGeneral, { width: eventCardWidth }]}>
-              <View>
-                <View style={styles.eventCardTopRow}>
-                  <View style={[styles.eventChildBadgeFamily, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
-                    <Icon name="usuario" size={11} color="#065F46" />
-                    <Text style={styles.eventChildTextFamily}>Toda la Familia</Text>
-                  </View>
-                  <View style={styles.eventIconCircleGreen}>
-                    <Icon name="graduacion" size={16} color={colors.primary} />
-                  </View>
+              <View style={styles.eventCardTopRow}>
+                <View style={[styles.eventChildBadgeFamily, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+                  <Icon name="usuario" size={11} color="#065F46" />
+                  <Text style={styles.eventChildTextFamily}>Toda la Familia</Text>
                 </View>
-                <Text style={styles.eventCardTitle} numberOfLines={2}>
-                  Reunión de Padres y Balance Pedagógico
-                </Text>
+                <View style={styles.eventIconCircleGreen}>
+                  <Icon name="graduacion" size={16} color={colors.primary} />
+                </View>
               </View>
+              <Text style={styles.eventCardTitle} numberOfLines={2}>
+                Reunión de Padres y Balance Pedagógico
+              </Text>
               <View style={[styles.eventDatePill, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
                 <Icon name="calendario" size={11} color="#64748B" />
                 <Text style={styles.eventDateText}>Martes, 17 Noviembre</Text>
@@ -167,7 +245,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </ScrollView>
         </View>
 
-        {/* SECCIÓN 2: "¿QUÉ HA PASADO HOY?" (Estado de ambos chicos con flexWrap) */}
+        {/* SECCIÓN 2: ¿QUÉ HA PASADO HOY? */}
         <View style={styles.sectionWrap}>
           <View>
             <Text style={styles.sectionTitle}>¿Qué ha pasado hoy?</Text>
@@ -175,23 +253,20 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               Asistencia y novedades del día para Mateo y Sofía
             </Text>
           </View>
-
           <View style={styles.dualGrid}>
-            {/* Card Mateo: Tardanza */}
+            {/* Card Mateo */}
             <View style={styles.dualCardMateo}>
-              <View>
-                <View style={styles.dualCardHeaderChild}>
-                  <View style={[styles.kidTagMateo, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
-                    <Icon name="graduacion" size={11} color="#005F2E" />
-                    <Text style={styles.kidTagTextMateo}>Mateo</Text>
-                  </View>
-                  <Text style={styles.dualDateText}>13:10 hs</Text>
+              <View style={styles.dualCardHeaderChild}>
+                <View style={[styles.kidTagMateo, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+                  <Icon name="graduacion" size={11} color="#005F2E" />
+                  <Text style={styles.kidTagTextMateo}>Mateo</Text>
                 </View>
-                <Text style={styles.dualCardTitle}>Falta parcial</Text>
-                <Text style={styles.dualCardSub} numberOfLines={2}>
-                  Ingreso posterior al horario
-                </Text>
+                <Text style={styles.dualDateText}>13:10 hs</Text>
               </View>
+              <Text style={styles.dualCardTitle}>Falta parcial</Text>
+              <Text style={styles.dualCardSub} numberOfLines={2}>
+                Ingreso posterior al horario
+              </Text>
               <View style={styles.dualBadgeContainer}>
                 <View style={styles.badgeTardanza}>
                   <Text style={styles.badgeTardanzaText}>Tardanza (1/4)</Text>
@@ -199,21 +274,19 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               </View>
             </View>
 
-            {/* Card Sofía: Asistencia Completa */}
+            {/* Card Sofía */}
             <View style={styles.dualCardSofia}>
-              <View>
-                <View style={styles.dualCardHeaderChild}>
-                  <View style={[styles.kidTagSofia, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
-                    <Icon name="graduacion" size={11} color="#1A73E8" />
-                    <Text style={styles.kidTagTextSofia}>Sofía</Text>
-                  </View>
-                  <Text style={styles.dualDateText}>07:45 hs</Text>
+              <View style={styles.dualCardHeaderChild}>
+                <View style={[styles.kidTagSofia, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+                  <Icon name="graduacion" size={11} color="#1A73E8" />
+                  <Text style={styles.kidTagTextSofia}>Sofía</Text>
                 </View>
-                <Text style={styles.dualCardTitle}>Puntual</Text>
-                <Text style={styles.dualCardSub} numberOfLines={2}>
-                  Ingreso registrado en puerta
-                </Text>
+                <Text style={styles.dualDateText}>07:45 hs</Text>
               </View>
+              <Text style={styles.dualCardTitle}>Puntual</Text>
+              <Text style={styles.dualCardSub} numberOfLines={2}>
+                Ingreso registrado en puerta
+              </Text>
               <View style={styles.dualBadgeContainer}>
                 <View style={styles.badgePresentePuntual}>
                   <Text style={styles.badgePresentePuntualText}>Presente ✓</Text>
@@ -223,7 +296,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* SECCIÓN 3: CALIFICACIONES Y BOLETINES RECIENTES */}
+        {/* SECCIÓN 3: CALIFICACIONES Y BOLETINES */}
         <View style={styles.sectionWrap}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Calificaciones y Boletines</Text>
@@ -235,13 +308,13 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               <Text style={styles.viewReportArrow}>→</Text>
             </TouchableOpacity>
           </View>
-
           <View style={styles.gradesStack}>
-            {/* Calificación Mateo: Lengua Italiana */}
+            {/* Mateo: Lengua Italiana */}
             <View style={styles.gradeCard}>
               <View style={styles.gradeLeft}>
                 <View style={styles.gradeIconBoxGreen}>
                   <Icon name="boletin" size={22} color={colors.primary} />
+                  <Text style={styles.gradeFlagEmoji}>🇮🇹</Text>
                 </View>
                 <View style={styles.gradeTextCol}>
                   <View style={styles.gradeChildTagRow}>
@@ -259,7 +332,6 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                   </Text>
                 </View>
               </View>
-
               <View style={styles.gradeScoreBadgeCol}>
                 <View style={styles.gradeScoreCircleGreen}>
                   <Text style={styles.gradeScoreNum}>9.8</Text>
@@ -268,11 +340,12 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               </View>
             </View>
 
-            {/* Calificación Sofía: Matemática */}
+            {/* Sofía: Matemática */}
             <View style={styles.gradeCard}>
               <View style={styles.gradeLeft}>
                 <View style={styles.gradeIconBoxBlue}>
                   <Icon name="certificado" size={22} color="#1A73E8" />
+                  <Text style={styles.gradeFlagEmoji}>🇦🇷</Text>
                 </View>
                 <View style={styles.gradeTextCol}>
                   <View style={styles.gradeChildTagRow}>
@@ -290,7 +363,6 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                   </Text>
                 </View>
               </View>
-
               <View style={styles.gradeScoreBadgeCol}>
                 <View style={styles.gradeScoreCircleBlue}>
                   <Text style={styles.gradeScoreNumBlue}>9.5</Text>
@@ -313,7 +385,6 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               <Text style={styles.galleryExploreArrow}>›</Text>
             </TouchableOpacity>
           </View>
-
           <View style={styles.galleryGrid}>
             {/* Album Mateo */}
             <TouchableOpacity
@@ -322,9 +393,10 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               onPress={() => navigation.navigate('Galería')}
             >
               <View style={styles.galleryImageBoxArt}>
+                <Text style={styles.galleryPlaceholderEmoji}>🎨🖼️</Text>
                 <Icon name="galeria" size={28} color="rgba(0, 140, 69, 0.35)" />
                 <View style={[styles.galleryPhotoBadge, { flexDirection: 'row', alignItems: 'center', gap: 3 }]}>
-                  <Icon name="camara" size={10} color="#131B2E" />
+                  <Icon name="camara" size={10} color="#FFFFFF" />
                   <Text style={styles.galleryPhotoBadgeText}>18</Text>
                 </View>
                 <View style={[styles.galleryChildPill, { flexDirection: 'row', alignItems: 'center', gap: 3 }]}>
@@ -347,9 +419,10 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               onPress={() => navigation.navigate('Galería')}
             >
               <View style={styles.galleryImageBoxGarden}>
+                <Text style={styles.galleryPlaceholderEmoji}>🌱🌻</Text>
                 <Icon name="galeria" size={28} color="rgba(26, 115, 232, 0.35)" />
                 <View style={[styles.galleryPhotoBadge, { flexDirection: 'row', alignItems: 'center', gap: 3 }]}>
-                  <Icon name="camara" size={10} color="#131B2E" />
+                  <Icon name="camara" size={10} color="#FFFFFF" />
                   <Text style={styles.galleryPhotoBadgeText}>24</Text>
                 </View>
                 <View style={[styles.galleryChildPill, { flexDirection: 'row', alignItems: 'center', gap: 3 }]}>
@@ -367,7 +440,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* SECCIÓN 5: ACCESOS RÁPIDOS INSTITUCIONALES */}
+        {/* SECCIÓN 5: ACCESOS RÁPIDOS */}
         <View style={styles.quickAccessSection}>
           <TouchableOpacity
             style={styles.quickActionBtn}
@@ -404,7 +477,6 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Espaciado de cortesía para el scroll */}
         <View style={{ height: 36 }} />
       </View>
     </ScrollView>
@@ -412,707 +484,879 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-                          container: {
-                          flex: 1,
-                        backgroundColor: '#F4F7FC',
+  container: {
+    flex: 1,
+    backgroundColor: '#F4F7FC',
   },
 
-                        /* 1. HERO BANNER */
-                        heroHeader: {
-                          backgroundColor: colors.primary,
-                        paddingBottom: 26,
-                        paddingHorizontal: 16,
-                        borderBottomLeftRadius: 32,
-                        borderBottomRightRadius: 32,
-                        position: 'relative',
-                        overflow: 'hidden',
-                        shadowColor: '#005F2E',
-                        shadowOffset: {width: 0, height: 6 },
-                        shadowOpacity: 0.15,
-                        shadowRadius: 12,
-                        elevation: 6,
+  /* 1. HERO BANNER */
+  heroHeader: {
+    backgroundColor: colors.primary,
+    paddingBottom: 26,
+    paddingHorizontal: 16,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    position: 'relative',
+    overflow: 'hidden',
+    shadowColor: '#005F2E',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
-                        heroCircleTopRight: {
-                          position: 'absolute',
-                        top: -40,
-                        right: -40,
-                        width: 170,
-                        height: 170,
-                        borderRadius: 85,
-                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+  heroCircleTopRight: {
+    position: 'absolute',
+    top: -40,
+    right: -40,
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
-                        heroCircleBottomLeft: {
-                          position: 'absolute',
-                        bottom: -30,
-                        left: -40,
-                        width: 140,
-                        height: 140,
-                        borderRadius: 70,
-                        backgroundColor: 'rgba(108, 221, 140, 0.1)',
+  heroCircleBottomLeft: {
+    position: 'absolute',
+    bottom: -30,
+    left: -40,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: 'rgba(108, 221, 140, 0.1)',
   },
-                        heroTopRow: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        zIndex: 10,
-                        gap: 8,
+  heroTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    zIndex: 10,
+    gap: 8,
   },
-                        heroBrand: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 8,
-                        flex: 1,
+  heroBrand: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
   },
-                        heroLogo: {
-                          width: 42,
-                        height: 42,
-                        borderRadius: 21,
-                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                        padding: 2,
+  heroLogo: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    padding: 2,
   },
-                        heroLogoSmall: {
-                          width: 36,
-                        height: 36,
-                        borderRadius: 18,
+  heroLogoSmall: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
   },
-                        heroBrandTextCol: {
-                          flex: 1,
-                        justifyContent: 'center',
+  heroBrandTextCol: {
+    flex: 1,
+    justifyContent: 'center',
   },
-                        heroTitle: {
-                          fontSize: 15,
-                        fontWeight: '900',
-                        color: '#FFFFFF',
-                        letterSpacing: -0.3,
+  heroTitle: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
   },
-                        heroTitleSmall: {
-                          fontSize: 13,
+  heroTitleSmall: {
+    fontSize: 13,
   },
-                        heroBadgeSub: {
-                          fontSize: 9.5,
-                        fontWeight: '800',
-                        color: 'rgba(255, 255, 255, 0.8)',
-                        letterSpacing: 0.8,
-                        marginTop: 1,
+  heroBadgeSub: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: 'rgba(255, 255, 255, 0.8)',
+    letterSpacing: 0.8,
+    marginTop: 1,
   },
-                        heroActionsRow: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 6,
+  heroActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
-                        notifBtn: {
-                          width: 38,
-                        height: 38,
-                        borderRadius: 19,
-                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
+  notifBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
   },
-                        actionBtnSmall: {
-                          width: 34,
-                        height: 34,
-                        borderRadius: 17,
+  actionBtnSmall: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
   },
-                        notifIcon: {
-                          fontSize: 16,
+  notifIcon: {
+    fontSize: 16,
   },
-                        notifRedDot: {
-                          position: 'absolute',
-                        top: 7,
-                        right: 7,
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        backgroundColor: colors.coral,
-                        borderWidth: 1.5,
-                        borderColor: colors.primary,
+  notifRedDot: {
+    position: 'absolute',
+    top: 7,
+    right: 7,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.coral,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
   },
-                        familyAvatar: {
-                          width: 38,
-                        height: 38,
-                        borderRadius: 19,
-                        backgroundColor: '#FFFFFF',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        shadowColor: '#000000',
-                        shadowOffset: {width: 0, height: 2 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 4,
-                        elevation: 2,
+  familyAvatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-                        familyAvatarText: {
-                          fontSize: 12,
-                        fontWeight: '900',
-                        color: colors.primary,
+  familyAvatarText: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: colors.primary,
   },
-                        heroGreeting: {
-                          marginTop: 14,
-                        zIndex: 10,
+  heroGreeting: {
+    marginTop: 14,
+    zIndex: 10,
   },
-                        heroHello: {
-                          fontSize: 22,
-                        fontWeight: '900',
-                        color: '#FFFFFF',
-                        letterSpacing: -0.4,
+  heroHello: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: -0.4,
   },
-                        heroHelloSmall: {
-                          fontSize: 19,
-  },
-
-                        /* 3. CONTENT BODY */
-                        contentBody: {
-                          paddingHorizontal: 16,
-                        gap: 18,
-                        marginTop: 16,
-  },
-                        sectionWrap: {
-                          gap: 10,
-  },
-                        sectionHeaderRow: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-  },
-                        sectionTitleWithDot: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 6,
-  },
-                        sectionTitle: {
-                          fontSize: 16,
-                        fontWeight: '900',
-                        color: '#131B2E',
-  },
-                        greenTitleDot: {
-                          width: 7,
-                        height: 7,
-                        borderRadius: 3.5,
-                        backgroundColor: colors.primary,
-  },
-                        sectionLinkGreen: {
-                          fontSize: 12,
-                        fontWeight: '800',
-                        color: colors.primary,
-  },
-                        sectionSubtitle: {
-                          fontSize: 11.5,
-                        color: '#64748B',
-                        marginTop: 1,
+  heroHelloSmall: {
+    fontSize: 19,
   },
 
-                        /* EVENT CARDS */
-                        eventsScrollContainer: {
-                          gap: 12,
-                        paddingVertical: 2,
+  /* 2. ESTUDIANTES A CARGO */
+  floatingStudentsSection: {
+    marginTop: -14,
+    zIndex: 20,
   },
-                        eventCardCelebration: {
-                          backgroundColor: '#FEF9C3',
-                        borderRadius: 16,
-                        padding: 14,
-                        borderWidth: 1,
-                        borderColor: '#FDE047',
-                        justifyContent: 'space-between',
-                        minHeight: 140,
+  studentsHeaderRow: {
+    paddingHorizontal: 18,
+    marginBottom: 8,
   },
-                        eventCardMeeting: {
-                          backgroundColor: '#EFF6FF',
-                        borderRadius: 16,
-                        padding: 14,
-                        borderWidth: 1,
-                        borderColor: '#BAE6FD',
-                        justifyContent: 'space-between',
-                        minHeight: 140,
+  studentsHeaderTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#131B2E',
   },
-                        eventCardGeneral: {
-                          backgroundColor: '#E8F7EE',
-                        borderRadius: 16,
-                        padding: 14,
-                        borderWidth: 1,
-                        borderColor: '#A7F3D0',
-                        justifyContent: 'space-between',
-                        minHeight: 140,
+  studentsScrollContainer: {
+    paddingHorizontal: 16,
+    gap: 12,
+    paddingVertical: 2,
   },
-                        eventCardTopRow: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        marginBottom: 8,
+  studentCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    position: 'relative',
+    overflow: 'hidden',
+    justifyContent: 'space-between',
   },
-                        eventChildBadgeMateo: {
-                          backgroundColor: '#FEF08A',
-                        paddingHorizontal: 7,
-                        paddingVertical: 2.5,
-                        borderRadius: 9999,
+  studentCardAccentGreen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+    backgroundColor: colors.primary,
   },
-                        eventChildTextMateo: {
-                          fontSize: 9.5,
-                        fontWeight: '800',
-                        color: '#854D0E',
+  studentCardAccentCeleste: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+    backgroundColor: '#1A73E8',
   },
-                        eventChildBadgeSofia: {
-                          backgroundColor: '#D1E4FF',
-                        paddingHorizontal: 7,
-                        paddingVertical: 2.5,
-                        borderRadius: 9999,
+  studentCardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 2,
   },
-                        eventChildTextSofia: {
-                          fontSize: 9.5,
-                        fontWeight: '800',
-                        color: '#00497C',
+  studentAvatarWrap: {
+    position: 'relative',
   },
-                        eventChildBadgeFamily: {
-                          backgroundColor: '#D1FAE5',
-                        paddingHorizontal: 7,
-                        paddingVertical: 2.5,
-                        borderRadius: 9999,
+  studentAvatarCircleGreen: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#E8F7EE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
-                        eventChildTextFamily: {
-                          fontSize: 9.5,
-                        fontWeight: '800',
-                        color: '#065F46',
+  studentAvatarCircleCeleste: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
-                        eventIconCircleYellow: {
-                          width: 30,
-                        height: 30,
-                        borderRadius: 15,
-                        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+  studentAvatarEmoji: {
+    fontSize: 22,
   },
-                        eventIconCircleBlue: {
-                          width: 30,
-                        height: 30,
-                        borderRadius: 15,
-                        backgroundColor: '#FFFFFF',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+  checkBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
-                        eventIconCircleGreen: {
-                          width: 30,
-                        height: 30,
-                        borderRadius: 15,
-                        backgroundColor: '#FFFFFF',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+  checkBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '900',
   },
-                        eventEmoji: {
-                          fontSize: 15,
+  studentDetailsCol: {
+    flex: 1,
   },
-                        eventCardTitle: {
-                          fontSize: 13.5,
-                        fontWeight: '800',
-                        color: '#131B2E',
-                        lineHeight: 18,
+  studentNameAndRateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 4,
   },
-                        eventDatePill: {
-                          backgroundColor: '#FFFFFF',
-                        paddingHorizontal: 9,
-                        paddingVertical: 4.5,
-                        borderRadius: 9999,
-                        alignSelf: 'flex-start',
-                        marginTop: 8,
-                        shadowColor: '#000000',
-                        shadowOffset: {width: 0, height: 1 },
-                        shadowOpacity: 0.05,
-                        shadowRadius: 2,
-                        elevation: 1,
+  studentNameText: {
+    fontSize: 14.5,
+    fontWeight: '800',
+    color: '#131B2E',
+    flexShrink: 1,
   },
-                        eventDateText: {
-                          fontSize: 10.5,
-                        fontWeight: '700',
-                        color: '#131B2E',
+  asistBadgeGreen: {
+    backgroundColor: '#E8F7EE',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 9999,
   },
-
-                        /* DUAL CARDS (HOY) */
-                        dualGrid: {
-                          flexDirection: 'row',
-                        gap: 10,
+  asistBadgeTextGreen: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#005F2E',
   },
-                        dualCardMateo: {
-                          flex: 1,
-                        backgroundColor: '#FFF1F2',
-                        borderWidth: 1,
-                        borderColor: '#FECDD3',
-                        borderRadius: 16,
-                        padding: 12,
-                        justifyContent: 'space-between',
-                        minHeight: 135,
+  asistBadgeCeleste: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 9999,
   },
-                        dualCardSofia: {
-                          flex: 1,
-                        backgroundColor: '#EFF6FF',
-                        borderWidth: 1,
-                        borderColor: '#BAE6FD',
-                        borderRadius: 16,
-                        padding: 12,
-                        justifyContent: 'space-between',
-                        minHeight: 135,
+  asistBadgeTextCeleste: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#1A73E8',
   },
-                        dualCardHeaderChild: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        marginBottom: 6,
-                        flexWrap: 'wrap',
-                        gap: 4,
+  studentLevelText: {
+    fontSize: 11.5,
+    color: '#64748B',
+    marginTop: 2,
   },
-                        kidTagMateo: {
-                          backgroundColor: '#FFE4E6',
-                        paddingHorizontal: 6,
-                        paddingVertical: 2,
-                        borderRadius: 9999,
+  studentStatusStrip: {
+    marginTop: 10,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-                        kidTagTextMateo: {
-                          fontSize: 9.5,
-                        fontWeight: '800',
-                        color: '#9F1239',
+  studentStatusLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
-                        kidTagSofia: {
-                          backgroundColor: '#DBEAFE',
-                        paddingHorizontal: 6,
-                        paddingVertical: 2,
-                        borderRadius: 9999,
+  statusShiftEmoji: {
+    fontSize: 12,
   },
-                        kidTagTextSofia: {
-                          fontSize: 9.5,
-                        fontWeight: '800',
-                        color: '#1E40AF',
+  statusShiftText: {
+    fontSize: 11.5,
+    color: '#475569',
+    fontWeight: '500',
   },
-                        dualDateText: {
-                          fontSize: 10,
-                        color: '#94A3B8',
-  },
-                        dualCardTitle: {
-                          fontSize: 13.5,
-                        fontWeight: '800',
-                        color: '#131B2E',
-  },
-                        dualCardSub: {
-                          fontSize: 10.5,
-                        color: '#64748B',
-                        marginTop: 2,
-                        lineHeight: 14,
-  },
-                        dualBadgeContainer: {
-                          marginTop: 8,
-  },
-                        badgeTardanza: {
-                          backgroundColor: '#FFFFFF',
-                        paddingVertical: 4,
-                        paddingHorizontal: 6,
-                        borderRadius: 9999,
-                        alignItems: 'center',
-  },
-                        badgeTardanzaText: {
-                          fontSize: 9.5,
-                        fontWeight: '800',
-                        color: '#9F1239',
-  },
-                        badgePresentePuntual: {
-                          backgroundColor: '#FFFFFF',
-                        paddingVertical: 4,
-                        paddingHorizontal: 6,
-                        borderRadius: 9999,
-                        alignItems: 'center',
-  },
-                        badgePresentePuntualText: {
-                          fontSize: 9.5,
-                        fontWeight: '800',
-                        color: '#1A73E8',
+  statusPresentGreen: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#005F2E',
+    letterSpacing: 0.5,
   },
 
-                        /* GRADES STACK */
-                        viewReportLink: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 4,
+  /* 3. CONTENT BODY */
+  contentBody: {
+    paddingHorizontal: 16,
+    gap: 18,
+    marginTop: 16,
   },
-                        viewReportText: {
-                          fontSize: 12,
-                        fontWeight: '800',
-                        color: colors.primary,
+  sectionWrap: {
+    gap: 10,
   },
-                        viewReportArrow: {
-                          fontSize: 14,
-                        color: colors.primary,
-                        fontWeight: '800',
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-                        gradesStack: {
-                          gap: 10,
+  sectionTitleWithDot: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
-                        gradeCard: {
-                          backgroundColor: '#FFFFFF',
-                        borderRadius: 16,
-                        padding: 12,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        borderWidth: 1,
-                        borderColor: '#E2E8F0',
-                        shadowColor: '#0F172A',
-                        shadowOffset: {width: 0, height: 2 },
-                        shadowOpacity: 0.05,
-                        shadowRadius: 6,
-                        elevation: 2,
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#131B2E',
   },
-                        gradeLeft: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 10,
-                        flex: 1,
-                        marginRight: 6,
+  greenTitleDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: colors.primary,
   },
-                        gradeIconBoxGreen: {
-                          width: 42,
-                        height: 42,
-                        borderRadius: 12,
-                        backgroundColor: '#E8F7EE',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
+  sectionLinkGreen: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: colors.primary,
   },
-                        gradeIconBoxBlue: {
-                          width: 42,
-                        height: 42,
-                        borderRadius: 12,
-                        backgroundColor: '#EFF6FF',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
-  },
-                        gradeBookEmoji: {
-                          fontSize: 20,
-  },
-                        gradeFlagEmoji: {
-                          position: 'absolute',
-                        bottom: -2,
-                        right: -2,
-                        fontSize: 10,
-  },
-                        gradeTextCol: {
-                          flex: 1,
-  },
-                        gradeChildTagRow: {
-                          flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 6,
-                        marginBottom: 2,
-                        flexWrap: 'wrap',
-  },
-                        gradeTimeText: {
-                          fontSize: 9.5,
-                        color: '#94A3B8',
-  },
-                        gradeSubjectTitle: {
-                          fontSize: 13.5,
-                        fontWeight: '800',
-                        color: '#131B2E',
-  },
-                        gradeAssessmentName: {
-                          fontSize: 11.5,
-                        color: '#475569',
-                        marginTop: 1,
-  },
-                        gradeScoreBadgeCol: {
-                          alignItems: 'center',
-                        minWidth: 50,
-  },
-                        gradeScoreCircleGreen: {
-                          width: 40,
-                        height: 40,
-                        borderRadius: 20,
-                        backgroundColor: '#E8F7EE',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: 'rgba(0, 140, 69, 0.2)',
-  },
-                        gradeScoreCircleBlue: {
-                          width: 40,
-                        height: 40,
-                        borderRadius: 20,
-                        backgroundColor: '#EFF6FF',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: 'rgba(26, 115, 232, 0.2)',
-  },
-                        gradeScoreNum: {
-                          fontSize: 15,
-                        fontWeight: '900',
-                        color: colors.primary,
-  },
-                        gradeScoreNumBlue: {
-                          fontSize: 15,
-                        fontWeight: '900',
-                        color: '#1A73E8',
-  },
-                        gradeScoreLabelGreen: {
-                          fontSize: 8.5,
-                        fontWeight: '800',
-                        color: '#005F2E',
-                        textTransform: 'uppercase',
-                        marginTop: 2,
-  },
-                        gradeScoreLabelBlue: {
-                          fontSize: 8.5,
-                        fontWeight: '800',
-                        color: '#1E40AF',
-                        textTransform: 'uppercase',
-                        marginTop: 2,
+  sectionSubtitle: {
+    fontSize: 11.5,
+    color: '#64748B',
+    marginTop: 1,
   },
 
-                        /* GALLERY SECTION */
-                        galleryExploreText: {
-                          fontSize: 12,
-                        color: '#475569',
-                        fontWeight: '600',
+  /* EVENT CARDS */
+  eventsScrollContainer: {
+    gap: 12,
+    paddingVertical: 2,
   },
-                        galleryExploreArrow: {
-                          fontSize: 16,
-                        color: '#475569',
-                        fontWeight: '700',
+  eventCardCelebration: {
+    backgroundColor: '#FEF9C3',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#FDE047',
+    justifyContent: 'space-between',
+    minHeight: 140,
   },
-                        galleryGrid: {
-                          flexDirection: 'row',
-                        gap: 10,
+  eventCardMeeting: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
+    justifyContent: 'space-between',
+    minHeight: 140,
   },
-                        galleryCard: {
-                          flex: 1,
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: 16,
-                        overflow: 'hidden',
-                        borderWidth: 1,
-                        borderColor: '#E2E8F0',
-                        shadowColor: '#0F172A',
-                        shadowOffset: {width: 0, height: 2 },
-                        shadowOpacity: 0.05,
-                        shadowRadius: 4,
-                        elevation: 2,
+  eventCardGeneral: {
+    backgroundColor: '#E8F7EE',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    justifyContent: 'space-between',
+    minHeight: 140,
   },
-                        galleryImageBoxArt: {
-                          height: 100,
-                        backgroundColor: '#E8F7EE',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
+  eventCardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
-                        galleryImageBoxGarden: {
-                          height: 100,
-                        backgroundColor: '#EFF6FF',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
+  eventChildBadgeMateo: {
+    backgroundColor: '#FEF08A',
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
+    borderRadius: 9999,
   },
-                        galleryPlaceholderEmoji: {
-                          fontSize: 26,
+  eventChildTextMateo: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#854D0E',
   },
-                        galleryPhotoBadge: {
-                          position: 'absolute',
-                        top: 6,
-                        right: 6,
-                        backgroundColor: 'rgba(19, 27, 46, 0.7)',
-                        paddingHorizontal: 5,
-                        paddingVertical: 1.5,
-                        borderRadius: 9999,
+  eventChildBadgeSofia: {
+    backgroundColor: '#D1E4FF',
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
+    borderRadius: 9999,
   },
-                        galleryPhotoBadgeText: {
-                          fontSize: 8.5,
-                        fontWeight: '800',
-                        color: '#FFFFFF',
+  eventChildTextSofia: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#00497C',
   },
-                        galleryChildPill: {
-                          position: 'absolute',
-                        bottom: 6,
-                        left: 6,
-                        backgroundColor: 'rgba(255, 255, 255, 0.94)',
-                        paddingHorizontal: 6,
-                        paddingVertical: 1.5,
-                        borderRadius: 9999,
+  eventChildBadgeFamily: {
+    backgroundColor: '#D1FAE5',
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
+    borderRadius: 9999,
   },
-                        galleryChildPillText: {
-                          fontSize: 8.5,
-                        fontWeight: '800',
-                        color: '#131B2E',
+  eventChildTextFamily: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#065F46',
   },
-                        galleryCardBody: {
-                          padding: 10,
+  eventIconCircleYellow: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-                        galleryCardTitle: {
-                          fontSize: 11.5,
-                        fontWeight: '800',
-                        color: '#131B2E',
+  eventIconCircleBlue: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-                        galleryCardSubtitle: {
-                          fontSize: 9.5,
-                        color: '#94A3B8',
-                        marginTop: 2,
+  eventIconCircleGreen: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eventEmoji: {
+    fontSize: 15,
+  },
+  eventCardTitle: {
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: '#131B2E',
+    lineHeight: 18,
+  },
+  eventDatePill: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 9,
+    paddingVertical: 4.5,
+    borderRadius: 9999,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  eventDateText: {
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#131B2E',
   },
 
-                        /* QUICK ACCESS */
-                        quickAccessSection: {
-                          gap: 10,
+  /* DUAL CARDS (HOY) */
+  dualGrid: {
+    flexDirection: 'row',
+    gap: 10,
   },
-                        quickActionBtn: {
-                          backgroundColor: '#FFFFFF',
-                        borderRadius: 16,
-                        padding: 13,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        borderWidth: 1,
-                        borderColor: '#E2E8F0',
-                        shadowColor: '#0F172A',
-                        shadowOffset: {width: 0, height: 1 },
-                        shadowOpacity: 0.04,
-                        shadowRadius: 4,
-                        elevation: 1,
+  dualCardMateo: {
+    flex: 1,
+    backgroundColor: '#FFF1F2',
+    borderWidth: 1,
+    borderColor: '#FECDD3',
+    borderRadius: 16,
+    padding: 12,
+    justifyContent: 'space-between',
+    minHeight: 135,
   },
-                        quickActionIconCircleGreen: {
-                          width: 38,
-                        height: 38,
-                        borderRadius: 12,
-                        backgroundColor: '#E8F7EE',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginRight: 10,
+  dualCardSofia: {
+    flex: 1,
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
+    borderRadius: 16,
+    padding: 12,
+    justifyContent: 'space-between',
+    minHeight: 135,
   },
-                        quickActionIconCircleRed: {
-                          width: 38,
-                        height: 38,
-                        borderRadius: 12,
-                        backgroundColor: '#FFF1F2',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginRight: 10,
+  dualCardHeaderChild: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+    flexWrap: 'wrap',
+    gap: 4,
   },
-                        quickActionEmoji: {
-                          fontSize: 17,
+  kidTagMateo: {
+    backgroundColor: '#FFE4E6',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 9999,
   },
-                        quickActionTextCol: {
-                          flex: 1,
+  kidTagTextMateo: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#9F1239',
   },
-                        quickActionTitle: {
-                          fontSize: 13,
-                        fontWeight: '800',
-                        color: '#131B2E',
+  kidTagSofia: {
+    backgroundColor: '#DBEAFE',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 9999,
   },
-                        quickActionSub: {
-                          fontSize: 11,
-                        color: '#64748B',
-                        marginTop: 1,
+  kidTagTextSofia: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#1E40AF',
   },
-                        quickActionSubRed: {
-                          fontSize: 11,
-                        color: '#9F1239',
-                        fontWeight: '600',
-                        marginTop: 1,
+  dualDateText: {
+    fontSize: 10,
+    color: '#94A3B8',
   },
-                        quickActionArrow: {
-                          fontSize: 18,
-                        color: '#94A3B8',
-                        fontWeight: '700',
-                        marginLeft: 6,
+  dualCardTitle: {
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: '#131B2E',
+  },
+  dualCardSub: {
+    fontSize: 10.5,
+    color: '#64748B',
+    marginTop: 2,
+    lineHeight: 14,
+  },
+  dualBadgeContainer: {
+    marginTop: 8,
+  },
+  badgeTardanza: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    borderRadius: 9999,
+    alignItems: 'center',
+  },
+  badgeTardanzaText: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#9F1239',
+  },
+  badgePresentePuntual: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    borderRadius: 9999,
+    alignItems: 'center',
+  },
+  badgePresentePuntualText: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#1A73E8',
+  },
+
+  /* GRADES STACK */
+  viewReportLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  viewReportText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: colors.primary,
+  },
+  viewReportArrow: {
+    fontSize: 14,
+    color: colors.primary,
+    fontWeight: '800',
+  },
+  gradesStack: {
+    gap: 10,
+  },
+  gradeCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  gradeLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1,
+    marginRight: 6,
+  },
+  gradeIconBoxGreen: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: '#E8F7EE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  gradeIconBoxBlue: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  gradeBookEmoji: {
+    fontSize: 20,
+  },
+  gradeFlagEmoji: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    fontSize: 10,
+  },
+  gradeTextCol: {
+    flex: 1,
+  },
+  gradeChildTagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
+    flexWrap: 'wrap',
+  },
+  gradeTimeText: {
+    fontSize: 9.5,
+    color: '#94A3B8',
+  },
+  gradeSubjectTitle: {
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: '#131B2E',
+  },
+  gradeAssessmentName: {
+    fontSize: 11.5,
+    color: '#475569',
+    marginTop: 1,
+  },
+  gradeScoreBadgeCol: {
+    alignItems: 'center',
+    minWidth: 50,
+  },
+  gradeScoreCircleGreen: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E8F7EE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 140, 69, 0.2)',
+  },
+  gradeScoreCircleBlue: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(26, 115, 232, 0.2)',
+  },
+  gradeScoreNum: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: colors.primary,
+  },
+  gradeScoreNumBlue: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#1A73E8',
+  },
+  gradeScoreLabelGreen: {
+    fontSize: 8.5,
+    fontWeight: '800',
+    color: '#005F2E',
+    textTransform: 'uppercase',
+    marginTop: 2,
+  },
+  gradeScoreLabelBlue: {
+    fontSize: 8.5,
+    fontWeight: '800',
+    color: '#1E40AF',
+    textTransform: 'uppercase',
+    marginTop: 2,
+  },
+
+  /* GALLERY SECTION */
+  galleryExploreText: {
+    fontSize: 12,
+    color: '#475569',
+    fontWeight: '600',
+  },
+  galleryExploreArrow: {
+    fontSize: 16,
+    color: '#475569',
+    fontWeight: '700',
+  },
+  galleryGrid: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  galleryCard: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  galleryImageBoxArt: {
+    height: 100,
+    backgroundColor: '#E8F7EE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  galleryImageBoxGarden: {
+    height: 100,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  galleryPlaceholderEmoji: {
+    fontSize: 26,
+  },
+  galleryPhotoBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    backgroundColor: 'rgba(19, 27, 46, 0.7)',
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
+    borderRadius: 9999,
+  },
+  galleryPhotoBadgeText: {
+    fontSize: 8.5,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  galleryChildPill: {
+    position: 'absolute',
+    bottom: 6,
+    left: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 9999,
+  },
+  galleryChildPillText: {
+    fontSize: 8.5,
+    fontWeight: '800',
+    color: '#131B2E',
+  },
+  galleryCardBody: {
+    padding: 10,
+  },
+  galleryCardTitle: {
+    fontSize: 11.5,
+    fontWeight: '800',
+    color: '#131B2E',
+  },
+  galleryCardSubtitle: {
+    fontSize: 9.5,
+    color: '#94A3B8',
+    marginTop: 2,
+  },
+
+  /* QUICK ACCESS */
+  quickAccessSection: {
+    gap: 10,
+  },
+  quickActionBtn: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 13,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  quickActionIconCircleGreen: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: '#E8F7EE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  quickActionIconCircleRed: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: '#FFF1F2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  quickActionEmoji: {
+    fontSize: 17,
+  },
+  quickActionTextCol: {
+    flex: 1,
+  },
+  quickActionTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#131B2E',
+  },
+  quickActionSub: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  quickActionSubRed: {
+    fontSize: 11,
+    color: '#9F1239',
+    fontWeight: '600',
+    marginTop: 1,
+  },
+  quickActionArrow: {
+    fontSize: 18,
+    color: '#94A3B8',
+    fontWeight: '700',
+    marginLeft: 6,
   },
 });
