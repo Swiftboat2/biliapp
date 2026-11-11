@@ -10,6 +10,7 @@ Sistema integral de gestión escolar, seguridad física en puerta, asistencia co
 biliapp/
 ├── apps/
 │   ├── api/             # Backend NestJS (REST + WebSockets + JWT/PIN RBAC)
+│   ├── web/             # Panel institucional web (Dirección, Preceptoría y Docentes) — Vite + React
 │   └── mobile/          # App Móvil Familias y Puerta con Selector Multi-Hijo (React Native Expo SDK 58)
 ├── packages/
 │   ├── database/        # Prisma ORM, migraciones PostgreSQL y seeders
@@ -69,3 +70,18 @@ pnpm dev
 - **Nivel Inicial:** Registro táctil de estados de ánimo, alimentación, descanso e higiene (mudas de pañal) con timeline para familias.
 - **Auditoría Inmutable:** Interceptor append-only en NestJS que registra usuario, timestamp, IP, entidad modificada y payload previo/posterior.
 
+
+### Panel institucional (web)
+Panel para Dirección, Preceptoría y Docentes, con el mismo estilo de la app mobile. Por ahora usa datos de ejemplo en el navegador (`apps/web/src/data/mock.ts`), igual que la app mobile; las acciones se guardan en `localStorage` y se pueden restablecer desde el menú.
+
+```bash
+pnpm --filter @biliapp/web dev   # http://localhost:3001
+```
+
+Al entrar se elige el perfil (Dirección, Preceptoría o Docente). Cada rol ve solo sus secciones:
+- **Dirección:** tablero del día, asistencia del colegio, ventanas de carga de notas, legajos (con actas DOE), retiros, comunicados, calendario y supervisión de conversaciones con auditoría.
+- **Preceptoría:** toma de asistencia (diaria y contraturno), justificativos, retiros en puerta, legajos y salud, comunicados a sus cursos y mensajes con familias.
+- **Docentes:** asistencia por materia, planilla de notas con instancias parciales (escrito, oral, TP o mixta, con opción "vale doble") y nota de cierre del trimestre, promedios por alumno y por curso del trimestre y del año (informe cualitativo en Jardín), observaciones pedagógicas, calendario de evaluaciones y mensajes.
+- **App de familias (simulador):** desde el ingreso o el menú, "Ver la app de familias" muestra la app de celular de las familias (Laura López, mamá de Mateo y Sofía) dentro de un marco de teléfono. Usa los mismos datos del panel: firmar autorizaciones, enviar justificativos, autorizar retiros y escribir mensajes le llega al instante a Preceptoría, Docentes y Dirección.
+
+Deploy en Vercel: proyecto con *Root Directory* `apps/web` (la configuración de build está en `apps/web/vercel.json`).
