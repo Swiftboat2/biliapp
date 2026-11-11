@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Home, MessageCircle, FolderOpen, Image as ImageIcon, CheckSquare, LogOut } from 'lucide-react';
+import { Home, MessageCircle, FolderOpen, Image as ImageIcon, CheckSquare, LogOut, FileText } from 'lucide-react';
 import { useApp } from '../data/store';
 import { FAMILY, STAFF } from '../data/mock';
 import { initials } from '../lib/school';
@@ -81,7 +81,10 @@ export function FamilySimulator() {
             ))}
           </div>
         </div>
-        <button className="btn sm" style={{ alignSelf: 'flex-start' }} onClick={signOut}><LogOut /> Salir del simulador</button>
+        <div className="row wrap" style={{ gap: 8 }}>
+          <button className="btn sm" onClick={signOut}><LogOut /> Salir del simulador</button>
+          <a className="btn sm" href="/propuesta/"><FileText /> Ver la propuesta</a>
+        </div>
       </aside>
 
       <div className="phone-frame">

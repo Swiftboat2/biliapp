@@ -1,5 +1,5 @@
 import { UserRole } from '@biliapp/shared-types';
-import { ChevronRight, Smartphone } from 'lucide-react';
+import { ChevronRight, FileText, Smartphone } from 'lucide-react';
 import { FAMILY, STAFF, INSTITUTION } from '../data/mock';
 import { useApp } from '../data/store';
 import { initials } from '../lib/school';
@@ -30,6 +30,7 @@ export function Login() {
           </div>
           <h1>Panel institucional</h1>
           <p>Elegí con qué perfil querés entrar. Es una versión de demostración con datos de ejemplo.</p>
+          <a href="/propuesta/" className="btn sm" style={{ marginTop: 14, position: 'relative', background: '#fff', color: 'var(--primary-dk)', borderColor: '#fff' }}><FileText /> Ver la propuesta</a>
         </div>
         <div className="login-body">
           {STAFF.map((s) => {

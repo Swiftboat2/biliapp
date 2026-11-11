@@ -5,7 +5,7 @@ import { ASSIGNMENTS } from '../data/mock';
 import { relative, shortDate, daysUntil } from '../lib/dates';
 import { audienceLabel, conceptFor, course, gradeKey, staffName, subject } from '../lib/school';
 import { annualAverage, fmtNota, instancesFor, partialGrade, termGrade } from '../lib/grades';
-import { commsFor, Hero, isKinder, Sheet, useKids, usePhoneToast, type Go, type Kid } from './parts';
+import { commsFor, Hero, HScroll, isKinder, Sheet, useKids, usePhoneToast, type Go, type Kid } from './parts';
 import type { Communication } from '../data/types';
 
 type Filter = 'todos' | 'firmas' | 'boletines' | 'circulares' | 'salud';
@@ -34,11 +34,11 @@ export function FamArchivos({ go }: { go: Go }) {
     <>
       <Hero title="Archivos" context="AUTORIZACIONES · BOLETINES · CIRCULARES" go={go} />
       <div className="fam-body">
-        <div className="fam-hscroll" style={{ gap: 6 }}>
+        <HScroll gap={6}>
           {([['todos', 'Todos'], ['firmas', `Autorizaciones${toSign.length ? ` (${toSign.length})` : ''}`], ['boletines', 'Boletines'], ['circulares', 'Circulares'], ['salud', 'Fichas médicas']] as [Filter, string][]).map(([f, label]) => (
             <button key={f} className={`fam-btn sm ${filter === f ? '' : 'light'}`} onClick={() => setFilter(f)}>{label}</button>
           ))}
-        </div>
+        </HScroll>
 
         {show('firmas') && (
           <section className="fam-section">

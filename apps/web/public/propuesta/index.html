@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" type="image/png" href="/logo-colegio.png">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+<title>BiliAPP · Plataforma Escolar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<style>
+/* Layout: the app's own look — green curved hero, floating white cards on #F4F7FC, phone mockups beside each module. Single light theme, same as the mobile app. */
+:root{
+  --primary:#008C45; --primary-dk:#005F2E; --primary-lt:#E8F7EE;
+  --celeste:#3898EC; --celeste-dk:#1A73E8; --celeste-lt:#EBF5FE; --celeste-bd:#BAE6FD;
+  --red:#CD212A; --red-lt:#FFF1F2; --red-bd:#FECDD3; --red-tx:#9F1239;
+  --amber:#D97706; --amber-dk:#92400E; --amber-lt:#FEF3C7; --amber-bd:#FDE68A;
+  --bg:#F4F7FC; --card:#FFFFFF; --soft:#F8FAFC; --line:#E2E8F0;
+  --fg:#131B2E; --fg2:#475569; --fg3:#64748B; --muted:#94A3B8;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.02em}
+p{margin:0}
+
+/* ---------- HERO (ola verde) ---------- */
+.hero{background:var(--primary);border-radius:0 0 32px 32px;position:relative;overflow:hidden;color:#fff;box-shadow:0 6px 14px rgba(0,95,46,.18)}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%}
+.hero::before{width:420px;height:420px;top:-160px;right:-120px;background:rgba(255,255,255,.08)}
+.hero::after{width:300px;height:300px;bottom:-140px;left:-90px;background:rgba(108,221,140,.12)}
+.hero .wrap{position:relative;z-index:1;padding-block:28px 40px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.15);padding:2px}
+.brand b{display:block;font-weight:900;font-size:16px;letter-spacing:-.3px}
+.brand small{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;color:rgba(255,255,255,.8)}
+.hero h1{font-size:clamp(30px,4.4vw,48px);font-weight:900;line-height:1.08;margin-top:32px;letter-spacing:-.035em}
+.hero .lead{font-size:17px;color:rgba(255,255,255,.88);margin-top:14px;max-width:34em}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.hpill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:12px;font-weight:800;padding:6px 12px;border-radius:999px;display:inline-flex;gap:6px;align-items:center}
+.hpill svg.i{width:14px;height:14px}
+
+/* ---------- PHONE MOCKUP ---------- */
+.phone{width:290px;max-width:100%;background:#0F172A;border-radius:40px;padding:9px;box-shadow:0 24px 50px rgba(15,23,42,.28);flex:none}
+.screen{background:var(--bg);border-radius:32px;overflow:hidden;height:560px;position:relative;font-size:11px;color:var(--fg);display:flex;flex-direction:column}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:84px;height:22px;background:#0F172A;border-radius:12px;z-index:5}
+.scr-body{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:9px;padding:0 12px 10px}
+.tabbar{background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:7px 4px 11px;color:var(--muted);font-size:8.5px;font-weight:700}
+.tabbar span{display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+.tabbar svg.i{width:17px;height:17px}
+.tabbar .on{color:var(--primary)}
+.tabbar .badge{position:absolute;top:-3px;right:2px;background:var(--red);color:#fff;font-size:7.5px;border-radius:999px;padding:0 4px;line-height:12px}
+.mhero{background:var(--primary);border-radius:0 0 24px 24px;color:#fff;padding:36px 12px 16px;position:relative;overflow:hidden;margin:0 -12px}
+.mhero::before{content:"";position:absolute;width:130px;height:130px;border-radius:50%;top:-40px;right:-40px;background:rgba(255,255,255,.08)}
+.mhero-row{display:flex;align-items:center;gap:7px;position:relative}
+.mhero-row img{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15)}
+.mhero-row b{font-size:10.5px;font-weight:900;display:block;line-height:1.2}
+.mhero-row small{font-size:7px;font-weight:800;letter-spacing:.6px;opacity:.8}
+.mhero-row .av{margin-left:auto;width:28px;height:28px;border-radius:50%;background:#fff;color:var(--primary);font-weight:900;font-size:9.5px;display:grid;place-items:center}
+.mhero h4{margin:10px 0 0;font-size:15px;font-weight:900;letter-spacing:-.3px;position:relative}
+.mhero.title h4{font-size:17px;margin-top:6px}
+.mhero p{font-size:9.5px;opacity:.85;position:relative}
+.mcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:0 2px 6px rgba(15,23,42,.05);position:relative;overflow:hidden}
+.mcard.acc-g{border-top:3px solid var(--primary)}
+.mcard.acc-c{border-top:3px solid var(--celeste-dk)}
+.mt{font-size:12px;font-weight:800;color:var(--fg)}
+.ms{font-size:9.5px;color:var(--fg3)}
+.mrow{display:flex;align-items:center;gap:8px}
+.msec{font-size:12.5px;font-weight:900;display:flex;align-items:center;gap:5px;margin-top:2px}
+.msec::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--primary)}
+.tag{display:inline-flex;align-items:center;gap:3px;font-size:8.5px;font-weight:800;padding:2px 7px;border-radius:999px;white-space:nowrap}
+.tag.g{background:var(--primary-lt);color:var(--primary-dk)}
+.tag.c{background:#DBEAFE;color:#1E40AF}
+.tag.r{background:#FFE4E6;color:var(--red-tx)}
+.tag.a{background:var(--amber-lt);color:var(--amber-dk)}
+.tag.w{background:#fff;color:var(--fg)}
+.circ{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex:none}
+.circ svg.i{width:16px;height:16px}
+.circ.g{background:var(--primary-lt);color:var(--primary-dk)}
+.circ.c{background:var(--celeste-lt);color:var(--celeste-dk)}
+.circ.r{background:var(--red-lt);color:var(--red)}
+.circ.a{background:var(--amber-lt);color:var(--amber-dk)}
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.dual > div{border-radius:13px;padding:8px;border:1px solid}
+.d-red{background:var(--red-lt);border-color:var(--red-bd)!important}
+.d-cel{background:var(--celeste-lt);border-color:var(--celeste-bd)!important}
+.btn-g{background:var(--primary);color:#fff;border-radius:999px;text-align:center;font-weight:800;font-size:10.5px;padding:8px;box-shadow:0 6px 12px rgba(0,140,69,.3)}
+.bar{height:6px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--primary);border-radius:999px}
+/* asistencia */
+.att{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line)}
+.att:last-child{border-bottom:0}
+.att .nm{flex:1;min-width:0;font-weight:700;font-size:10.5px}
+.att .nm small{display:block;font-weight:500;color:var(--fg3);font-size:8.5px}
+.pat{display:flex;gap:3px}
+.pat b{width:19px;height:19px;border-radius:6px;display:grid;place-items:center;font-size:8.5px;font-weight:900;background:var(--soft);color:var(--muted);border:1px solid var(--line)}
+.pat b.P{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pat b.A{background:var(--red);color:#fff;border-color:var(--red)}
+.pat b.T{background:var(--amber);color:#fff;border-color:var(--amber)}
+.pat b.R{background:var(--celeste-dk);color:#fff;border-color:var(--celeste-dk)}
+/* chat / notif */
+.lock{background:linear-gradient(160deg,#0B3D24,#0F172A 70%);color:#fff;height:100%;padding:44px 12px 12px;display:flex;flex-direction:column;gap:8px}
+.lock .time{text-align:center;font-size:42px;font-weight:300;letter-spacing:-1px;line-height:1}
+.lock .date{text-align:center;font-size:10px;opacity:.8;margin-bottom:14px}
+.notif{background:rgba(255,255,255,.9);color:var(--fg);border-radius:14px;padding:9px;display:flex;gap:8px}
+.notif img{width:24px;height:24px;border-radius:7px;background:#fff}
+.notif b{font-size:10px;display:flex;justify-content:space-between}
+.notif b span{font-weight:500;color:var(--fg3);font-size:8.5px}
+.notif p{font-size:10px;color:var(--fg2);line-height:1.35}
+.quiet{display:flex;gap:6px;align-items:center;background:rgba(255,255,255,.12);border-radius:10px;padding:7px 9px;font-size:9.5px}
+.quiet svg.i{width:14px;height:14px}
+/* POS */
+.pos-alert{background:var(--red);color:#fff;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start;box-shadow:0 8px 16px rgba(205,33,42,.3)}
+.pos-alert b{font-size:12px;font-weight:900;display:block}
+.pos-alert p{font-size:9.5px;opacity:.92}
+.item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:10.5px;font-weight:600}
+.item s{color:var(--muted)}
+.item.blk{color:var(--red-tx)}
+
+/* ---------- SECTIONS ---------- */
+main{display:flex;flex-direction:column;gap:56px;padding-block:28px 64px}
+.sec-head{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;max-width:46em}
+.eyebrow{font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--primary)}
+.sec-title{font-size:clamp(22px,2.6vw,28px);font-weight:900;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--primary);flex:none}
+.sec-sub{color:var(--fg3);font-size:15px}
+
+/* roles (como tarjetas de alumno) */
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.role{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;position:relative;overflow:hidden;box-shadow:0 3px 8px rgba(15,23,42,.06);display:flex;flex-direction:column;gap:10px;transition:border-color .15s, box-shadow .15s, transform .15s}
+.role::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--rc)}
+.role:hover{transform:translateY(-2px)}
+.role:focus-visible{outline:3px solid var(--celeste);outline-offset:2px}
+.role[aria-pressed="true"]{border:2px solid var(--rc);padding:13px;box-shadow:0 6px 14px rgba(0,140,69,.18)}
+.role .top{display:flex;align-items:center;gap:10px}
+.role .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--rl);color:var(--rc)}
+.role b{font-size:14.5px;font-weight:800;display:block}
+.role small{font-size:11.5px;color:var(--fg3);display:block;line-height:1.3}
+.role .strip{background:var(--soft);border-radius:10px;padding:6px 10px;display:flex;justify-content:space-between;font-size:11px;color:var(--fg2)}
+.role .strip em{font-style:normal;font-weight:800;color:var(--rc);font-size:10.5px;letter-spacing:.4px}
+.filter-note{margin-top:12px;font-size:13px;color:var(--fg3);min-height:1.5em}
+.filter-note b{color:var(--fg)}
+
+/* día */
+.day{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.moment{border-radius:16px;padding:14px;border:1px solid;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.moment .hd{display:flex;justify-content:space-between;align-items:center}
+.moment .hr{font-size:20px;font-weight:900;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.moment h3{font-size:15px;font-weight:800}
+.moment p{font-size:13px;color:var(--fg2);line-height:1.45}
+.m-g{background:var(--primary-lt);border-color:#A7F3D0}
+.m-c{background:var(--celeste-lt);border-color:var(--celeste-bd)}
+.m-r{background:var(--red-lt);border-color:var(--red-bd)}
+.m-a{background:#FEF9C3;border-color:#FDE047}
+.moment .circ{width:30px;height:30px;background:#fff}
+
+/* módulos */
+.module{background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 4px 10px rgba(15,23,42,.06);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:start;position:relative;overflow:hidden}
+.module::before{content:"";position:absolute;inset:0 0 auto;height:5px;background:var(--mc)}
+.mod-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:6px}
+.mod-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--ml);color:var(--mc);flex:none}
+.mod-icon svg.i{width:22px;height:22px}
+.mod-num{font-size:11px;font-weight:900;letter-spacing:1px;color:var(--mc);text-transform:uppercase}
+.module h2{font-size:22px;font-weight:900}
+.mod-intro{color:var(--fg2);font-size:14.5px;margin:6px 0 18px;max-width:42em}
+.feats{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.feat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;display:flex;gap:11px;align-items:flex-start;transition:opacity .2s, filter .2s, border-color .2s}
+.feat .circ{width:38px;height:38px;border-radius:12px}
+.feat .circ svg.i{width:19px;height:19px}
+.feat .tx{flex:1;min-width:0}
+.feat h3{font-size:14px;font-weight:800;letter-spacing:-.2px;line-height:1.3}
+.feat p{font-size:12.5px;color:var(--fg3);margin-top:3px;line-height:1.45}
+.feat .meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.pill{font-size:10px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+.pill.pri{background:var(--primary-lt);color:var(--primary-dk)}
+.pill.opc{background:var(--amber-lt);color:var(--amber-dk)}
+.pill.fin{background:#F1F5F9;color:var(--fg2)}
+.who{font-size:10px;font-weight:700;color:var(--fg3);background:var(--soft);border:1px solid var(--line);padding:2px 7px;border-radius:999px}
+body.filtering .feat.off{opacity:.28;filter:grayscale(1)}
+body.filtering .feat.hit{border-color:var(--primary)}
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.phone-cap{font-size:12px;color:var(--fg3);text-align:center;max-width:270px}
+.phone-cap b{color:var(--fg)}
+
+.callout{margin-top:14px;background:var(--celeste-lt);border:1px solid var(--celeste-bd);border-radius:16px;padding:14px;display:flex;gap:12px;align-items:flex-start}
+.callout b{font-size:14px;display:block}
+.callout p{font-size:13px;color:var(--fg2)}
+
+/* etapas */
+.stages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.stage{border-radius:20px;padding:18px;border:1px solid;display:flex;flex-direction:column;gap:10px}
+.stage .hd{display:flex;justify-content:space-between;align-items:center}
+.stage h3{font-size:18px;font-weight:900}
+.stage p{font-size:13.5px;color:var(--fg2)}
+.stage ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.stage li{background:#fff;font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.foot{font-size:12px;color:var(--muted);text-align:center;padding-top:8px}
+
+/* panel institucional (escritorio) */
+.desk-scroll{overflow-x:auto;border-radius:20px;-webkit-overflow-scrolling:touch}
+.desk{min-width:900px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 40px rgba(15,23,42,.12);overflow:hidden}
+.desk-top{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--soft);border-bottom:1px solid var(--line);font-size:12px;color:var(--fg3);font-weight:600}
+.desk-top i{width:10px;height:10px;border-radius:50%;background:#E2E8F0;display:inline-block}
+.desk-top span{margin-left:10px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 14px}
+.desk-body{display:grid;grid-template-columns:200px 1fr;min-height:520px}
+.side{background:var(--primary);color:#fff;padding:16px 12px;display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden}
+.side::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;bottom:-90px;left:-80px;background:rgba(255,255,255,.07)}
+.side .brand{margin-bottom:14px}
+.side .brand img{width:34px;height:34px}
+.side .brand b{font-size:12.5px;line-height:1.2}
+.side .brand small{font-size:8.5px}
+.nav{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700;padding:8px 10px;border-radius:10px;color:rgba(255,255,255,.82);position:relative;z-index:1}
+.nav svg.i{width:16px;height:16px}
+.nav.on{background:#fff;color:var(--primary-dk)}
+.nav em{margin-left:auto;font-style:normal;background:var(--red);color:#fff;font-size:10px;border-radius:999px;padding:0 6px;line-height:16px}
+.dmain{background:var(--bg);padding:18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.dhead{display:flex;justify-content:space-between;align-items:flex-end}
+.dhead h4{margin:0;font-size:19px;font-weight:900;letter-spacing:-.3px}
+.dhead p{font-size:12px;color:var(--fg3)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--kc)}
+.kpi small{font-size:10.5px;font-weight:800;color:var(--fg3);letter-spacing:.3px;text-transform:uppercase}
+.kpi b{display:block;font-size:24px;font-weight:900;letter-spacing:-.5px;font-variant-numeric:tabular-nums;margin-top:2px}
+.kpi b span{font-size:13px;color:var(--muted);font-weight:700}
+.kpi p{font-size:11px;color:var(--fg3)}
+.dgrid{display:grid;grid-template-columns:1.15fr 1fr;gap:12px}
+.dpanel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.dpanel h5{margin:0 0 6px;font-size:13px;font-weight:900;display:flex;align-items:center;gap:6px}
+.alert-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}
+.alert-row:last-child{border-bottom:0}
+.alert-row .circ{width:30px;height:30px;border-radius:9px}
+.alert-row .tx{flex:1;min-width:0}
+.alert-row b{display:block;font-size:12.5px}
+.alert-row small{color:var(--fg3)}
+.abtn{font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;border:1.5px solid var(--line);color:var(--fg2);white-space:nowrap}
+.abtn.g{background:var(--primary);border-color:var(--primary);color:#fff}
+.ctable{width:100%;border-collapse:collapse;font-size:12px}
+.ctable th{text-align:left;font-size:10px;font-weight:800;color:var(--fg3);text-transform:uppercase;letter-spacing:.4px;padding:4px 0}
+.ctable td{padding:7px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.ctable td:first-child{font-weight:700}
+.window{display:flex;align-items:center;gap:12px;background:var(--celeste-lt);border:1px solid var(--celeste-bd);border-radius:14px;padding:10px 14px;font-size:12.5px}
+.window .tx{flex:1}
+.window b{display:block}
+.staff{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.staff-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;position:relative;overflow:hidden;box-shadow:0 3px 8px rgba(15,23,42,.05)}
+.staff-card::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--sc)}
+.staff-card .top{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.staff-card h3{font-size:17px;font-weight:900}
+.staff-card .top small{font-size:12px;color:var(--fg3)}
+.staff-card ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.staff-card li{display:flex;gap:9px;font-size:13.5px;color:var(--fg2);line-height:1.4}
+.staff-card li svg.i{width:16px;height:16px;color:var(--sc);margin-top:2px}
+.staff-card li b{color:var(--fg)}
+.scroll-hint{display:none;font-size:12px;color:var(--fg3);margin-top:8px}
+@media (max-width:940px){.scroll-hint{display:block}}
+@media (max-width:700px){.staff{grid-template-columns:1fr}}
+
+/* decisiones Dejar / Quitar */
+.dec{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);flex-wrap:wrap}
+.dbtn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;border:1.5px solid var(--line);color:var(--fg2);background:#fff;transition:background .15s,border-color .15s,color .15s}
+.dbtn svg.i{width:13px;height:13px;stroke-width:3}
+.dbtn:hover{border-color:var(--muted)}
+.dbtn:focus-visible{outline:3px solid var(--celeste);outline-offset:2px}
+.dbtn[disabled]{cursor:default;opacity:.55}
+.dbtn.keep[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+.dbtn.drop[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.dby{font-size:11px;color:var(--muted);margin-left:2px}
+.feat.d-keep{border-color:#A7F3D0;background:#FBFEFC}
+.feat.d-drop{border-color:var(--red-bd);background:var(--red-lt)}
+.feat.d-drop h3{text-decoration:line-through;text-decoration-color:rgba(205,33,42,.5);color:var(--fg3)}
+.decbar{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:20;margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 24px rgba(15,23,42,.14);padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.decbar .lbl{font-size:13px;font-weight:900;display:flex;align-items:center;gap:6px}
+.decbar .lbl::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--primary)}
+.decbar .stats{display:flex;gap:6px;flex-wrap:wrap}
+.decbar .st{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
+.st.k{background:var(--primary-lt);color:var(--primary-dk)}
+.st.q{background:var(--red-lt);color:var(--red-tx)}
+.st.n{background:#F1F5F9;color:var(--fg2)}
+.decbar .prog{flex:1;min-width:140px;height:8px;border-radius:999px;background:#F1F5F9;overflow:hidden;display:flex}
+.decbar .prog i{display:block;height:100%}
+.decbar .msg{flex-basis:100%;font-size:12px;color:var(--fg3)}
+.decbar .msg:empty{display:none}
+
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr}
+  .hero .phone{margin:0 auto}
+  .module{grid-template-columns:1fr;padding:20px}
+  .stages{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<!-- Íconos (Feather, igual que la app) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+<symbol id="chat" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+<symbol id="folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+<symbol id="image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+<symbol id="shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+<symbol id="check-sq" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+<symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+<symbol id="file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+<symbol id="users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+<symbol id="heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+<symbol id="alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></symbol>
+<symbol id="bus" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></symbol>
+<symbol id="tool" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+<symbol id="tv" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></symbol>
+<symbol id="bag" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol>
+<symbol id="card" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></symbol>
+<symbol id="eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+<symbol id="award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></symbol>
+<symbol id="moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+<symbol id="box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></symbol>
+<symbol id="camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+<symbol id="cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></symbol>
+<symbol id="pie" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+</defs>
+</svg>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="brand">
+        <img src="/logo-colegio.png" alt="Escudo del Instituto República de Italia">
+        <div><b>Instituto República de Italia</b><small>ENTRE RÍOS · PROPUESTA 2026</small></div>
+      </div>
+      <h1>Todo el colegio, en una sola app.</h1>
+      <p class="lead">Asistencia, notas, salud, retiros y comunicados para Jardín, Primaria y Secundaria. Las familias lo ven en el celular y el personal lo carga en segundos, sin planillas en papel.</p>
+      <div class="hero-pills">
+        <span class="hpill"><svg class="i"><use href="#users"/></svg>5 perfiles de uso</span>
+        <span class="hpill"><svg class="i"><use href="#box"/></svg>4 módulos</span>
+        <span class="hpill"><svg class="i"><use href="#cal"/></svg>2 etapas de implementación</span>
+        <a class="hpill" href="/" style="background:#fff;color:var(--primary-dk);text-decoration:none">Probar el panel y la app de familias ›</a>
+      </div>
+    </div>
+
+    <!-- Pantalla: Inicio familia -->
+    <div class="phone" aria-label="Pantalla de inicio de la app para familias">
+      <div class="screen">
+        <div class="notch"></div>
+        <div class="scr-body">
+          <div class="mhero">
+            <div class="mhero-row"><img src="/logo-colegio.png" alt=""><div><b>Instituto República de Italia</b><small>ENTRE RÍOS · CICLO 2026</small></div><span class="av">FL</span></div>
+            <h4>¡Hola, Familia López! 👋</h4>
+          </div>
+          <div class="mcard acc-g">
+            <div class="mrow"><span class="circ g"><svg class="i"><use href="#user"/></svg></span><div style="flex:1"><div class="mrow" style="justify-content:space-between"><span class="mt">Mateo López</span><span class="tag g">96% ASIST.</span></div><span class="ms">Sala de 4 · Nivel Inicial</span></div></div>
+          </div>
+          <div class="mcard acc-c" style="opacity:.75">
+            <div class="mrow"><span class="circ c"><svg class="i"><use href="#user"/></svg></span><div style="flex:1"><div class="mrow" style="justify-content:space-between"><span class="mt">Sofía López</span><span class="tag c">98% ASIST.</span></div><span class="ms">4° Grado "B" · Primaria</span></div></div>
+          </div>
+          <div class="msec">¿Qué pasó hoy?</div>
+          <div class="dual">
+            <div class="d-red"><span class="tag r">Mateo</span><div class="mt" style="margin-top:5px">Falta parcial</div><div class="ms">Ingreso 13:10 hs</div><span class="tag w" style="color:var(--red-tx);margin-top:5px">Tardanza (1/4)</span></div>
+            <div class="d-cel"><span class="tag c">Sofía</span><div class="mt" style="margin-top:5px">Puntual</div><div class="ms">Ingreso 07:45 hs</div><span class="tag w" style="color:var(--celeste-dk);margin-top:5px">Presente ✓</span></div>
+          </div>
+          <div class="mcard"><div class="mrow"><span class="circ r" style="border-radius:10px"><svg class="i"><use href="#pen"/></svg></span><div><div class="mt">Autorización pendiente</div><div class="ms" style="color:var(--red-tx);font-weight:600">Salida Museo Provincial · Firma con PIN</div></div></div></div>
+        </div>
+        <div class="tabbar"><span class="on"><svg class="i"><use href="#home"/></svg>Inicio</span><span><svg class="i"><use href="#chat"/></svg>Mensajes<i class="badge">3</i></span><span><svg class="i"><use href="#folder"/></svg>Archivos</span><span><svg class="i"><use href="#image"/></svg>Galería</span><span><svg class="i"><use href="#check-sq"/></svg>Asistencia</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ROLES -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Quién la usa</span>
+      <h2 class="sec-title">Cada persona ve lo que le corresponde</h2>
+      <p class="sec-sub">Tocá un perfil para resaltar, en los módulos de abajo, las funciones que usa esa persona.</p>
+    </div>
+    <div class="roles" id="roles">
+      <button class="role" data-role="all" aria-pressed="true" style="--rc:var(--fg2);--rl:#F1F5F9">
+        <span class="top"><span class="av"><svg class="i"><use href="#box"/></svg></span><span><b>Todos</b><small>Vista completa de la propuesta</small></span></span>
+        <span class="strip"><span>Funciones</span><em data-count="all"></em></span>
+      </button>
+      <button class="role" data-role="f" aria-pressed="false" style="--rc:var(--primary);--rl:var(--primary-lt)">
+        <span class="top"><span class="av"><svg class="i"><use href="#users"/></svg></span><span><b>Familias</b><small>Un solo usuario para todos sus hijos</small></span></span>
+        <span class="strip"><span>Funciones</span><em data-count="f"></em></span>
+      </button>
+      <button class="role" data-role="d" aria-pressed="false" style="--rc:var(--celeste-dk);--rl:var(--celeste-lt)">
+        <span class="top"><span class="av"><svg class="i"><use href="#book"/></svg></span><span><b>Docentes</b><small>Asistencia, notas e informes</small></span></span>
+        <span class="strip"><span>Funciones</span><em data-count="d"></em></span>
+      </button>
+      <button class="role" data-role="p" aria-pressed="false" style="--rc:var(--amber);--rl:var(--amber-lt)">
+        <span class="top"><span class="av"><svg class="i"><use href="#shield"/></svg></span><span><b>Preceptoría</b><small>Puerta, faltas y retiros</small></span></span>
+        <span class="strip"><span>Funciones</span><em data-count="p"></em></span>
+      </button>
+      <button class="role" data-role="r" aria-pressed="false" style="--rc:var(--red);--rl:var(--red-lt)">
+        <span class="top"><span class="av"><svg class="i"><use href="#award"/></svg></span><span><b>Dirección</b><small>Control, cierres y supervisión</small></span></span>
+        <span class="strip"><span>Funciones</span><em data-count="r"></em></span>
+      </button>
+      <button class="role" data-role="s" aria-pressed="false" style="--rc:#7C3AED;--rl:#F3E8FF">
+        <span class="top"><span class="av"><svg class="i"><use href="#bus"/></svg></span><span><b>Personal de servicio</b><small>Celadores y mantenimiento</small></span></span>
+        <span class="strip"><span>Funciones</span><em data-count="s"></em></span>
+      </button>
+    </div>
+    <p class="filter-note" id="filterNote" aria-live="polite"></p>
+  </section>
+
+  <!-- UN DÍA -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Un día cualquiera</span>
+      <h2 class="sec-title">Así se ve un día con la app</h2>
+      <p class="sec-sub">Ejemplo de la jornada de la familia López, con Mateo en Jardín y Sofía en Primaria.</p>
+    </div>
+    <div class="day">
+      <div class="moment m-c"><div class="hd"><span class="hr">07:30</span><span class="circ c"><svg class="i"><use href="#moon"/></svg></span></div><h3>Llegan los mensajes de la noche</h3><p>Lo que una familia escribió a las 23 hs le notifica a la docente recién ahora. El descanso se respeta.</p></div>
+      <div class="moment m-g"><div class="hd"><span class="hr">07:45</span><span class="circ g"><svg class="i"><use href="#check-sq"/></svg></span></div><h3>Asistencia en segundos</h3><p>Preceptoría marca Presente, Ausente, Tarde o Retiro. Las medias faltas y cuartos se calculan solos.</p></div>
+      <div class="moment m-g"><div class="hd"><span class="hr">12:00</span><span class="circ g"><svg class="i"><use href="#shield"/></svg></span></div><h3>Retiro seguro en puerta</h3><p>"Hoy lo retira la abuela": la familia lo cargó en la app y la puerta ve su DNI y su foto.</p></div>
+      <div class="moment m-c"><div class="hd"><span class="hr">13:42</span><span class="circ c"><svg class="i"><use href="#bus"/></svg></span></div><h3>Bajó del micro</h3><p>El celador marca la bajada y la familia recibe el aviso al instante.</p></div>
+    </div>
+  </section>
+
+  <!-- PANEL INSTITUCIONAL -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Para el colegio</span>
+      <h2 class="sec-title">El panel institucional</h2>
+      <p class="sec-sub">Lo que usan Dirección y Preceptoría desde la computadora o la tablet. Las familias usan el celular; el colegio controla todo desde acá.</p>
+    </div>
+
+    <div class="desk-scroll">
+      <div class="desk" role="img" aria-label="Pantalla de ejemplo del panel institucional para Dirección">
+        <div class="desk-top"><i></i><i></i><i></i><span>Panel institucional · Instituto República de Italia</span></div>
+        <div class="desk-body">
+          <div class="side">
+            <div class="brand"><img src="/logo-colegio.png" alt=""><div><b>Instituto República de Italia</b><small>PANEL INSTITUCIONAL</small></div></div>
+            <span class="nav on"><svg class="i"><use href="#home"/></svg>Inicio</span>
+            <span class="nav"><svg class="i"><use href="#check-sq"/></svg>Asistencia</span>
+            <span class="nav"><svg class="i"><use href="#award"/></svg>Calificaciones</span>
+            <span class="nav"><svg class="i"><use href="#folder"/></svg>Legajos y salud</span>
+            <span class="nav"><svg class="i"><use href="#shield"/></svg>Retiros<em>4</em></span>
+            <span class="nav"><svg class="i"><use href="#bell"/></svg>Comunicados</span>
+            <span class="nav"><svg class="i"><use href="#chat"/></svg>Mensajes</span>
+            <span class="nav"><svg class="i"><use href="#cal"/></svg>Calendario</span>
+            <span class="nav"><svg class="i"><use href="#eye"/></svg>Supervisión</span>
+          </div>
+          <div class="dmain">
+            <div class="dhead"><div><p>Martes 10 de noviembre · 08:20</p><h4>Buen día, Dirección</h4></div><span class="tag g" style="font-size:11px;padding:4px 10px">Ciclo 2026 · 2° trimestre</span></div>
+            <div class="kpis">
+              <div class="kpi" style="--kc:var(--primary)"><small>Presentes hoy</small><b>412 <span>/ 438</span></b><p>94% · 3 niveles</p></div>
+              <div class="kpi" style="--kc:var(--amber)"><small>Asistencia sin tomar</small><b>2 <span>cursos</span></b><p>3° Año "A" · 5° Grado "B"</p></div>
+              <div class="kpi" style="--kc:var(--celeste-dk)"><small>Comunicado de ayer</small><b>87%</b><p>leído por las familias</p></div>
+              <div class="kpi" style="--kc:var(--red)"><small>Alertas</small><b>6</b><p>requieren atención</p></div>
+            </div>
+            <div class="window"><span class="circ c"><svg class="i"><use href="#lock"/></svg></span><div class="tx"><b>Carga de notas del 2° trimestre: abierta</b><span style="color:var(--fg3)">Hasta el viernes 20/11 · 31 de 38 docentes ya cargaron</span></div><span class="abtn">Extender</span><span class="abtn g">Cerrar carga</span></div>
+            <div class="dgrid">
+              <div class="dpanel">
+                <h5>Requiere atención</h5>
+                <div class="alert-row"><span class="circ r"><svg class="i"><use href="#alert"/></svg></span><div class="tx"><b>Bruno Duarte llegó a 15 faltas</b><small>4° Grado "B" · se notificó a la familia</small></div><span class="abtn">Ver legajo</span></div>
+                <div class="alert-row"><span class="circ a"><svg class="i"><use href="#camera"/></svg></span><div class="tx"><b>3 justificativos para revisar</b><small>Certificados médicos subidos por familias</small></div><span class="abtn g">Revisar</span></div>
+                <div class="alert-row"><span class="circ g"><svg class="i"><use href="#shield"/></svg></span><div class="tx"><b>4 permisos de retiro para hoy</b><small>Cargados por familias antes de las 08:00</small></div><span class="abtn">Ver lista</span></div>
+                <div class="alert-row"><span class="circ c"><svg class="i"><use href="#heart"/></svg></span><div class="tx"><b>12 aptos físicos vencen este mes</b><small>Aviso automático enviado a las familias</small></div><span class="abtn">Detalle</span></div>
+              </div>
+              <div class="dpanel">
+                <h5>Asistencia por curso</h5>
+                <table class="ctable">
+                  <thead><tr><th>Curso</th><th>Presentes</th><th>Estado</th></tr></thead>
+                  <tbody>
+                    <tr><td>Sala de 4</td><td>22 / 23</td><td><span class="tag g">Tomada</span></td></tr>
+                    <tr><td>4° Grado "B"</td><td>27 / 28</td><td><span class="tag g">Tomada</span></td></tr>
+                    <tr><td>5° Grado "B"</td><td>— / 30</td><td><span class="tag a">Pendiente</span></td></tr>
+                    <tr><td>1° Año "A"</td><td>31 / 33</td><td><span class="tag g">Tomada</span></td></tr>
+                    <tr><td>3° Año "A"</td><td>— / 29</td><td><span class="tag a">Pendiente</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="scroll-hint">Deslizá hacia el costado para ver el panel completo.</p>
+
+    <div class="staff">
+      <div class="staff-card" style="--sc:var(--red)">
+        <div class="top"><span class="circ r" style="width:42px;height:42px"><svg class="i"><use href="#award"/></svg></span><div><h3>Dirección</h3><small>Visión general y control institucional</small></div></div>
+        <ul>
+          <li><svg class="i"><use href="#pie"/></svg><span><b>Tablero del día:</b> presentes por nivel, cursos sin asistencia y alertas en una sola pantalla.</span></li>
+          <li><svg class="i"><use href="#lock"/></svg><span><b>Abre y cierra la carga de notas</b> de cada período; después del cierre nadie modifica.</span></li>
+          <li><svg class="i"><use href="#bell"/></svg><span><b>Envía comunicados oficiales</b> y ve en vivo quién leyó y quién firmó.</span></li>
+          <li><svg class="i"><use href="#eye"/></svg><span><b>Supervisa conversaciones</b> ante denuncias o conflictos.</span></li>
+          <li><svg class="i"><use href="#folder"/></svg><span><b>Accede a legajos completos,</b> incluidas las actas reservadas del equipo de orientación.</span></li>
+          <li><svg class="i"><use href="#alert"/></svg><span><b>Recibe los avisos de faltas</b> cuando un alumno llega a 10, 15 o 20.</span></li>
+        </ul>
+      </div>
+      <div class="staff-card" style="--sc:var(--amber)">
+        <div class="top"><span class="circ a" style="width:42px;height:42px"><svg class="i"><use href="#shield"/></svg></span><div><h3>Preceptoría</h3><small>La operación diaria, curso por curso</small></div></div>
+        <ul>
+          <li><svg class="i"><use href="#check-sq"/></svg><span><b>Toma asistencia</b> con Presente, Ausente, Tarde o Retiro; las fracciones se calculan solas.</span></li>
+          <li><svg class="i"><use href="#camera"/></svg><span><b>Aprueba o rechaza justificativos</b> con la foto del certificado que subió la familia.</span></li>
+          <li><svg class="i"><use href="#users"/></svg><span><b>Controla los retiros en puerta:</b> personas autorizadas con foto, permisos del día y alertas legales.</span></li>
+          <li><svg class="i"><use href="#heart"/></svg><span><b>Ve las condiciones de salud críticas</b> de cada alumno: alergias, celiaquía, medicación.</span></li>
+          <li><svg class="i"><use href="#bell"/></svg><span><b>Envía comunicados</b> a un curso o a todo un nivel.</span></li>
+          <li><svg class="i"><use href="#moon"/></svg><span><b>Responde mensajes de familias</b> sin notificaciones fuera de horario.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- MÓDULOS -->
+  <section id="modulos">
+    <div class="sec-head">
+      <span class="eyebrow">Qué puede hacer</span>
+      <h2 class="sec-title">Los cuatro módulos de la propuesta</h2>
+      <p class="sec-sub">Cada función lleva la recomendación del documento: <span class="pill pri">Prioritaria</span> <span class="pill opc">Opcional</span></p>
+      <p class="sec-sub">Marcá <b style="color:var(--primary-dk)">Dejar</b> o <b style="color:var(--red-tx)">Quitar</b> en cada función. Las decisiones se guardan y las ve todo el equipo directivo. Tocá de nuevo para deshacer.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+
+      <!-- 1. ACADÉMICA -->
+      <article class="module" style="--mc:var(--primary);--ml:var(--primary-lt)">
+        <div>
+          <div class="mod-head"><span class="mod-icon"><svg class="i"><use href="#book"/></svg></span><div><span class="mod-num">Módulo 1</span><h2>Gestión académica y vida escolar</h2></div></div>
+          <p class="mod-intro">Las tareas pedagógicas del día a día en un solo lugar, para los tres niveles. Se terminan las planillas duplicadas.</p>
+          <div class="feats">
+            <div class="feat" data-r="d p r f"><span class="circ g"><svg class="i"><use href="#check-sq"/></svg></span><div class="tx"><h3>Asistencia diaria y por materia</h3><p>Presente, Ausente, Tarde y Retiro anticipado. Cálculo de fracciones y avisos al llegar a 10, 15 y 20 faltas.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="f p"><span class="circ g"><svg class="i"><use href="#camera"/></svg></span><div class="tx"><h3>Justificación de faltas</h3><p>La familia sube la foto del certificado y Preceptoría la aprueba.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="d p"><span class="circ g"><svg class="i"><use href="#clock"/></svg></span><div class="tx"><h3>Asistencia contraturno</h3><p>Registro aparte para Educación Física, talleres y laboratorios de la tarde.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="d r f"><span class="circ g"><svg class="i"><use href="#award"/></svg></span><div class="tx"><h3>Calificaciones y boletines</h3><p>Escala propia de cada nivel, carga que Dirección abre y cierra, y boletín PDF con confirmación de lectura.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="f d"><span class="circ g"><svg class="i"><use href="#cal"/></svg></span><div class="tx"><h3>Calendario de evaluaciones</h3><p>Fechas de exámenes y entregas visibles para familias y alumnos.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="d f"><span class="circ g"><svg class="i"><use href="#heart"/></svg></span><div class="tx"><h3>Informes de Jardín</h3><p>Plantillas descriptivas por áreas de desarrollo, sin notas numéricas.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="d r f"><span class="circ g"><svg class="i"><use href="#eye"/></svg></span><div class="tx"><h3>Observaciones pedagógicas</h3><p>Notas de conducta o desempeño, con visibilidad configurable.</p><div class="meta"><span class="pill opc">Opcional</span></div></div></div>
+          </div>
+        </div>
+        <div class="phone-col">
+          <div class="phone"><div class="screen"><div class="notch"></div><div class="scr-body">
+            <div class="mhero title"><p>Preceptoría · 4° Grado "B"</p><h4>Tomar asistencia</h4><p>Martes 10 de noviembre · Turno Mañana</p></div>
+            <div class="mcard">
+              <div class="att"><span class="nm">Álvarez, Tomás<small>Faltas: 3</small></span><span class="pat"><b class="P">P</b><b>A</b><b>T</b><b>R</b></span></div>
+              <div class="att"><span class="nm">Benítez, Lucía<small>Faltas: 9¼</small></span><span class="pat"><b>P</b><b>A</b><b class="T">T</b><b>R</b></span></div>
+              <div class="att"><span class="nm">Duarte, Bruno<small>Faltas: 14½</small></span><span class="pat"><b>P</b><b class="A">A</b><b>T</b><b>R</b></span></div>
+              <div class="att"><span class="nm">López, Sofía<small>Faltas: 1</small></span><span class="pat"><b class="P">P</b><b>A</b><b>T</b><b>R</b></span></div>
+              <div class="att"><span class="nm">Paz, Valentina<small>Faltas: 4</small></span><span class="pat"><b>P</b><b>A</b><b>T</b><b class="R">R</b></span></div>
+              <div class="att"><span class="nm">Ruiz, Joaquín<small>Faltas: 2</small></span><span class="pat"><b class="P">P</b><b>A</b><b>T</b><b>R</b></span></div>
+            </div>
+            <div class="mcard" style="background:var(--red-lt);border-color:var(--red-bd)"><div class="mrow"><span class="circ r"><svg class="i"><use href="#alert"/></svg></span><div><div class="mt" style="color:var(--red-tx)">Duarte llega a 15 faltas</div><div class="ms">Se avisa a la familia y a Dirección</div></div></div></div>
+            <div class="btn-g">Guardar · 28 de 28 cargados</div>
+          </div></div></div>
+          <p class="phone-cap"><b>Toma rápida.</b> Un toque por alumno; la app suma la fracción y avisa cuando se llega a un límite.</p>
+        </div>
+      </article>
+
+      <!-- 2. SEGURIDAD -->
+      <article class="module" style="--mc:var(--red);--ml:var(--red-lt)">
+        <div>
+          <div class="mod-head"><span class="mod-icon"><svg class="i"><use href="#shield"/></svg></span><div><span class="mod-num">Módulo 2</span><h2>Seguridad escolar, salud y legajo</h2></div></div>
+          <p class="mod-intro">Protección legal del colegio, retiros ordenados y condiciones médicas críticas a la vista del personal que las necesita.</p>
+          <div class="feats">
+            <div class="feat" data-r="f p"><span class="circ r"><svg class="i"><use href="#users"/></svg></span><div class="tx"><h3>Personas autorizadas</h3><p>Padrón permanente con DNI, foto y parentesco, cargado por los padres.</p></div></div>
+            <div class="feat" data-r="f p"><span class="circ r"><svg class="i"><use href="#pen"/></svg></span><div class="tx"><h3>Permisos eventuales</h3><p>Autorización por el día desde la app: "Hoy lo retira un compañero".</p></div></div>
+            <div class="feat" data-r="p r"><span class="circ r"><svg class="i"><use href="#alert"/></svg></span><div class="tx"><h3>Alertas legales y tenencias</h3><p>Marca visual inmediata ante impedimentos de contacto judicial.</p></div></div>
+            <div class="feat" data-r="f d p"><span class="circ r"><svg class="i"><use href="#heart"/></svg></span><div class="tx"><h3>Condiciones críticas de salud</h3><p>Alergias severas, celiaquía, diabetes y medicación de rescate.</p></div></div>
+            <div class="feat" data-r="f p"><span class="circ r"><svg class="i"><use href="#bell"/></svg></span><div class="tx"><h3>Vencimiento de aptos físicos</h3><p>Aviso automático a la familia para renovar el certificado.</p></div></div>
+            <div class="feat" data-r="r"><span class="circ r"><svg class="i"><use href="#lock"/></svg></span><div class="tx"><h3>Actas psicopedagógicas (DOE)</h3><p>Informes reservados para el equipo de orientación y Dirección.</p></div></div>
+          </div>
+        </div>
+        <div class="phone-col">
+          <div class="phone"><div class="screen"><div class="notch"></div><div class="scr-body">
+            <div class="mhero title"><p>Puerta · Salida 12:00</p><h4>Retiro de Mateo López</h4><p>Sala de 4 · Nivel Inicial</p></div>
+            <div class="mcard acc-g">
+              <div class="mrow"><span class="circ g" style="width:46px;height:46px"><svg class="i" style="width:22px;height:22px"><use href="#user"/></svg></span><div style="flex:1"><div class="mt">Marta Giménez</div><div class="ms">Abuela · DNI 14.523.***</div><span class="tag g" style="margin-top:4px">Permiso de hoy ✓</span></div></div>
+              <div class="ms" style="margin-top:8px;background:var(--soft);border-radius:8px;padding:6px 8px">Cargado por Laura López a las 08:12</div>
+            </div>
+            <div class="mcard" style="background:var(--red-lt);border-color:var(--red-bd)"><div class="mrow"><span class="circ r"><svg class="i"><use href="#alert"/></svg></span><div><div class="mt" style="color:var(--red-tx)">Restricción judicial vigente</div><div class="ms">Diego R. no puede retirar. Llamar a Dirección.</div></div></div></div>
+            <div class="mcard" style="background:var(--celeste-lt);border-color:var(--celeste-bd)"><div class="mrow"><span class="circ c"><svg class="i"><use href="#heart"/></svg></span><div><div class="mt">Salud</div><div class="ms">Alergia al maní · Lleva autoinyector</div></div></div></div>
+            <div class="btn-g">Confirmar entrega</div>
+          </div></div></div>
+          <p class="phone-cap"><b>Pick-up seguro.</b> La puerta ve quién puede retirar, con foto, y las alertas que importan. <em>Datos de ejemplo.</em></p>
+        </div>
+      </article>
+
+      <!-- 3. COMUNICACIÓN -->
+      <article class="module" style="--mc:var(--celeste-dk);--ml:var(--celeste-lt)">
+        <div>
+          <div class="mod-head"><span class="mod-icon"><svg class="i"><use href="#chat"/></svg></span><div><span class="mod-num">Módulo 3</span><h2>Comunicación institucional</h2></div></div>
+          <p class="mod-intro">El cuaderno de comunicaciones, digital. Formal y verificable para las familias, y cuidando el descanso de los docentes.</p>
+          <div class="feats">
+            <div class="feat" data-r="f p r"><span class="circ c"><svg class="i"><use href="#bell"/></svg></span><div class="tx"><h3>Comunicados oficiales</h3><p>De Dirección o Preceptoría a familias, con confirmación de lectura y sin respuestas desordenadas.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="f r"><span class="circ c"><svg class="i"><use href="#pen"/></svg></span><div class="tx"><h3>Autorizaciones digitales</h3><p>Salidas educativas o uso de imagen firmadas con un toque seguro.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="f d p"><span class="circ c"><svg class="i"><use href="#moon"/></svg></span><div class="tx"><h3>Mensajería con horario de silencio</h3><p>Lo que llega fuera de horario se notifica recién a las 07:30 hs.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="r"><span class="circ c"><svg class="i"><use href="#eye"/></svg></span><div class="tx"><h3>Supervisión de Dirección</h3><p>Dirección puede auditar conversaciones ante denuncias o conflictos.</p><div class="meta"><span class="pill pri">Prioritaria</span></div></div></div>
+            <div class="feat" data-r="f d r"><span class="circ c"><svg class="i"><use href="#cal"/></svg></span><div class="tx"><h3>Agenda de citas y entrevistas</h3><p>Se proponen horarios y la familia confirma desde la app.</p><div class="meta"><span class="pill opc">Opcional</span></div></div></div>
+          </div>
+          <div class="callout"><span class="circ c"><svg class="i"><use href="#users"/></svg></span><div><b>Familias con varios hijos</b><p>Un único usuario para hijos en Jardín, Primaria y Secundaria. Se cambia de hijo con un toque arriba de la pantalla, o se ve un calendario familiar con todo junto.</p></div></div>
+        </div>
+        <div class="phone-col">
+          <div class="phone"><div class="screen"><div class="notch"></div><div class="scr-body">
+            <div class="mhero title"><p>Dirección · Comunicado</p><h4>Salida al Museo Provincial</h4><p>Enviado a 4° Grado "B" · hace 2 h</p></div>
+            <div class="mcard">
+              <div class="mt">Lectura de las familias</div>
+              <div class="mrow" style="justify-content:space-between;margin:6px 0 5px"><span style="font-size:20px;font-weight:900;color:var(--primary)">34<span style="font-size:11px;color:var(--muted)"> / 41</span></span><span class="tag g">83% leído</span></div>
+              <div class="bar"><i style="width:83%"></i></div>
+            </div>
+            <div class="mcard">
+              <div class="mt">Autorizaciones firmadas</div>
+              <div class="mrow" style="justify-content:space-between;margin:6px 0 5px"><span style="font-size:20px;font-weight:900;color:var(--celeste-dk)">29<span style="font-size:11px;color:var(--muted)"> / 41</span></span><span class="tag c">12 pendientes</span></div>
+              <div class="bar"><i style="width:71%;background:var(--celeste-dk)"></i></div>
+            </div>
+            <div class="mcard"><div class="mrow"><span class="circ a"><svg class="i"><use href="#bell"/></svg></span><div><div class="mt">Recordatorio</div><div class="ms">Reenviar a quienes no firmaron</div></div></div></div>
+            <div class="btn-g">Enviar recordatorio</div>
+          </div><div class="tabbar"><span><svg class="i"><use href="#home"/></svg>Inicio</span><span class="on"><svg class="i"><use href="#chat"/></svg>Mensajes</span><span><svg class="i"><use href="#folder"/></svg>Archivos</span><span><svg class="i"><use href="#image"/></svg>Galería</span><span><svg class="i"><use href="#check-sq"/></svg>Asistencia</span></div></div></div>
+          <p class="phone-cap"><b>Lectura verificable.</b> Dirección sabe quién leyó y quién firmó, sin papeles.</p>
+        </div>
+      </article>
+
+      <!-- 4. OPERATIVOS -->
+      <article class="module" style="--mc:#7C3AED;--ml:#F3E8FF">
+        <div>
+          <div class="mod-head"><span class="mod-icon"><svg class="i"><use href="#bus"/></svg></span><div><span class="mod-num">Módulo 4 · Opcional</span><h2>Servicios operativos</h2></div></div>
+          <p class="mod-intro">Logística del edificio: transporte, mantenimiento y pantallas informativas.</p>
+          <div class="feats">
+            <div class="feat" data-r="s"><span class="circ" style="background:#F3E8FF;color:#7C3AED"><svg class="i"><use href="#users"/></svg></span><div class="tx"><h3>Lista de pasajeros</h3><p>Alumnos por recorrido, con chofer y celador a cargo.</p></div></div>
+            <div class="feat" data-r="s f"><span class="circ" style="background:#F3E8FF;color:#7C3AED"><svg class="i"><use href="#bus"/></svg></span><div class="tx"><h3>Aviso de subida y bajada</h3><p>El celador marca y la familia recibe la notificación al instante.</p></div></div>
+            <div class="feat" data-r="d p r s"><span class="circ" style="background:#F3E8FF;color:#7C3AED"><svg class="i"><use href="#tool"/></svg></span><div class="tx"><h3>Reporte de roturas</h3><p>Bancos, luces o vidrios: se avisa desde el aula con foto.</p></div></div>
+            <div class="feat" data-r="r s"><span class="circ" style="background:#F3E8FF;color:#7C3AED"><svg class="i"><use href="#tv"/></svg></span><div class="tx"><h3>Pantallas en pasillos</h3><p>Avisos del día, efemérides y cumpleaños en los televisores.</p></div></div>
+          </div>
+        </div>
+        <div class="phone-col">
+          <div class="phone"><div class="screen"><div class="notch"></div>
+            <div class="lock">
+              <div class="time">13:42</div><div class="date">martes, 10 de noviembre</div>
+              <div class="notif"><img src="/logo-colegio.png" alt=""><div style="flex:1"><b>BiliAPP · Transporte <span>ahora</span></b><p>Mateo bajó del micro en Av. Ramírez 1450. Celador: Jorge M.</p></div></div>
+              <div class="notif"><img src="/logo-colegio.png" alt=""><div style="flex:1"><b>BiliAPP · Transporte <span>12:58</span></b><p>Mateo subió al micro del recorrido 3.</p></div></div>
+              <div class="quiet"><svg class="i"><use href="#moon"/></svg>Mensajes de docentes en silencio hasta 07:30</div>
+            </div>
+          </div></div>
+          <p class="phone-cap"><b>Aviso en el celular.</b> La familia sabe cuándo sube y baja su hijo, sin llamar a nadie.</p>
+        </div>
+      </article>
+
+
+    </div>
+    <div class="decbar" id="decbar" aria-live="polite">
+      <span class="lbl">Decisiones</span>
+      <span class="stats"><span class="st k" id="cKeep">0 Dejar</span><span class="st q" id="cDrop">0 Quitar</span><span class="st n" id="cNone">— sin decidir</span></span>
+      <span class="prog" aria-hidden="true"><i id="pKeep" style="background:var(--primary);width:0"></i><i id="pDrop" style="background:var(--red);width:0"></i></span>
+      <span class="msg" id="decMsg">Cargando decisiones…</span>
+    </div>
+  </section>
+
+  <!-- ETAPAS -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Cómo arrancamos</span>
+      <h2 class="sec-title">Implementación en dos etapas</h2>
+      <p class="sec-sub">Empezar por lo esencial y sumar módulos cuando familias y docentes ya usen la app con naturalidad. </p>
+    </div>
+    <div class="stages">
+      <div class="stage m-g"><div class="hd"><span class="tag g" style="font-size:11px">ETAPA 1 · INICIO</span><span class="circ g" style="background:#fff"><svg class="i"><use href="#check"/></svg></span></div><h3>Lo esencial</h3><p>Lo que el colegio usa todos los días desde el primer momento.</p><ul><li>Asistencia</li><li>Calificaciones</li><li>Legajo médico</li><li>Autorizaciones de retiro</li><li>Comunicados oficiales</li></ul></div>
+      <div class="stage m-c"><div class="hd"><span class="tag c" style="font-size:11px">ETAPA 2</span><span class="circ c" style="background:#fff"><svg class="i"><use href="#chat"/></svg></span></div><h3>Comunicación y servicios</h3><p>Cuando la app ya es parte de la rutina.</p><ul><li>Mensajería interna</li><li>Transporte</li><li>Mantenimiento</li><li>Cartelería</li></ul></div>
+    </div>
+  </section>
+
+  <p class="foot">Nombres, horarios y cifras de las pantallas son ejemplos ilustrativos. Basado en la "Propuesta de Plataforma Escolar Digital" para revisión directiva.</p>
+</main>
+
+<script>
+(function(){
+  var feats=[].slice.call(document.querySelectorAll('.feat'));
+  var names={all:'Todos',f:'Familias',d:'Docentes',p:'Preceptoría',r:'Dirección',s:'Personal de servicio'};
+  function count(r){return r==='all'?feats.length:feats.filter(function(f){return f.dataset.r.split(' ').indexOf(r)>-1}).length}
+  document.querySelectorAll('[data-count]').forEach(function(el){el.textContent=count(el.dataset.count)});
+  // etiqueta "quién la usa" en cada función
+  var short={f:'Familias',d:'Docentes',p:'Preceptoría',r:'Dirección',s:'Servicio'};
+  feats.forEach(function(f){
+    var tx=f.querySelector('.tx'),meta=tx.querySelector('.meta');
+    if(!meta){meta=document.createElement('div');meta.className='meta';tx.appendChild(meta)}
+    f.dataset.r.split(' ').forEach(function(k){var s=document.createElement('span');s.className='who';s.textContent=short[k];meta.appendChild(s)});
+  });
+  var note=document.getElementById('filterNote');
+  function apply(r){
+    document.querySelectorAll('.role').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.role===r?'true':'false')});
+    document.body.classList.toggle('filtering',r!=='all');
+    feats.forEach(function(f){var hit=r==='all'||f.dataset.r.split(' ').indexOf(r)>-1;f.classList.toggle('off',!hit);f.classList.toggle('hit',hit&&r!=='all')});
+    note.innerHTML=r==='all'?'Mostrando las <b>'+feats.length+' funciones</b> de la propuesta.':'<b>'+names[r]+'</b> usa <b>'+count(r)+' de '+feats.length+'</b> funciones. Están resaltadas en los módulos de abajo.';
+    try{localStorage.setItem('bili-role',r)}catch(e){}
+  }
+  document.getElementById('roles').addEventListener('click',function(e){var b=e.target.closest('.role');if(!b)return;apply(b.dataset.role);if(b.dataset.role!=='all'){var m=document.getElementById('modulos');if(m&&window.innerWidth<860)m.scrollIntoView({behavior:'smooth'})}});
+  var saved='all';try{saved=localStorage.getItem('bili-role')||'all'}catch(e){}
+  apply(names[saved]?saved:'all');
+
+  /* ---------- Decisiones Dejar / Quitar (compartidas) ---------- */
+  function slug(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+  var ICK='<svg class="i"><use href="#check"/></svg>';
+  var ICX='<svg class="i" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  var byId={};
+  feats.forEach(function(f){
+    var id=slug(f.querySelector('h3').textContent);f.dataset.id=id;byId[id]=f;
+    var row=document.createElement('div');row.className='dec';
+    row.innerHTML='<button type="button" class="dbtn keep" data-v="dejar" aria-pressed="false" disabled>'+ICK+'Dejar</button><button type="button" class="dbtn drop" data-v="quitar" aria-pressed="false" disabled>'+ICX+'Quitar</button><span class="dby"></span>';
+    f.querySelector('.tx').appendChild(row);
+  });
+  var state={}, db=null, local=false, user=null, msg=document.getElementById('decMsg');
+  function setMsg(t){msg.textContent=t||''}
+
+  async function render(){
+    var k=0,q=0,ids={};
+    feats.forEach(function(f){
+      var d=state[f.dataset.id], v=d&&d.decision;
+      if(v==='dejar')k++; if(v==='quitar')q++;
+      f.classList.toggle('d-keep',v==='dejar');f.classList.toggle('d-drop',v==='quitar');
+      f.querySelectorAll('.dbtn').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===v?'true':'false')});
+      if(d&&d.by)ids[d.by]=1;
+    });
+    var n=feats.length;
+    document.getElementById('cKeep').textContent=k+' Dejar';
+    document.getElementById('cDrop').textContent=q+' Quitar';
+    document.getElementById('cNone').textContent=(n-k-q)+' sin decidir';
+    document.getElementById('pKeep').style.width=(k/n*100)+'%';
+    document.getElementById('pDrop').style.width=(q/n*100)+'%';
+    var profs={};
+    try{if(user&&Object.keys(ids).length)profs=await user.profiles(Object.keys(ids))||{}}catch(e){}
+    feats.forEach(function(f){
+      var d=state[f.dataset.id],el=f.querySelector('.dby');
+      if(!d){el.textContent='';return}
+      var p=d.by&&profs[d.by];var who=(p&&p.name)||'';
+      el.textContent=who?'Decidió '+who:'Decidido';
+    });
+  }
+
+  document.addEventListener('click',async function(e){
+    var b=e.target.closest('.dbtn');if(!b||b.disabled||!(db||local))return;
+    var f=b.closest('.feat'),id=f.dataset.id,v=b.dataset.v;
+    var prev=state[id], clear=prev&&prev.decision===v;
+    var me=null;try{me=await user.id()}catch(err){}
+    if(clear)delete state[id];else state[id]={decision:v,by:me,at:Date.now()};
+    render();
+    f.querySelectorAll('.dbtn').forEach(function(x){x.disabled=true});
+    try{
+      if(local){localStorage.setItem('bili-decisiones',JSON.stringify(state));}
+      else{var ref=db.collection('decisiones').doc(id);
+      if(clear)await ref.delete();else await ref.set({decision:v,by:me,at:Date.now(),funcion:f.querySelector('h3').textContent});}
+      setMsg('');
+    }catch(err){
+      if(prev)state[id]=prev;else delete state[id];render();
+      setMsg(err&&(err.code==='permission_denied'||err.code==='not_granted')?'Tu acceso a esta página es solo de lectura. Pedile al dueño que te dé permiso para interactuar.':'No se pudo guardar la decisión. Probá de nuevo.');
+    }finally{f.querySelectorAll('.dbtn').forEach(function(x){x.disabled=false})}
+  });
+
+  (async function(){
+    if(!window.claude||!window.claude.use){local=true;try{var saved=JSON.parse(localStorage.getItem('bili-decisiones')||'{}');Object.keys(saved).forEach(function(k){if(byId[k])state[k]=saved[k]})}catch(e){}document.querySelectorAll('.dbtn').forEach(function(x){x.disabled=false});setMsg('Las decisiones quedan guardadas en este navegador.');render();return}
+    var timer=setTimeout(function(){setMsg('Las decisiones están tardando en cargar.')},10000);
+    try{user=await window.claude.use('user')}catch(e){}
+    try{db=await window.claude.use('db')}catch(e){}
+    if(!db){clearTimeout(timer);setMsg('Iniciá sesión en claude.ai para ver y registrar decisiones.');render();return}
+    db.collection('decisiones').onSnapshot(function(snap){
+      clearTimeout(timer);
+      var s={};snap.docs.forEach(function(d){var x=d.data();if(x&&byId[d.id]&&(x.decision==='dejar'||x.decision==='quitar'))s[d.id]=x});
+      state=s;setMsg('');
+      document.querySelectorAll('.dbtn').forEach(function(x){x.disabled=false});
+      render();
+    },function(err){clearTimeout(timer);setMsg('No se pudieron cargar las decisiones. Recargá la página.')});
+  })();
+})();
+</script>
+
+</body>
+</html>

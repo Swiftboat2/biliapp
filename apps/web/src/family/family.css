@@ -74,9 +74,23 @@
 .fam-title { font-size: 13.5px; font-weight: 800; color: var(--fg); }
 .fam-text { font-size: 12.5px; color: var(--fg2); line-height: 1.45; }
 
-.fam-hscroll { display: flex; gap: 12px; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 4px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.hs-wrap { position: relative; }
+.fam-hscroll { display: flex; gap: 12px; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 8px; scroll-snap-type: x proximity; scroll-padding: 0 16px; scrollbar-width: none; user-select: none; }
 .fam-hscroll::-webkit-scrollbar { display: none; }
 .fam-hscroll > * { scroll-snap-align: start; flex: none; }
+/* En la compu (mouse): barra fina visible y cursor de arrastre. */
+@media (hover: hover) and (pointer: fine) {
+  .fam-hscroll { scrollbar-width: thin; scrollbar-color: var(--line) transparent; cursor: grab; }
+  .fam-hscroll::-webkit-scrollbar { display: block; height: 6px; }
+  .fam-hscroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+}
+.hs-arrow { all: unset; cursor: pointer; position: absolute; top: calc(50% - 20px); width: 30px; height: 30px; border-radius: 50%; background: #fff; color: var(--fg); font-size: 20px; font-weight: 800; line-height: 28px; text-align: center; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.2); z-index: 5; }
+.hs-arrow.left { left: -6px; }
+.hs-arrow.right { right: -6px; }
+.hs-arrow:focus-visible { outline: 2px solid var(--celeste); }
+@media (hover: none) { .hs-arrow { display: none; } }
+.kid-stack { display: flex; flex-direction: column; gap: 10px; }
+.kid-stack .kid-card { width: 100%; }
 
 .kid-card { width: 272px; }
 .kid-card.active.green { border: 2px solid var(--primary); box-shadow: 0 6px 14px rgba(0, 140, 69, 0.18); padding: 12px; }

@@ -5,7 +5,7 @@ import { ASSIGNMENTS, FAMILY } from '../data/mock';
 import { daysUntil, shortDate, timeOf, todayISO } from '../lib/dates';
 import { conceptFor, course, LEVEL_LABEL, SHIFT_LABEL, sheetKey, staffName, subject, totalAbsences } from '../lib/school';
 import { fmtNota, instancesFor, partialGrade } from '../lib/grades';
-import { attendancePct, Hero, isKinder, kidInitials, pendingSignatures, useKids, type Go } from './parts';
+import { attendancePct, Hero, HScroll, isKinder, kidInitials, pendingSignatures, useKids, type Go } from './parts';
 import type { Mark } from '../data/types';
 
 const TODAY_LABEL: Record<Mark, { title: string; sub: string; tone: 'green' | 'red' | 'blue'; pill: string }> = {
@@ -57,7 +57,7 @@ export function FamInicio({ go }: { go: Go }) {
     <>
       <Hero title={`¡Hola, Familia ${FAMILY.lastName}! 👋`} go={go} />
       <div className="fam-body" style={{ marginTop: -4 }}>
-        <div className="fam-hscroll">
+        <div className="kid-stack">
           {kids.map((k) => {
             const sheet = data.attendance[sheetKey(k.s.courseId, today)];
             const mark = sheet?.marks[k.s.id];
@@ -101,7 +101,7 @@ export function FamInicio({ go }: { go: Go }) {
 
         <section className="fam-section">
           <div className="fam-sec-head"><span className="fam-sec-title dot">Próximos eventos</span></div>
-          <div className="fam-hscroll">
+          <HScroll>
             {events.map((e) => (
               <div key={e.id} className={`event-card ${e.tone}`}>
                 <span className="fam-pill white" style={{ alignSelf: 'flex-start' }}><GraduationCap /> {e.who}</span>
@@ -109,7 +109,7 @@ export function FamInicio({ go }: { go: Go }) {
                 <span className="date"><CalendarDays size={11} style={{ verticalAlign: -1 }} /> {shortDate(e.date)}</span>
               </div>
             ))}
-          </div>
+          </HScroll>
         </section>
 
         <section className="fam-section">

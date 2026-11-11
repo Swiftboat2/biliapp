@@ -80,6 +80,66 @@ export function KidSwitch({ kids, value, onChange }: { kids: Kid[]; value: strin
   );
 }
 
+/**
+ * Fila deslizable horizontal. En el celular se desliza con el dedo; en la compu
+ * se puede arrastrar con el mouse, usar la barra fina o las flechas.
+ */
+export function HScroll({ children, gap }: { children: ReactNode; gap?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
+  const [edges, setEdges] = useState({ start: true, end: false });
+
+  const update = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    setEdges({ start: el.scrollLeft <= 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
+  }, []);
+  useEffect(() => {
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [update]);
+
+  const by = (dir: 1 | -1) => ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' });
+
+  return (
+    <div className="hs-wrap">
+      <div
+        ref={ref}
+        className="fam-hscroll"
+        style={gap ? { gap } : undefined}
+        onScroll={update}
+        onPointerDown={(e) => {
+          if (e.pointerType !== 'mouse' || !ref.current) return;
+          drag.current = { x: e.clientX, left: ref.current.scrollLeft, moved: false };
+        }}
+        onPointerMove={(e) => {
+          const d = drag.current;
+          if (!d || !ref.current) return;
+          const dx = e.clientX - d.x;
+          if (Math.abs(dx) > 4) d.moved = true;
+          if (d.moved) ref.current.scrollLeft = d.left - dx;
+        }}
+        onPointerUp={() => {
+          // Deja pasar el click si no hubo arrastre.
+          setTimeout(() => (drag.current = null), 0);
+        }}
+        onPointerLeave={() => (drag.current = null)}
+        onClickCapture={(e) => {
+          if (drag.current?.moved) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
+      >
+        {children}
+      </div>
+      {!edges.start && <button className="hs-arrow left" aria-label="Ver anteriores" onClick={() => by(-1)}>‹</button>}
+      {!edges.end && <button className="hs-arrow right" aria-label="Ver más" onClick={() => by(1)}>›</button>}
+    </div>
+  );
+}
+
 /** Hoja inferior dentro del teléfono (reemplaza a los Modal de React Native). */
 export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   useEffect(() => {

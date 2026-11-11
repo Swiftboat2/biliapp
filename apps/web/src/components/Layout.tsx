@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { UserRole } from '@biliapp/shared-types';
 import {
   Home, CheckSquare, FileCheck2, Award, FolderOpen, ShieldCheck, Bell, MessageCircle, CalendarDays,
-  NotebookPen, Eye, LogOut, Menu, RotateCcw, Smartphone,
+  NotebookPen, Eye, LogOut, Menu, RotateCcw, Smartphone, FileText,
 } from 'lucide-react';
 import { useApp, useUser } from '../data/store';
 import { initials, pendingJustifications, todaysEventualPickups } from '../lib/school';
@@ -92,6 +92,9 @@ export function Layout() {
               <small>{user.title}</small>
             </div>
           </div>
+          <a className="side-btn" href="/propuesta/">
+            <FileText size={15} /> Ver la propuesta
+          </a>
           <button className="side-btn" onClick={() => signIn(FAMILY.id)}>
             <Smartphone size={15} /> Ver la app de familias
           </button>
