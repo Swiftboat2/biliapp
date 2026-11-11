@@ -13,3 +13,5 @@ out/
 coverage/
 .turbo/
 
+# Local AI runtime state
+.atl/

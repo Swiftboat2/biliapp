@@ -14,7 +14,7 @@ import { colors } from '../theme/colors';
 import { Icon } from '../components/Icon';
 
 export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const { students, setActiveStudent } = useActiveStudent();
+  const { students, activeStudent, setActiveStudent } = useActiveStudent();
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
@@ -25,6 +25,9 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const mateo = students.find((s) => s.educationalLevel === 'INICIAL') || students[0];
   const sofia = students.find((s) => s.educationalLevel === 'PRIMARIA') || students[1] || students[0];
+
+  const isMateoActive = activeStudent?.id === mateo?.id;
+  const isSofiaActive = activeStudent?.id === sofia?.id;
 
   return (
     <ScrollView
@@ -88,14 +91,18 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       >
         {/* Tarjeta Mateo */}
         <TouchableOpacity
-          style={[styles.studentCard, { width: studentCardWidth }]}
+          style={[
+            styles.studentCard,
+            { width: studentCardWidth },
+            isMateoActive && styles.studentCardActiveGreen,
+          ]}
           activeOpacity={0.9}
           onPress={() => { if (mateo) setActiveStudent(mateo); }}
         >
           <View style={styles.studentCardAccentGreen} />
           <View style={styles.studentCardTopRow}>
             <View style={styles.studentAvatarWrap}>
-              <View style={styles.studentAvatarCircleGreen}>
+              <View style={[styles.studentAvatarCircleGreen, isMateoActive && styles.avatarActiveRingGreen]}>
                 <Icon name="usuario" size={22} color="#005F2E" />
               </View>
               <View style={styles.checkBadge}>
@@ -105,9 +112,16 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <View style={styles.studentDetailsCol}>
               <View style={styles.studentNameAndRateRow}>
                 <Text style={styles.studentNameText} numberOfLines={1}>Mateo López</Text>
-                <View style={styles.asistBadgeGreen}>
-                  <Text style={styles.asistBadgeTextGreen}>96% ASIST.</Text>
-                </View>
+                <TouchableOpacity
+                  style={styles.asistBadgeGreen}
+                  onPress={() => {
+                    if (mateo) setActiveStudent(mateo);
+                    navigation.navigate('Asistencia');
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.asistBadgeTextGreen}>96% ASIST. ›</Text>
+                </TouchableOpacity>
               </View>
               <Text style={styles.studentLevelText} numberOfLines={1}>
                 Sala de 4 · Nivel Inicial
@@ -125,14 +139,18 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         {/* Tarjeta Sofía */}
         <TouchableOpacity
-          style={[styles.studentCard, { width: studentCardWidth }]}
+          style={[
+            styles.studentCard,
+            { width: studentCardWidth },
+            isSofiaActive && styles.studentCardActiveCeleste,
+          ]}
           activeOpacity={0.9}
           onPress={() => { if (sofia) setActiveStudent(sofia); }}
         >
           <View style={styles.studentCardAccentCeleste} />
           <View style={styles.studentCardTopRow}>
             <View style={styles.studentAvatarWrap}>
-              <View style={styles.studentAvatarCircleCeleste}>
+              <View style={[styles.studentAvatarCircleCeleste, isSofiaActive && styles.avatarActiveRingCeleste]}>
                 <Icon name="usuario" size={22} color="#1A73E8" />
               </View>
               <View style={styles.checkBadge}>
@@ -142,9 +160,16 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <View style={styles.studentDetailsCol}>
               <View style={styles.studentNameAndRateRow}>
                 <Text style={styles.studentNameText} numberOfLines={1}>Sofía López</Text>
-                <View style={styles.asistBadgeCeleste}>
-                  <Text style={styles.asistBadgeTextCeleste}>98% ASIST.</Text>
-                </View>
+                <TouchableOpacity
+                  style={styles.asistBadgeCeleste}
+                  onPress={() => {
+                    if (sofia) setActiveStudent(sofia);
+                    navigation.navigate('Asistencia');
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.asistBadgeTextCeleste}>98% ASIST. ›</Text>
+                </TouchableOpacity>
               </View>
               <Text style={styles.studentLevelText} numberOfLines={1}>
                 4° Grado "B" · Primaria
@@ -195,7 +220,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </View>
               </View>
               <Text style={styles.eventCardTitle} numberOfLines={2}>
-                Festa della Repubblica &amp; Muestra de Arte
+                Festa della Repubblica & Muestra de Arte
               </Text>
               <View style={[styles.eventDatePill, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
                 <Icon name="calendario" size={11} color="#64748B" />
@@ -255,7 +280,14 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
           <View style={styles.dualGrid}>
             {/* Card Mateo */}
-            <View style={styles.dualCardMateo}>
+            <TouchableOpacity
+              style={styles.dualCardMateo}
+              activeOpacity={0.88}
+              onPress={() => {
+                if (mateo) setActiveStudent(mateo);
+                navigation.navigate('Asistencia');
+              }}
+            >
               <View style={styles.dualCardHeaderChild}>
                 <View style={[styles.kidTagMateo, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
                   <Icon name="graduacion" size={11} color="#005F2E" />
@@ -269,13 +301,20 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               </Text>
               <View style={styles.dualBadgeContainer}>
                 <View style={styles.badgeTardanza}>
-                  <Text style={styles.badgeTardanzaText}>Tardanza (1/4)</Text>
+                  <Text style={styles.badgeTardanzaText}>Tardanza (1/4) ›</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
 
             {/* Card Sofía */}
-            <View style={styles.dualCardSofia}>
+            <TouchableOpacity
+              style={styles.dualCardSofia}
+              activeOpacity={0.88}
+              onPress={() => {
+                if (sofia) setActiveStudent(sofia);
+                navigation.navigate('Asistencia');
+              }}
+            >
               <View style={styles.dualCardHeaderChild}>
                 <View style={[styles.kidTagSofia, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
                   <Icon name="graduacion" size={11} color="#1A73E8" />
@@ -289,22 +328,22 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               </Text>
               <View style={styles.dualBadgeContainer}>
                 <View style={styles.badgePresentePuntual}>
-                  <Text style={styles.badgePresentePuntualText}>Presente ✓</Text>
+                  <Text style={styles.badgePresentePuntualText}>Presente ✓ ›</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
-        {/* SECCIÓN 3: CALIFICACIONES Y BOLETINES */}
+        {/* SECCIÓN 3: NOTAS PARCIALES */}
         <View style={styles.sectionWrap}>
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Calificaciones y Boletines</Text>
+            <Text style={styles.sectionTitle}>Notas Parciales</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('Archivos')}
               style={styles.viewReportLink}
             >
-              <Text style={styles.viewReportText}>Ver boletines</Text>
+              <Text style={styles.viewReportText}>Ver notas parciales</Text>
               <Text style={styles.viewReportArrow}>→</Text>
             </TouchableOpacity>
           </View>
@@ -445,15 +484,15 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           <TouchableOpacity
             style={styles.quickActionBtn}
             activeOpacity={0.85}
-            onPress={() => navigation.navigate('Seguridad')}
+            onPress={() => navigation.navigate('Asistencia')}
           >
             <View style={styles.quickActionIconCircleGreen}>
-              <Icon name="seguridad" size={20} color={colors.primary} />
+              <Icon name="asistencia" size={20} color={colors.primary} />
             </View>
             <View style={styles.quickActionTextCol}>
-              <Text style={styles.quickActionTitle}>Pases QR de Puerta</Text>
+              <Text style={styles.quickActionTitle}>Control de Asistencia</Text>
               <Text style={styles.quickActionSub}>
-                Habilitar retiros para Mateo o Sofía
+                Registro diario, tardanzas y justificaciones
               </Text>
             </View>
             <Text style={styles.quickActionArrow}>›</Text>
@@ -681,6 +720,30 @@ const styles = StyleSheet.create({
     right: 0,
     height: 4,
     backgroundColor: '#1A73E8',
+  },
+  studentCardActiveGreen: {
+    borderColor: colors.primary,
+    borderWidth: 2,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  studentCardActiveCeleste: {
+    borderColor: '#1A73E8',
+    borderWidth: 2,
+    shadowColor: '#1A73E8',
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  avatarActiveRingGreen: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  avatarActiveRingCeleste: {
+    borderWidth: 2,
+    borderColor: '#1A73E8',
   },
   studentCardTopRow: {
     flexDirection: 'row',

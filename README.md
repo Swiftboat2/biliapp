@@ -10,8 +10,7 @@ Sistema integral de gestión escolar, seguridad física en puerta, asistencia co
 biliapp/
 ├── apps/
 │   ├── api/             # Backend NestJS (REST + WebSockets + JWT/PIN RBAC)
-│   ├── web-admin/       # Panel Directivo, Preceptoría y Seguridad en Puerta (Next.js 15)
-│   └── mobile/          # App Móvil Familias y Puerta con Selector Multi-Hijo (React Native Expo)
+│   └── mobile/          # App Móvil Familias y Puerta con Selector Multi-Hijo (React Native Expo SDK 58)
 ├── packages/
 │   ├── database/        # Prisma ORM, migraciones PostgreSQL y seeders
 │   ├── shared-types/    # Interfaces, Enums y contratos TypeScript compartidos
@@ -57,7 +56,6 @@ pnpm --filter @biliapp/database ts-node prisma/seed.ts
 ```bash
 pnpm dev
 ```
-- **Web Admin:** `http://localhost:3000` (Tablero, Preceptoría, Puerta)
 - **API NestJS:** `http://localhost:4000` (Endpoints REST y Auth)
 - **App Móvil (Expo):** `pnpm --filter @biliapp/mobile start`
 

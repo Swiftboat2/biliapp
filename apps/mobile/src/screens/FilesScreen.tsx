@@ -17,6 +17,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 import { Icon } from '../components/Icon';
 
+interface DocumentItem {
+  id: string;
+  category: 'BOLETINES' | 'AUTORIZACIONES' | 'CIRCULARES' | 'FICHAS';
+  title: string;
+  subtitle: string;
+  studentName?: string;
+  date: string;
+  fileSize: string;
+  isOfficial?: boolean;
+  isUrgent?: boolean;
+  isSigned?: boolean;
+}
+
 export const FilesScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -37,6 +50,143 @@ export const FilesScreen: React.FC = () => {
   // Upload Document Modal
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [uploadType, setUploadType] = useState<'PHOTO' | 'PDF'>('PHOTO');
+
+  // Documents Database
+  const documents: DocumentItem[] = [
+    // 1. AUTORIZACIONES
+    {
+      id: 'doc-auth-1',
+      category: 'AUTORIZACIONES',
+      title: 'Autorización Salida Didáctica: Museo Provincial',
+      subtitle: 'Visita pedagógica y traslado escolar. Confirmación de tutor legal.',
+      studentName: 'Mateo López · Sala de 4 Años',
+      date: 'Vence en 48 hs',
+      fileSize: '1.2 MB · PDF',
+      isUrgent: true,
+      isSigned: isSigned,
+    },
+    {
+      id: 'doc-auth-2',
+      category: 'AUTORIZACIONES',
+      title: 'Consentimiento Uso de Imagen y Medios Digitales 2026',
+      subtitle: 'Autorización para publicación en boletín institucional y galería escolar.',
+      studentName: 'Sofía López · 4° Grado "B"',
+      date: 'Firmado el 12 Mar 2026',
+      fileSize: '950 KB · PDF',
+      isOfficial: true,
+      isSigned: true,
+    },
+
+    // 2. NOTAS PARCIALES / BOLETINES
+    {
+      id: 'doc-rep-1',
+      category: 'BOLETINES',
+      title: 'Informe Cualitativo Bimestral',
+      subtitle: 'Evolución pedagógica, socialización y hábitos de sala.',
+      studentName: 'Mateo López · Sala de 4 Años',
+      date: 'Ciclo 2026 · Emitido: 15 Oct',
+      fileSize: '1.8 MB · PDF',
+      isOfficial: true,
+    },
+    {
+      id: 'doc-rep-2',
+      category: 'BOLETINES',
+      title: 'Notas Parciales 1° Ciclo',
+      subtitle: 'Calificaciones trimestrales por área, lengua italiana y conducta.',
+      studentName: 'Sofía López · 4° Grado "B"',
+      date: '2° Trimestre · Emitido: 08 Oct',
+      fileSize: '2.4 MB · PDF',
+      isOfficial: true,
+    },
+    {
+      id: 'doc-rep-3',
+      category: 'BOLETINES',
+      title: 'Planilla Evaluativa Bicultural Italiano',
+      subtitle: 'Rendimiento en fonética, vocabulario e historia bicultural.',
+      studentName: 'Mateo & Sofía López',
+      date: '1° Semestre · Emitido: 01 Jul',
+      fileSize: '1.5 MB · PDF',
+      isOfficial: true,
+    },
+
+    // 3. CIRCULARES
+    {
+      id: 'doc-circ-1',
+      category: 'CIRCULARES',
+      title: 'Circular N° 14: Cuotas y Rematriculación 2027',
+      subtitle: 'Aranceles, cronograma de reserva de vacante y beneficios por hermano.',
+      studentName: 'Toda la Familia',
+      date: '22 Oct 2026',
+      fileSize: '850 KB · PDF',
+      isOfficial: true,
+    },
+    {
+      id: 'doc-circ-2',
+      category: 'CIRCULARES',
+      title: 'Reglamento Convivencia & Uniformes 2026',
+      subtitle: 'Normativa institucional sobre asistencia, código de vestimenta y convivencia.',
+      studentName: 'Nivel Inicial y Primario',
+      date: 'Vigente Ciclo 2026',
+      fileSize: '3.1 MB · PDF',
+      isOfficial: true,
+    },
+    {
+      id: 'doc-circ-3',
+      category: 'CIRCULARES',
+      title: 'Protocolo de Seguridad en Puerta y Retiros QR',
+      subtitle: 'Guía práctica para tutores sobre validación de identidad en portería.',
+      studentName: 'Comunidad Educativa',
+      date: 'Actualizado: 18 Ago 2026',
+      fileSize: '620 KB · PDF',
+      isOfficial: true,
+    },
+
+    // 4. FICHAS MÉDICAS
+    {
+      id: 'doc-fich-1',
+      category: 'FICHAS',
+      title: 'Ficha Médica y Esquema de Vacunación 2026',
+      subtitle: 'Registro de vacunas obligatorias, alergias y contactos de emergencia.',
+      studentName: 'Mateo López · Sala de 4 Años',
+      date: 'Presentada: 10 Mar 2026 · Válida',
+      fileSize: '1.1 MB · PDF',
+      isOfficial: true,
+    },
+    {
+      id: 'doc-fich-2',
+      category: 'FICHAS',
+      title: 'Certificado Apto Médico y Natación Escolar',
+      subtitle: 'Evaluación cardiológica y aptitud para actividades físicas y club.',
+      studentName: 'Sofía López · 4° Grado "B"',
+      date: 'Presentada: 15 Abr 2026 · Válida',
+      fileSize: '1.4 MB · PDF',
+      isOfficial: true,
+    },
+  ];
+
+  // Counts
+  const totalCount = documents.length;
+  const boletinesCount = documents.filter((d) => d.category === 'BOLETINES').length;
+  const authCount = documents.filter((d) => d.category === 'AUTORIZACIONES').length;
+  const circularesCount = documents.filter((d) => d.category === 'CIRCULARES').length;
+  const fichasCount = documents.filter((d) => d.category === 'FICHAS').length;
+
+  // Filtered documents
+  const filteredDocuments = documents.filter((doc) => {
+    // Category match
+    if (activeCategory !== 'TODOS' && doc.category !== activeCategory) {
+      return false;
+    }
+    // Search query match
+    if (searchQuery.trim().length > 0) {
+      const q = searchQuery.toLowerCase();
+      const matchTitle = doc.title.toLowerCase().includes(q);
+      const matchSub = doc.subtitle.toLowerCase().includes(q);
+      const matchStudent = doc.studentName?.toLowerCase().includes(q) || false;
+      return matchTitle || matchSub || matchStudent;
+    }
+    return true;
+  });
 
   const handleDigitChange = (val: string, index: number) => {
     const clean = val.replace(/[^0-9]/g, '');
@@ -66,6 +216,13 @@ export const FilesScreen: React.FC = () => {
   const handleSimulatePreview = (title: string) => {
     Alert.alert('Vista previa del documento', `${title}\nDocumento oficial verificado con código QR.`);
   };
+
+  // Group by section for clean UI
+  const urgentAuth = filteredDocuments.find((d) => d.id === 'doc-auth-1');
+  const otherAuth = filteredDocuments.filter((d) => d.category === 'AUTORIZACIONES' && d.id !== 'doc-auth-1');
+  const boletinesList = filteredDocuments.filter((d) => d.category === 'BOLETINES');
+  const circularesList = filteredDocuments.filter((d) => d.category === 'CIRCULARES');
+  const fichasList = filteredDocuments.filter((d) => d.category === 'FICHAS');
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -116,11 +273,11 @@ export const FilesScreen: React.FC = () => {
             Archivos y Documentos
           </Text>
           <Text style={styles.heroMainSubtitle} numberOfLines={1}>
-            Circulares oficiales, autorizaciones, boletines y constancias.
+            Circulares oficiales, autorizaciones, notas parciales y fichas médicas.
           </Text>
         </View>
 
-        {/* Integrated Floating Search Bar */}
+        {/* Integrated Floating Search Bar with Clear Button */}
         <View style={styles.searchBarWrapper}>
           <Icon name="buscar" size={16} color="#94A3B8" style={{ marginRight: 8 }} />
           <TextInput
@@ -130,19 +287,33 @@ export const FilesScreen: React.FC = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
-          <TouchableOpacity style={styles.filterTuneBtn} activeOpacity={0.8}>
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setSearchQuery('')}
+              style={{ padding: 4, marginRight: 6 }}
+              activeOpacity={0.7}
+            >
+              <Icon name="cerrar" size={15} color="#64748B" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.filterTuneBtn}
+            activeOpacity={0.8}
+            onPress={() => setActiveCategory('TODOS')}
+          >
             <Icon name="filtros" size={16} color="#64748B" />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* 2. FILTROS DE CATEGORÍAS EN PÍLDORAS DESLIZABLES */}
+      {/* 2. FILTROS DE CATEGORÍAS EN PÍLDORAS DESLIZABLES CON CONTADORES */}
       <View style={styles.filterChipsSection}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filterChipsScroll}
         >
+          {/* Todos */}
           <TouchableOpacity
             style={[
               styles.filterChip,
@@ -164,8 +335,14 @@ export const FilesScreen: React.FC = () => {
             >
               Todos
             </Text>
+            <View style={[styles.chipBadge, activeCategory === 'TODOS' && styles.chipBadgeActive]}>
+              <Text style={[styles.chipBadgeText, activeCategory === 'TODOS' && styles.chipBadgeTextActive]}>
+                {totalCount}
+              </Text>
+            </View>
           </TouchableOpacity>
 
+          {/* Notas Parciales */}
           <TouchableOpacity
             style={[
               styles.filterChip,
@@ -185,10 +362,16 @@ export const FilesScreen: React.FC = () => {
                 activeCategory === 'BOLETINES' && styles.filterChipTextActive,
               ]}
             >
-              Boletines
+              Notas Parciales
             </Text>
+            <View style={[styles.chipBadge, activeCategory === 'BOLETINES' && styles.chipBadgeActive]}>
+              <Text style={[styles.chipBadgeText, activeCategory === 'BOLETINES' && styles.chipBadgeTextActive]}>
+                {boletinesCount}
+              </Text>
+            </View>
           </TouchableOpacity>
 
+          {/* Autorizaciones */}
           <TouchableOpacity
             style={[
               styles.filterChip,
@@ -210,8 +393,14 @@ export const FilesScreen: React.FC = () => {
             >
               Autorizaciones
             </Text>
+            <View style={[styles.chipBadge, activeCategory === 'AUTORIZACIONES' && styles.chipBadgeActive]}>
+              <Text style={[styles.chipBadgeText, activeCategory === 'AUTORIZACIONES' && styles.chipBadgeTextActive]}>
+                {authCount}
+              </Text>
+            </View>
           </TouchableOpacity>
 
+          {/* Circulares */}
           <TouchableOpacity
             style={[
               styles.filterChip,
@@ -233,8 +422,14 @@ export const FilesScreen: React.FC = () => {
             >
               Circulares
             </Text>
+            <View style={[styles.chipBadge, activeCategory === 'CIRCULARES' && styles.chipBadgeActive]}>
+              <Text style={[styles.chipBadgeText, activeCategory === 'CIRCULARES' && styles.chipBadgeTextActive]}>
+                {circularesCount}
+              </Text>
+            </View>
           </TouchableOpacity>
 
+          {/* Fichas Médicas */}
           <TouchableOpacity
             style={[
               styles.filterChip,
@@ -256,74 +451,116 @@ export const FilesScreen: React.FC = () => {
             >
               Fichas Médicas
             </Text>
+            <View style={[styles.chipBadge, activeCategory === 'FICHAS' && styles.chipBadgeActive]}>
+              <Text style={[styles.chipBadgeText, activeCategory === 'FICHAS' && styles.chipBadgeTextActive]}>
+                {fichasCount}
+              </Text>
+            </View>
           </TouchableOpacity>
         </ScrollView>
       </View>
 
       {/* BODY CONTENT */}
       <View style={styles.bodyContent}>
-        {/* 1. SECCIÓN: ACCIÓN REQUERIDA / FIRMA URGENTE */}
-        {!isSigned && (
+        {/* EMPTY STATE IF NO MATCHES */}
+        {filteredDocuments.length === 0 && (
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIconCircle}>
+              <Icon name="buscar" size={26} color="#94A3B8" />
+            </View>
+            <Text style={styles.emptyTitle}>Sin documentos encontrados</Text>
+            <Text style={styles.emptySubtitle}>
+              No hay archivos que coincidan con "{searchQuery}".
+            </Text>
+            <TouchableOpacity
+              style={styles.clearSearchBtn}
+              onPress={() => {
+                setSearchQuery('');
+                setActiveCategory('TODOS');
+              }}
+            >
+              <Text style={styles.clearSearchBtnText}>Ver todos los documentos</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* 1. SECCIÓN: ACCIÓN REQUERIDA / AUTORIZACIONES */}
+        {(activeCategory === 'TODOS' || activeCategory === 'AUTORIZACIONES') && urgentAuth && (
           <View style={styles.sectionBlock}>
             <View style={styles.sectionHeaderRow}>
               <View style={styles.sectionTitleWithIcon}>
-                <Icon name="firma-digital" size={18} color={colors.coral} />
-                <Text style={styles.sectionTitle}>Acción Requerida</Text>
+                <Icon name="firma-digital" size={18} color={isSigned ? colors.primary : colors.coral} />
+                <Text style={styles.sectionTitle}>
+                  {isSigned ? 'Autorizaciones Digitales' : 'Acción Requerida'}
+                </Text>
               </View>
-              <View style={styles.urgentBadge}>
-                <Text style={styles.urgentBadgeText}>1 PENDIENTE</Text>
+              <View style={isSigned ? styles.signedBadge : styles.urgentBadge}>
+                <Text style={isSigned ? styles.signedBadgeText : styles.urgentBadgeText}>
+                  {isSigned ? 'FIRMADO ✓' : '1 PENDIENTE'}
+                </Text>
               </View>
             </View>
 
             <View style={styles.urgentCard}>
-              <View style={styles.urgentRedBorderLine} />
+              <View style={isSigned ? styles.urgentGreenBorderLine : styles.urgentRedBorderLine} />
 
               <View style={styles.urgentCardTop}>
                 <View style={styles.urgentCardInfo}>
                   <View style={styles.pendingTagRow}>
-                    <View style={styles.pendingTag}>
-                      <Text style={styles.pendingTagText}>FIRMA PENDIENTE</Text>
+                    <View style={isSigned ? styles.signedTag : styles.pendingTag}>
+                      <Text style={isSigned ? styles.signedTagText : styles.pendingTagText}>
+                        {isSigned ? 'FIRMADO DIGITALMENTE' : 'FIRMA PENDIENTE'}
+                      </Text>
                     </View>
-                    <Text style={styles.pendingDueText}>Vence en 48 hs</Text>
+                    <Text style={styles.pendingDueText}>
+                      {isSigned ? 'Constancia archivada' : 'Vence en 48 hs'}
+                    </Text>
                   </View>
                   <Text style={styles.urgentTitle}>
-                    Autorización Salida Didáctica: Museo Provincial
+                    {urgentAuth.title}
                   </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 3 }}>
                     <Icon name="graduacion" size={13} color="#005F2E" />
                     <Text style={styles.urgentStudent}>
-                      Mateo López · Sala de 4 Años
+                      {urgentAuth.studentName}
                     </Text>
                   </View>
                 </View>
 
-                <View style={styles.urgentIconBox}>
-                  <Icon name="firma-digital" size={24} color={colors.coral} />
+                <View style={[styles.urgentIconBox, isSigned && styles.signedIconBox]}>
+                  <Icon
+                    name={isSigned ? 'check' : 'firma-digital'}
+                    size={24}
+                    color={isSigned ? colors.primary : colors.coral}
+                  />
                 </View>
               </View>
 
               <Text style={styles.urgentDesc}>
-                Visita educativa prevista para el 28 de Octubre. Se requiere confirmación de tutor legal y aceptación del protocolo de traslado escolar.
+                {urgentAuth.subtitle}
               </Text>
 
               <View style={styles.urgentButtonsRow}>
-                <TouchableOpacity
-                  style={styles.signButton}
-                  activeOpacity={0.88}
-                  onPress={() => setIsPinModalOpen(true)}
-                >
-                  <Icon name="firma-digital" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                  <Text style={styles.signButtonText}>Revisar y Firmar</Text>
-                </TouchableOpacity>
+                {!isSigned ? (
+                  <TouchableOpacity
+                    style={styles.signButton}
+                    activeOpacity={0.88}
+                    onPress={() => setIsPinModalOpen(true)}
+                  >
+                    <Icon name="firma-digital" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                    <Text style={styles.signButtonText}>Revisar y Firmar</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.signedConfirmedBox}>
+                    <Icon name="check" size={14} color="#005F2E" />
+                    <Text style={styles.signedConfirmedText}>Firma registrada con PIN seguro</Text>
+                  </View>
+                )}
 
                 <TouchableOpacity
                   style={styles.previewBtnSmall}
                   activeOpacity={0.85}
-                  onPress={() =>
-                    handleSimulatePreview(
-                      'Autorización Salida Didáctica: Museo Provincial'
-                    )
-                  }
+                  onPress={() => handleSimulatePreview(urgentAuth.title)}
                 >
                   <Icon name="buscar" size={16} color="#1E40AF" />
                 </TouchableOpacity>
@@ -332,195 +569,187 @@ export const FilesScreen: React.FC = () => {
           </View>
         )}
 
-        {/* 2. BOLETINES E INFORMES EVALUATIVOS */}
-        <View style={styles.sectionBlock}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionTitleWithIcon}>
-              <Icon name="boletin" size={18} color={colors.primary} />
-              <Text style={styles.sectionTitle}>Boletines e Informes</Text>
-            </View>
-            <TouchableOpacity activeOpacity={0.8}>
-              <Text style={styles.sectionLink}>Ver Histórico</Text>
-            </TouchableOpacity>
-          </View>
-
+        {/* OTRAS AUTORIZACIONES */}
+        {(activeCategory === 'TODOS' || activeCategory === 'AUTORIZACIONES') && otherAuth.length > 0 && (
           <View style={styles.cardsStack}>
-            {/* Boletín Mateo */}
-            <View style={styles.reportCard}>
-              <View style={styles.reportTopRow}>
-                <View style={styles.pdfIconBox}>
-                  <Icon name="boletin" size={20} color={colors.primary} />
-                  <Text style={styles.pdfBadgeText}>PDF</Text>
-                </View>
-
-                <View style={styles.reportInfoCol}>
-                  <View style={styles.reportBadgeRow}>
-                    <View style={styles.officialBadge}>
-                      <Text style={styles.officialBadgeText}>OFICIAL</Text>
-                    </View>
-                    <Text style={styles.reportSizeText}>1.8 MB</Text>
+            {otherAuth.map((item) => (
+              <View key={item.id} style={styles.docRowCard}>
+                <View style={styles.docRowLeft}>
+                  <View style={styles.docIconBoxGreen}>
+                    <Icon name="firma-digital" size={18} color={colors.primary} />
                   </View>
-                  <Text style={styles.reportTitle}>Informe Cualitativo Bimestral</Text>
-                  <Text style={styles.reportStudent}>Mateo López · Sala de 4 Años</Text>
-                  <Text style={styles.reportDate}>Ciclo Lectivo 2026 · Emitido: 15 Oct</Text>
+                  <View style={styles.docTextCol}>
+                    <Text style={styles.docTitle} numberOfLines={1}>
+                      {item.title}
+                    </Text>
+                    <Text style={styles.docSub}>{item.studentName}</Text>
+                    <View style={styles.docMetaRow}>
+                      <Text style={styles.docMetaDate}>{item.date}</Text>
+                      <View style={styles.docMetaDot} />
+                      <Text style={styles.docMetaSize}>{item.fileSize}</Text>
+                    </View>
+                  </View>
                 </View>
-              </View>
-
-              <View style={styles.reportBottomButtonsRow}>
-                <TouchableOpacity
-                  style={styles.btnSecondary}
-                  activeOpacity={0.85}
-                  onPress={() =>
-                    handleSimulatePreview(
-                      'Informe Cualitativo Bimestral - Mateo López'
-                    )
-                  }
-                >
-                  <Icon name="buscar" size={14} color="#475569" style={{ marginRight: 4 }} />
-                  <Text style={styles.btnSecondaryText}>Vista previa</Text>
-                </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.btnPrimaryCeleste}
-                  activeOpacity={0.85}
-                  onPress={() =>
-                    handleSimulateDownload(
-                      'Informe Cualitativo Bimestral - Mateo López.pdf'
-                    )
-                  }
+                  style={styles.cloudDownloadBtn}
+                  activeOpacity={0.8}
+                  onPress={() => handleSimulateDownload(`${item.title}.pdf`)}
                 >
-                  <Icon name="descargar-pdf" size={15} color="#FFFFFF" style={{ marginRight: 4 }} />
-                  <Text style={styles.btnCelesteText}>Descargar</Text>
+                  <Icon name="descargar-pdf" size={18} color={colors.primary} />
                 </TouchableOpacity>
               </View>
+            ))}
+          </View>
+        )}
+
+        {/* 2. NOTAS PARCIALES E INFORMES EVALUATIVOS */}
+        {(activeCategory === 'TODOS' || activeCategory === 'BOLETINES') && boletinesList.length > 0 && (
+          <View style={styles.sectionBlock}>
+            <View style={styles.sectionHeaderRow}>
+              <View style={styles.sectionTitleWithIcon}>
+                <Icon name="boletin" size={18} color={colors.primary} />
+                <Text style={styles.sectionTitle}>Notas Parciales e Informes</Text>
+              </View>
+              <Text style={styles.sectionLink}>Oficiales ({boletinesList.length})</Text>
             </View>
 
-            {/* Boletín Sofía */}
-            <View style={styles.reportCard}>
-              <View style={styles.reportTopRow}>
-                <View style={styles.pdfIconBox}>
-                  <Icon name="certificado" size={20} color="#1A73E8" />
-                  <Text style={styles.pdfBadgeText}>PDF</Text>
-                </View>
-
-                <View style={styles.reportInfoCol}>
-                  <View style={styles.reportBadgeRow}>
-                    <View style={styles.officialBadge}>
-                      <Text style={styles.officialBadgeText}>OFICIAL</Text>
+            <View style={styles.cardsStack}>
+              {boletinesList.map((item) => (
+                <View key={item.id} style={styles.reportCard}>
+                  <View style={styles.reportTopRow}>
+                    <View style={styles.pdfIconBox}>
+                      <Icon name="boletin" size={20} color={colors.primary} />
+                      <Text style={styles.pdfBadgeText}>PDF</Text>
                     </View>
-                    <Text style={styles.reportSizeText}>2.4 MB</Text>
+
+                    <View style={styles.reportInfoCol}>
+                      <View style={styles.reportBadgeRow}>
+                        <View style={styles.officialBadge}>
+                          <Text style={styles.officialBadgeText}>OFICIAL</Text>
+                        </View>
+                        <Text style={styles.reportSizeText}>{item.fileSize}</Text>
+                      </View>
+                      <Text style={styles.reportTitle}>{item.title}</Text>
+                      <Text style={styles.reportStudent}>{item.studentName}</Text>
+                      <Text style={styles.reportDate}>{item.date}</Text>
+                    </View>
                   </View>
-                  <Text style={styles.reportTitle}>Boletín Calificaciones 1° Ciclo</Text>
-                  <Text style={styles.reportStudent}>Sofía López · 4° Grado "B"</Text>
-                  <Text style={styles.reportDate}>2° Trimestre · Emitido: 08 Oct</Text>
+
+                  <View style={styles.reportBottomButtonsRow}>
+                    <TouchableOpacity
+                      style={styles.btnSecondary}
+                      activeOpacity={0.85}
+                      onPress={() => handleSimulatePreview(item.title)}
+                    >
+                      <Icon name="buscar" size={14} color="#475569" style={{ marginRight: 4 }} />
+                      <Text style={styles.btnSecondaryText}>Vista previa</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.btnPrimaryCeleste}
+                      activeOpacity={0.85}
+                      onPress={() => handleSimulateDownload(`${item.title}.pdf`)}
+                    >
+                      <Icon name="descargar-pdf" size={15} color="#FFFFFF" style={{ marginRight: 4 }} />
+                      <Text style={styles.btnCelesteText}>Descargar</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-
-              <View style={styles.reportBottomButtonsRow}>
-                <TouchableOpacity
-                  style={styles.btnSecondary}
-                  activeOpacity={0.85}
-                  onPress={() =>
-                    handleSimulatePreview(
-                      'Boletín Calificaciones 1° Ciclo - Sofía López'
-                    )
-                  }
-                >
-                  <Icon name="buscar" size={14} color="#475569" style={{ marginRight: 4 }} />
-                  <Text style={styles.btnSecondaryText}>Vista previa</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.btnPrimaryCeleste}
-                  activeOpacity={0.85}
-                  onPress={() =>
-                    handleSimulateDownload(
-                      'Boletín Calificaciones 1° Ciclo - Sofía López.pdf'
-                    )
-                  }
-                >
-                  <Icon name="descargar-pdf" size={15} color="#FFFFFF" style={{ marginRight: 4 }} />
-                  <Text style={styles.btnCelesteText}>Descargar</Text>
-                </TouchableOpacity>
-              </View>
+              ))}
             </View>
           </View>
-        </View>
+        )}
 
         {/* 3. CIRCULARES & REGLAMENTOS */}
-        <View style={styles.sectionBlock}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionTitleWithIcon}>
-              <Icon name="novedades" size={18} color="#854D0E" />
-              <Text style={styles.sectionTitle}>Circulares & Reglamentos</Text>
-            </View>
-            <TouchableOpacity activeOpacity={0.8}>
-              <Text style={styles.sectionLinkBlue}>Ver todas (6)</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.cardsStack}>
-            {/* Circular 14 */}
-            <View style={styles.docRowCard}>
-              <View style={styles.docRowLeft}>
-                <View style={styles.docIconBoxCeleste}>
-                  <Icon name="novedades" size={18} color="#1A73E8" />
-                </View>
-                <View style={styles.docTextCol}>
-                  <Text style={styles.docTitle} numberOfLines={1}>
-                    Circular N° 14: Cuotas y Rematriculación 2027
-                  </Text>
-                  <View style={styles.docMetaRow}>
-                    <Text style={styles.docMetaDate}>22 Oct 2026</Text>
-                    <View style={styles.docMetaDot} />
-                    <Text style={styles.docMetaSize}>850 KB · PDF</Text>
-                  </View>
-                </View>
+        {(activeCategory === 'TODOS' || activeCategory === 'CIRCULARES') && circularesList.length > 0 && (
+          <View style={styles.sectionBlock}>
+            <View style={styles.sectionHeaderRow}>
+              <View style={styles.sectionTitleWithIcon}>
+                <Icon name="novedades" size={18} color="#854D0E" />
+                <Text style={styles.sectionTitle}>Circulares & Reglamentos</Text>
               </View>
-
-              <TouchableOpacity
-                style={styles.cloudDownloadBtn}
-                activeOpacity={0.8}
-                onPress={() =>
-                  handleSimulateDownload('Circular N° 14 - Rematriculación 2027.pdf')
-                }
-              >
-                <Icon name="descargar-pdf" size={18} color="#1A73E8" />
-              </TouchableOpacity>
+              <Text style={styles.sectionLinkBlue}>Institucional ({circularesList.length})</Text>
             </View>
 
-            {/* Reglamento Convivencia */}
-            <View style={styles.docRowCard}>
-              <View style={styles.docRowLeft}>
-                <View style={styles.docIconBoxGreen}>
-                  <Icon name="carpetas" size={18} color={colors.primary} />
-                </View>
-                <View style={styles.docTextCol}>
-                  <Text style={styles.docTitle} numberOfLines={1}>
-                    Reglamento Convivencia & Uniformes 2026
-                  </Text>
-                  <View style={styles.docMetaRow}>
-                    <Text style={styles.docMetaDate}>Vigente</Text>
-                    <View style={styles.docMetaDot} />
-                    <Text style={styles.docMetaSize}>3.1 MB · PDF</Text>
+            <View style={styles.cardsStack}>
+              {circularesList.map((item) => (
+                <View key={item.id} style={styles.docRowCard}>
+                  <View style={styles.docRowLeft}>
+                    <View style={styles.docIconBoxCeleste}>
+                      <Icon name="novedades" size={18} color="#1A73E8" />
+                    </View>
+                    <View style={styles.docTextCol}>
+                      <Text style={styles.docTitle} numberOfLines={1}>
+                        {item.title}
+                      </Text>
+                      <Text style={styles.docSub}>{item.subtitle}</Text>
+                      <View style={styles.docMetaRow}>
+                        <Text style={styles.docMetaDate}>{item.date}</Text>
+                        <View style={styles.docMetaDot} />
+                        <Text style={styles.docMetaSize}>{item.fileSize}</Text>
+                      </View>
+                    </View>
                   </View>
-                </View>
-              </View>
 
-              <TouchableOpacity
-                style={styles.cloudDownloadBtn}
-                activeOpacity={0.8}
-                onPress={() =>
-                  handleSimulateDownload('Reglamento Convivencia & Uniformes 2026.pdf')
-                }
-              >
-                <Icon name="descargar-pdf" size={18} color={colors.primary} />
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.cloudDownloadBtn}
+                    activeOpacity={0.8}
+                    onPress={() => handleSimulateDownload(`${item.title}.pdf`)}
+                  >
+                    <Icon name="descargar-pdf" size={18} color="#1A73E8" />
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
           </View>
-        </View>
+        )}
 
-        {/* 4. SUBIR O ADJUNTAR DOCUMENTO */}
+        {/* 4. FICHAS MÉDICAS Y APTOS FÍSICOS */}
+        {(activeCategory === 'TODOS' || activeCategory === 'FICHAS') && fichasList.length > 0 && (
+          <View style={styles.sectionBlock}>
+            <View style={styles.sectionHeaderRow}>
+              <View style={styles.sectionTitleWithIcon}>
+                <Icon name="primeros-auxilios" size={18} color="#005F2E" />
+                <Text style={styles.sectionTitle}>Fichas Médicas & Aptos</Text>
+              </View>
+              <Text style={styles.sectionLink}>Vigentes ({fichasList.length})</Text>
+            </View>
+
+            <View style={styles.cardsStack}>
+              {fichasList.map((item) => (
+                <View key={item.id} style={styles.docRowCard}>
+                  <View style={styles.docRowLeft}>
+                    <View style={styles.docIconBoxGreen}>
+                      <Icon name="primeros-auxilios" size={18} color="#005F2E" />
+                    </View>
+                    <View style={styles.docTextCol}>
+                      <Text style={styles.docTitle} numberOfLines={1}>
+                        {item.title}
+                      </Text>
+                      <Text style={styles.docSub}>{item.studentName}</Text>
+                      <View style={styles.docMetaRow}>
+                        <Text style={styles.docMetaDate}>{item.date}</Text>
+                        <View style={styles.docMetaDot} />
+                        <Text style={styles.docMetaSize}>{item.fileSize}</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.cloudDownloadBtn}
+                    activeOpacity={0.8}
+                    onPress={() => handleSimulateDownload(`${item.title}.pdf`)}
+                  >
+                    <Icon name="descargar-pdf" size={18} color="#005F2E" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* 5. SUBIR O ADJUNTAR DOCUMENTO */}
         <View style={styles.uploadSectionBanner}>
           <View style={styles.uploadTopRow}>
             <View style={styles.uploadIconCircle}>
@@ -646,48 +875,44 @@ export const FilesScreen: React.FC = () => {
 
             <View style={styles.modalSheetBody}>
               <Text style={styles.pinInstructions}>
-                Selecciona el estudiante y tipo de comprobante:
+                Selecciona el tipo de comprobante y destinatario en el Instituto:
               </Text>
 
-              <View style={styles.uploadStudentSelectRow}>
-                <View style={[styles.uploadStudentPillActive, { flexDirection: 'row', alignItems: 'center', gap: 5 }]}>
-                  <Icon name="graduacion" size={13} color="#005F2E" />
-                  <Text style={styles.uploadStudentPillActiveText}>Mateo López (Sala 4)</Text>
-                </View>
-                <View style={[styles.uploadStudentPill, { flexDirection: 'row', alignItems: 'center', gap: 5 }]}>
-                  <Icon name="graduacion" size={13} color="#1A73E8" />
-                  <Text style={styles.uploadStudentPillText}>Sofía López (4° Grado)</Text>
-                </View>
-              </View>
-
-              <View style={styles.uploadDropZone}>
+              <TouchableOpacity
+                style={styles.uploadModalDropzone}
+                activeOpacity={0.8}
+                onPress={() =>
+                  Alert.alert(
+                    'Documento Adjuntado',
+                    'Archivo seleccionado con éxito. Listo para remitir.'
+                  )
+                }
+              >
                 <Icon
-                  name={uploadType === 'PHOTO' ? 'camara' : 'descargar-pdf'}
-                  size={36}
+                  name={uploadType === 'PHOTO' ? 'camara' : 'adjunto'}
+                  size={32}
                   color={colors.primary}
-                  style={{ marginBottom: 6 }}
                 />
-                <Text style={styles.uploadDropTitle}>
-                  {uploadType === 'PHOTO'
-                    ? 'Toca para abrir la cámara'
-                    : 'Toca para seleccionar archivo del móvil'}
+                <Text style={styles.uploadModalDropzoneTitle}>
+                  {uploadType === 'PHOTO' ? 'Abrir Cámara' : 'Seleccionar Archivo PDF'}
                 </Text>
-                <Text style={styles.uploadDropSubtitle}>
-                  Formatos admitidos: JPG, PNG, PDF (Máx 10 MB)
+                <Text style={styles.uploadModalDropzoneHint}>
+                  Formatos aceptados: JPG, PNG, PDF (hasta 5 MB)
                 </Text>
-              </View>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.confirmPinBtn}
+                activeOpacity={0.88}
                 onPress={() => {
                   setIsUploadModalOpen(false);
                   Alert.alert(
-                    'Documento enviado',
-                    'Tu certificado fue remitido a la Preceptoría para su aprobación.'
+                    'Documento Enviado',
+                    'Tu archivo fue remitido con éxito a la Secretaría Institucional.'
                   );
                 }}
               >
-                <Text style={styles.confirmPinBtnText}>Enviar a Preceptoría / Secretaría</Text>
+                <Text style={styles.confirmPinBtnText}>Remitir a Secretaría</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -703,72 +928,62 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F7FC',
   },
 
-  /* 1. HERO BANNER */
+  /* 1. HERO WAVE BANNER */
   heroBanner: {
     backgroundColor: colors.primary,
-    paddingBottom: 22,
+    paddingBottom: 24,
     paddingHorizontal: 16,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
     position: 'relative',
     overflow: 'hidden',
-    shadowColor: '#005F2E',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 5,
   },
   heroCircle1: {
     position: 'absolute',
-    top: -40,
-    right: -40,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
+    top: -50,
+    right: -50,
+    width: 170,
+    height: 170,
+    borderRadius: 85,
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
   heroCircle2: {
     position: 'absolute',
-    bottom: -20,
-    left: -30,
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: 'rgba(56, 152, 236, 0.15)',
+    bottom: -60,
+    left: -40,
+    width: 190,
+    height: 190,
+    borderRadius: 95,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
   heroTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    zIndex: 10,
-    gap: 8,
   },
   heroBrandLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
     flex: 1,
   },
   heroLogo: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    padding: 2,
-  },
-  heroLogoSmall: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    marginRight: 10,
+  },
+  heroLogoSmall: {
+    width: 30,
+    height: 30,
+    marginRight: 8,
   },
   brandTitleCol: {
     flex: 1,
-    justifyContent: 'center',
   },
   heroTitle: {
     fontSize: 15,
     fontWeight: '900',
     color: '#FFFFFF',
+    letterSpacing: -0.2,
   },
   heroTitleSmall: {
     fontSize: 13,
@@ -776,19 +991,20 @@ const styles = StyleSheet.create({
   heroSubtitle: {
     fontSize: 9.5,
     fontWeight: '800',
-    color: 'rgba(255, 255, 255, 0.8)',
-    letterSpacing: 0.8,
+    color: 'rgba(255, 255, 255, 0.85)',
+    letterSpacing: 0.6,
+    marginTop: 1,
   },
   heroActionsRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 10,
   },
   notifBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -797,9 +1013,6 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-  },
-  notifIcon: {
-    fontSize: 16,
   },
   notifRedDot: {
     position: 'absolute',
@@ -840,9 +1053,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 5,
   },
-  heroContextIcon: {
-    fontSize: 11,
-  },
   heroContextText: {
     fontSize: 9.5,
     fontWeight: '800',
@@ -879,10 +1089,6 @@ const styles = StyleSheet.create({
     elevation: 3,
     zIndex: 10,
   },
-  searchIcon: {
-    fontSize: 15,
-    marginRight: 8,
-  },
   searchInput: {
     flex: 1,
     fontSize: 12.5,
@@ -891,9 +1097,6 @@ const styles = StyleSheet.create({
   },
   filterTuneBtn: {
     padding: 4,
-  },
-  filterTuneIcon: {
-    fontSize: 15,
   },
 
   /* 2. FILTER CHIPS */
@@ -911,7 +1114,7 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: '#FFFFFF',
     paddingVertical: 7,
-    paddingHorizontal: 13,
+    paddingHorizontal: 12,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -933,6 +1136,23 @@ const styles = StyleSheet.create({
   filterChipTextActive: {
     color: '#FFFFFF',
   },
+  chipBadge: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 10,
+  },
+  chipBadgeActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+  },
+  chipBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#475569',
+  },
+  chipBadgeTextActive: {
+    color: '#FFFFFF',
+  },
 
   /* BODY */
   bodyContent: {
@@ -940,6 +1160,50 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     gap: 18,
   },
+
+  /* EMPTY STATE */
+  emptyCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginTop: 8,
+  },
+  emptyIconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#131B2E',
+  },
+  emptySubtitle: {
+    fontSize: 12.5,
+    color: '#64748B',
+    textAlign: 'center',
+    marginTop: 4,
+    marginBottom: 16,
+  },
+  clearSearchBtn: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 10,
+  },
+  clearSearchBtnText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+
   sectionBlock: {
     gap: 10,
   },
@@ -954,12 +1218,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-  },
-  urgentAlertIcon: {
-    fontSize: 16,
-  },
-  sectionTitleIcon: {
-    fontSize: 16,
   },
   sectionTitle: {
     fontSize: 16,
@@ -987,6 +1245,17 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#9F1239',
   },
+  signedBadge: {
+    backgroundColor: '#E8F7EE',
+    paddingHorizontal: 8,
+    paddingVertical: 2.5,
+    borderRadius: 9999,
+  },
+  signedBadgeText: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#005F2E',
+  },
 
   /* URGENT CARD */
   urgentCard: {
@@ -999,159 +1268,180 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
-    elevation: 3,
+    elevation: 2,
     position: 'relative',
     overflow: 'hidden',
   },
   urgentRedBorderLine: {
     position: 'absolute',
-    left: 0,
     top: 0,
-    bottom: 0,
-    width: 4,
+    left: 0,
+    right: 0,
+    height: 4,
     backgroundColor: colors.coral,
+  },
+  urgentGreenBorderLine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+    backgroundColor: colors.primary,
   },
   urgentCardTop: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    paddingLeft: 6,
+    marginTop: 4,
+    gap: 8,
   },
   urgentCardInfo: {
     flex: 1,
-    marginRight: 6,
   },
   pendingTagRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     marginBottom: 4,
-    flexWrap: 'wrap',
   },
   pendingTag: {
     backgroundColor: '#FFF1F2',
     paddingHorizontal: 7,
     paddingVertical: 2,
-    borderRadius: 9999,
+    borderRadius: 6,
   },
   pendingTagText: {
-    fontSize: 9.5,
-    fontWeight: '800',
-    color: '#9F1239',
+    fontSize: 9,
+    fontWeight: '900',
+    color: colors.coral,
+    letterSpacing: 0.4,
+  },
+  signedTag: {
+    backgroundColor: '#E8F7EE',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  signedTagText: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: '#005F2E',
+    letterSpacing: 0.4,
   },
   pendingDueText: {
-    fontSize: 10.5,
-    color: '#94A3B8',
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#B45309',
   },
   urgentTitle: {
-    fontSize: 14,
-    fontWeight: '800',
+    fontSize: 14.5,
+    fontWeight: '900',
     color: '#131B2E',
     lineHeight: 19,
   },
   urgentStudent: {
     fontSize: 11.5,
-    color: colors.primary,
     fontWeight: '700',
-    marginTop: 2,
+    color: '#005F2E',
   },
   urgentIconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#FFF1F2',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  urgentIcon: {
-    fontSize: 18,
+  signedIconBox: {
+    backgroundColor: '#E8F7EE',
   },
   urgentDesc: {
     fontSize: 11.5,
-    color: '#475569',
+    color: '#64748B',
     lineHeight: 16,
-    marginTop: 6,
-    paddingLeft: 6,
+    marginTop: 8,
   },
   urgentButtonsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: 10,
-    paddingLeft: 6,
+    marginTop: 12,
   },
   signButton: {
     flex: 1,
-    backgroundColor: colors.coral,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    backgroundColor: colors.coral,
     paddingVertical: 9,
-    borderRadius: 11,
-    shadowColor: colors.coral,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  signButtonIcon: {
-    fontSize: 13,
+    paddingHorizontal: 14,
+    borderRadius: 10,
   },
   signButtonText: {
     color: '#FFFFFF',
-    fontSize: 12.5,
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  signedConfirmedBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F7EE',
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    gap: 6,
+  },
+  signedConfirmedText: {
+    fontSize: 11.5,
     fontWeight: '800',
+    color: '#005F2E',
   },
   previewBtnSmall: {
-    width: 38,
-    height: 38,
-    borderRadius: 11,
-    backgroundColor: '#F1F5F9',
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  previewBtnIcon: {
-    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
   },
 
-  /* REPORT CARDS */
+  /* REPORT CARD */
   cardsStack: {
     gap: 10,
   },
   reportCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 13,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.04,
     shadowRadius: 6,
     elevation: 2,
   },
   reportTopRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 10,
+    gap: 12,
   },
   pdfIconBox: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    backgroundColor: '#FFF1F2',
+    width: 44,
+    height: 48,
+    borderRadius: 10,
+    backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pdfEmoji: {
-    fontSize: 18,
-  },
   pdfBadgeText: {
-    fontSize: 8,
+    fontSize: 8.5,
     fontWeight: '900',
-    color: '#9F1239',
-    marginTop: -2,
+    color: colors.primary,
+    marginTop: 1,
   },
   reportInfoCol: {
     flex: 1,
@@ -1159,116 +1449,98 @@ const styles = StyleSheet.create({
   reportBadgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: 6,
     marginBottom: 2,
   },
   officialBadge: {
-    backgroundColor: '#E8F7EE',
-    paddingHorizontal: 7,
-    paddingVertical: 1.5,
-    borderRadius: 9999,
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
   },
   officialBadgeText: {
     fontSize: 8.5,
     fontWeight: '800',
-    color: '#005F2E',
+    color: '#475569',
   },
   reportSizeText: {
-    fontSize: 10.5,
+    fontSize: 10,
     color: '#94A3B8',
   },
   reportTitle: {
     fontSize: 13.5,
     fontWeight: '800',
     color: '#131B2E',
-    marginTop: 2,
   },
   reportStudent: {
-    fontSize: 11.5,
-    color: '#475569',
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.primary,
     marginTop: 1,
-    fontWeight: '600',
   },
   reportDate: {
-    fontSize: 10.5,
+    fontSize: 10,
     color: '#94A3B8',
-    marginTop: 2,
+    marginTop: 1,
   },
   reportBottomButtonsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     gap: 8,
     marginTop: 12,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
   },
   btnSecondary: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
-    borderRadius: 10,
-    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    backgroundColor: '#F8FAFC',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  btnSecondaryIcon: {
-    fontSize: 12,
+    borderColor: '#CBD5E1',
+    paddingVertical: 8,
+    borderRadius: 8,
   },
   btnSecondaryText: {
-    fontSize: 11.5,
-    fontWeight: '700',
-    color: '#334155',
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#475569',
   },
   btnPrimaryCeleste: {
     flex: 1,
-    backgroundColor: '#EFF6FF',
-    borderRadius: 10,
-    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
-  },
-  btnCelesteIcon: {
-    fontSize: 12,
+    backgroundColor: '#1A73E8',
+    paddingVertical: 8,
+    borderRadius: 8,
   },
   btnCelesteText: {
-    fontSize: 11.5,
-    fontWeight: '700',
-    color: '#1A73E8',
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 
-  /* DOC ROW CARDS (Circulares) */
+  /* DOC ROW CARD (Circulares / Fichas / Autorizaciones) */
   docRowCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
   },
   docRowLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
     flex: 1,
     marginRight: 8,
   },
   docIconBoxCeleste: {
     width: 38,
     height: 38,
-    borderRadius: 11,
+    borderRadius: 10,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1276,30 +1548,32 @@ const styles = StyleSheet.create({
   docIconBoxGreen: {
     width: 38,
     height: 38,
-    borderRadius: 11,
+    borderRadius: 10,
     backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  docIconEmoji: {
-    fontSize: 17,
   },
   docTextCol: {
     flex: 1,
   },
   docTitle: {
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: '800',
     color: '#131B2E',
+  },
+  docSub: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
   },
   docMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    marginTop: 2,
+    gap: 6,
+    marginTop: 3,
   },
   docMetaDate: {
-    fontSize: 10.5,
+    fontSize: 10,
     color: '#94A3B8',
   },
   docMetaDot: {
@@ -1309,105 +1583,95 @@ const styles = StyleSheet.create({
     backgroundColor: '#CBD5E1',
   },
   docMetaSize: {
-    fontSize: 10.5,
-    color: '#475569',
-    fontWeight: '500',
+    fontSize: 10,
+    color: '#94A3B8',
   },
   cloudDownloadBtn: {
     width: 36,
     height: 36,
-    borderRadius: 10,
-    backgroundColor: '#F1F5F9',
+    borderRadius: 18,
+    backgroundColor: '#F8FAFC',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  cloudDownloadIcon: {
-    fontSize: 13,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
 
-  /* 4. UPLOAD MODULE */
+  /* UPLOAD SECTION BANNER */
   uploadSectionBanner: {
-    backgroundColor: '#E8F7EE',
-    borderRadius: 16,
-    padding: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#C6F6D5',
+    borderColor: '#E2E8F0',
+    marginTop: 4,
   },
   uploadTopRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 10,
+    gap: 12,
   },
   uploadIconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: colors.primary,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E8F7EE',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  uploadIconEmoji: {
-    fontSize: 17,
   },
   uploadTextCol: {
     flex: 1,
   },
   uploadTitle: {
-    fontSize: 13.5,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '900',
     color: '#131B2E',
   },
   uploadDesc: {
-    fontSize: 11,
-    color: '#475569',
-    marginTop: 2,
-    lineHeight: 15,
+    fontSize: 11.5,
+    color: '#64748B',
+    lineHeight: 16,
+    marginTop: 3,
   },
   uploadActionsGrid: {
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 12,
+    gap: 10,
+    marginTop: 14,
   },
   btnUploadPhoto: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 9,
-    borderRadius: 11,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    backgroundColor: '#EFF6FF',
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
   },
   btnUploadPhotoText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#131B2E',
+    fontSize: 11.5,
+    fontWeight: '800',
+    color: '#1A73E8',
   },
   btnUploadPdf: {
     flex: 1,
-    backgroundColor: colors.primary,
-    paddingVertical: 9,
-    borderRadius: 11,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
+    backgroundColor: '#F8FAFC',
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
   },
   btnUploadPdfText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '800',
-    color: '#FFFFFF',
-  },
-  uploadActionIcon: {
-    fontSize: 13,
+    color: '#475569',
   },
 
-  /* PIN MODAL */
+  /* MODALS */
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(15, 23, 42, 0.6)',
@@ -1417,46 +1681,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 18,
-    maxHeight: '85%',
+    padding: 20,
+    paddingBottom: 34,
   },
   modalSheetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    marginBottom: 14,
   },
   modalSheetTitle: {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '900',
     color: '#131B2E',
   },
   modalSheetSub: {
-    fontSize: 11.5,
+    fontSize: 12,
     color: '#64748B',
     marginTop: 2,
   },
-  modalCloseText: {
-    fontSize: 18,
-    color: '#94A3B8',
-    padding: 4,
-    fontWeight: '700',
-  },
   modalSheetBody: {
-    paddingVertical: 14,
+    gap: 12,
   },
   pinInstructions: {
     fontSize: 12.5,
     color: '#475569',
-    lineHeight: 18,
+    lineHeight: 17,
   },
   pinDigitsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 6,
-    marginVertical: 18,
+    gap: 8,
+    marginVertical: 10,
   },
   pinInputBox: {
     height: 48,
@@ -1467,84 +1723,50 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: '900',
-    color: '#0F172A',
+    color: '#131B2E',
   },
   pinAuditNotice: {
-    backgroundColor: '#EFF6FF',
-    borderRadius: 12,
+    backgroundColor: '#FEF3C7',
     padding: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#BAE6FD',
-    marginBottom: 16,
+    borderColor: '#FDE68A',
   },
   pinAuditText: {
     fontSize: 10.5,
-    color: '#0369A1',
-    lineHeight: 15,
+    color: '#92400E',
+    lineHeight: 14,
   },
   confirmPinBtn: {
     backgroundColor: colors.primary,
-    paddingVertical: 12,
+    paddingVertical: 13,
     borderRadius: 12,
     alignItems: 'center',
+    marginTop: 6,
   },
   confirmPinBtnText: {
-    color: '#FFFFFF',
-    fontSize: 13.5,
+    fontSize: 13,
     fontWeight: '900',
+    color: '#FFFFFF',
   },
-
-  /* Upload Modal Options */
-  uploadStudentSelectRow: {
-    flexDirection: 'row',
-    gap: 6,
-    marginVertical: 12,
-  },
-  uploadStudentPillActive: {
-    backgroundColor: '#E8F7EE',
-    paddingVertical: 5,
-    paddingHorizontal: 8,
-    borderRadius: 9999,
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  uploadStudentPillActiveText: {
-    fontSize: 10.5,
-    fontWeight: '800',
-    color: '#005F2E',
-  },
-  uploadStudentPill: {
-    backgroundColor: '#F1F5F9',
-    paddingVertical: 5,
-    paddingHorizontal: 8,
-    borderRadius: 9999,
-  },
-  uploadStudentPillText: {
-    fontSize: 10.5,
-    color: '#64748B',
-  },
-  uploadDropZone: {
-    borderWidth: 2,
+  uploadModalDropzone: {
+    borderWidth: 1.5,
     borderStyle: 'dashed',
     borderColor: '#CBD5E1',
-    borderRadius: 14,
-    padding: 20,
+    borderRadius: 16,
+    padding: 24,
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#F8FAFC',
-    marginBottom: 16,
+    marginVertical: 10,
   },
-  uploadDropIcon: {
-    fontSize: 28,
-    marginBottom: 4,
-  },
-  uploadDropTitle: {
-    fontSize: 12.5,
-    fontWeight: '700',
+  uploadModalDropzoneTitle: {
+    fontSize: 14,
+    fontWeight: '800',
     color: '#131B2E',
+    marginTop: 8,
   },
-  uploadDropSubtitle: {
-    fontSize: 10.5,
+  uploadModalDropzoneHint: {
+    fontSize: 11,
     color: '#94A3B8',
     marginTop: 2,
   },

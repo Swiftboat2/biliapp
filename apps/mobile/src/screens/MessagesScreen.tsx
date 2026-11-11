@@ -231,7 +231,20 @@ export const MessagesScreen: React.FC = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
-          <TouchableOpacity style={styles.filterTuneBtn} activeOpacity={0.8}>
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setSearchQuery('')}
+              style={{ padding: 4, marginRight: 6 }}
+              activeOpacity={0.7}
+            >
+              <Icon name="cerrar" size={15} color="#64748B" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.filterTuneBtn}
+            activeOpacity={0.8}
+            onPress={() => setActiveFilter('TODOS')}
+          >
             <Icon name="filtros" size={16} color="#64748B" />
           </TouchableOpacity>
         </View>
@@ -406,6 +419,26 @@ export const MessagesScreen: React.FC = () => {
             </View>
             <TouchableOpacity onPress={handleMarkAllRead}>
               <Text style={styles.markReadLink}>Marcar leídos ✓✓</Text>
+            </TouchableOpacity>
+          </View>
+        }
+        ListEmptyComponent={
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIconCircle}>
+              <Icon name="chat" size={26} color="#94A3B8" />
+            </View>
+            <Text style={styles.emptyTitle}>Sin mensajes</Text>
+            <Text style={styles.emptySubtitle}>
+              No se encontraron conversaciones con los filtros actuales.
+            </Text>
+            <TouchableOpacity
+              style={styles.clearSearchBtn}
+              onPress={() => {
+                setSearchQuery('');
+                setActiveFilter('TODOS');
+              }}
+            >
+              <Text style={styles.clearSearchBtnText}>Ver todos los mensajes</Text>
             </TouchableOpacity>
           </View>
         }
@@ -1014,6 +1047,47 @@ const styles = StyleSheet.create({
   },
 
   /* 3. CONVERSATIONS LIST */
+  emptyCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginVertical: 12,
+  },
+  emptyIconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#131B2E',
+  },
+  emptySubtitle: {
+    fontSize: 12.5,
+    color: '#64748B',
+    textAlign: 'center',
+    marginTop: 4,
+    marginBottom: 16,
+  },
+  clearSearchBtn: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 10,
+  },
+  clearSearchBtnText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
   listContainer: {
     paddingHorizontal: 16,
     paddingBottom: 90,

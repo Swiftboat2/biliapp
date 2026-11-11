@@ -191,9 +191,11 @@ export const PickupScreen: React.FC = () => {
                   onPress={() => setActiveStudent(student)}
                   activeOpacity={0.88}
                 >
-                  <Text style={styles.segmentIcon}>
-                    {isKinder ? '🧒' : '👧'}
-                  </Text>
+                  <Icon
+                    name="usuario"
+                    size={15}
+                    color={isSelected ? colors.primary : '#64748B'}
+                  />
                   <Text
                     style={[
                       styles.segmentText,
@@ -201,7 +203,7 @@ export const PickupScreen: React.FC = () => {
                     ]}
                     numberOfLines={1}
                   >
-                    {student.firstName} ({isKinder ? 'Sala 4' : '2° "A"'})
+                    {student.firstName} ({isKinder ? 'Sala 4' : '4° Grado "B"'})
                   </Text>
                 </TouchableOpacity>
               );
@@ -217,10 +219,8 @@ export const PickupScreen: React.FC = () => {
           {/* Student Header */}
           <View style={styles.qrStudentHeader}>
             <View style={styles.qrStudentLeft}>
-              <View style={styles.qrAvatarBox}>
-                <Text style={styles.qrAvatarEmoji}>
-                  {isMateo ? '🧒' : '👧'}
-                </Text>
+              <View style={[styles.qrAvatarBox, { backgroundColor: isMateo ? '#E8F7EE' : '#EFF6FF' }]}>
+                <Icon name="usuario" size={24} color={isMateo ? '#005F2E' : '#1A73E8'} />
                 <View style={styles.qrAvatarCheck}>
                   <Icon name="check" size={9} color="#FFFFFF" />
                 </View>
@@ -388,9 +388,7 @@ export const PickupScreen: React.FC = () => {
               <View key={person.id} style={styles.personRowCard}>
                 <View style={styles.personLeft}>
                   <View style={styles.personAvatarBox}>
-                    <Text style={styles.personAvatarEmoji}>
-                      {person.avatarEmoji}
-                    </Text>
+                    <Icon name="usuario" size={18} color={colors.primary} />
                   </View>
                   <View style={styles.personTextCol}>
                     <View style={styles.personNameRow}>

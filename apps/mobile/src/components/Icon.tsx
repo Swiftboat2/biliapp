@@ -9,6 +9,7 @@ export type IconName =
   | 'carpetas'
   | 'galeria'
   | 'seguridad'
+  | 'asistencia'
   | 'usuario'
   // 2. SEGURIDAD Y ACCESO QR
   | 'pase-qr'
@@ -18,6 +19,7 @@ export type IconName =
   | 'candado'
   // 3. ACADÉMICO
   | 'boletin'
+  | 'nota-parcial'
   | 'firma-digital'
   | 'descargar-pdf'
   | 'subir'
@@ -46,7 +48,8 @@ export type IconName =
   | 'favorito-fill'
   | 'pantalla-completa'
   | 'cerrar'
-  | 'check';
+  | 'check'
+  | 'volver';
 
 interface IconProps {
   name: IconName;
@@ -92,6 +95,15 @@ export const Icon: React.FC<IconProps> = ({
           style={style}
         />
       );
+    case 'asistencia':
+      return (
+        <MaterialCommunityIcons
+          name="calendar-check-outline"
+          size={size + 2}
+          color={color}
+          style={style}
+        />
+      );
     case 'usuario':
       return <Feather name="user" size={size} color={color} style={style} />;
 
@@ -132,6 +144,7 @@ export const Icon: React.FC<IconProps> = ({
 
     /* 3. ACADÉMICO */
     case 'boletin':
+    case 'nota-parcial':
       return (
         <MaterialCommunityIcons
           name="clipboard-check-outline"
@@ -278,6 +291,8 @@ export const Icon: React.FC<IconProps> = ({
       return <Feather name="x" size={size} color={color} style={style} />;
     case 'check':
       return <Feather name="check" size={size} color={color} style={style} />;
+    case 'volver':
+      return <Feather name="arrow-left" size={size} color={color} style={style} />;
 
     default:
       return null;

@@ -5,7 +5,6 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { MessagesScreen } from '../screens/MessagesScreen';
 import { FilesScreen } from '../screens/FilesScreen';
 import { GalleryScreen } from '../screens/GalleryScreen';
-import { PickupScreen } from '../screens/PickupScreen';
 import { AttendanceScreen } from '../screens/AttendanceScreen';
 import { colors } from '../theme/colors';
 import { Platform } from 'react-native';
@@ -92,20 +91,10 @@ export const BottomTabNavigator: React.FC = () => {
       />
 
       <Tab.Screen
-        name="Seguridad"
-        component={PickupScreen}
-        options={{
-          tabBarIcon: ({ color }) => <Icon name="seguridad" size={22} color={color} />,
-        }}
-      />
-
-      {/* Hidden route accessible via Navigation from Home */}
-      <Tab.Screen
         name="Asistencia"
         component={AttendanceScreen}
         options={{
-          tabBarButton: () => null,
-          tabBarItemStyle: { display: 'none' },
+          tabBarIcon: ({ color }) => <Icon name="asistencia" size={22} color={color} />,
         }}
       />
     </Tab.Navigator>
