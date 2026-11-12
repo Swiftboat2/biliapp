@@ -1,11 +1,11 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { UserCheck, Users, PenLine, CheckCircle2, Clock, HeartPulse, X } from 'lucide-react';
+import { UserCheck, Users, PenLine, CheckCircle2, Clock, X } from 'lucide-react';
 import { useApp } from '../data/store';
 import { COURSES, INSTITUTION, STAFF } from '../data/mock';
 import { modulesOf, signatureKey, teachersOf, toMin, type Module } from '../data/timetable';
 import { hhmm, shortDate, timeOf, todayISO } from '../lib/dates';
-import { fullName, healthItems, sheetKey, SHIFT_LABEL } from '../lib/school';
+import { fullName, sheetKey, SHIFT_LABEL } from '../lib/school';
 import { absentInModule, markText } from '../lib/acta';
 import { studentsOf } from '../lib/scope';
 import { CourseQR } from '../components/CourseQR';
@@ -53,7 +53,6 @@ export function CursoDocente() {
   const modules = modulesOf(courseId);
   const now = new Date();
   const nowMin = now.getHours() * 60 + now.getMinutes();
-  const health = students.filter((s) => healthItems(s).length > 0);
 
   return (
     <div className="cd">
@@ -125,17 +124,6 @@ export function CursoDocente() {
           )}
         </section>
 
-        {health.length > 0 && (
-          <section className="card">
-            <div className="card-head"><h2>Salud: tené en cuenta</h2></div>
-            {health.map((s) => (
-              <div key={s.id} className="list-row">
-                <span className="icon-box sm red"><HeartPulse /></span>
-                <div className="grow"><b>{fullName(s)}</b><span className="sub">{healthItems(s, true).join(' · ')}</span></div>
-              </div>
-            ))}
-          </section>
-        )}
 
         <section className="card" style={{ padding: 8 }}>
           <div className="card-head" style={{ padding: '8px 8px 0' }}>
