@@ -11,6 +11,7 @@ import { FamArchivos } from './FamArchivos';
 import { FamGaleria } from './FamGaleria';
 import { FamAsistencia } from './FamAsistencia';
 import { FamRetiros } from './FamRetiros';
+import { FamCalendario } from './FamCalendario';
 import './family.css';
 
 const TABS: { id: Screen; label: string; icon: typeof Home }[] = [
@@ -46,7 +47,7 @@ export function FamilySimulator() {
     { done: famDid('mensaje'), text: <><b>Escribile a una docente</b> desde Mensajes. Carla lo recibe en su panel y, si responde, te llega con la marca "Nuevo".</> },
   ];
 
-  const Current = { inicio: FamInicio, mensajes: FamMensajes, archivos: FamArchivos, galeria: FamGaleria, asistencia: FamAsistencia, retiros: FamRetiros }[screen];
+  const Current = { inicio: FamInicio, mensajes: FamMensajes, archivos: FamArchivos, galeria: FamGaleria, asistencia: FamAsistencia, retiros: FamRetiros, calendario: FamCalendario }[screen];
 
   return (
     <div className="sim">
@@ -95,7 +96,7 @@ export function FamilySimulator() {
           </div>
           <nav className="fam-tabs" aria-label="Secciones de la app">
             {TABS.map(({ id, label, icon: Icon }) => (
-              <button key={id} className={`fam-tab${screen === id || (id === 'inicio' && screen === 'retiros') ? ' on' : ''}`} onClick={() => setScreen(id)} aria-current={screen === id ? 'page' : undefined}>
+              <button key={id} className={`fam-tab${screen === id || (id === 'inicio' && (screen === 'retiros' || screen === 'calendario')) ? ' on' : ''}`} onClick={() => setScreen(id)} aria-current={screen === id ? 'page' : undefined}>
                 <Icon />
                 {label}
                 {id === 'mensajes' && unread > 0 && <span className="badge">{unread}</span>}

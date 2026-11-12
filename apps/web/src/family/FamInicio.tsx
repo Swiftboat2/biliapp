@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { CalendarDays, CheckSquare, ChevronRight, GraduationCap, PenLine, ShieldCheck, Sparkles } from 'lucide-react';
 import { useApp } from '../data/store';
 import { ASSIGNMENTS, FAMILY } from '../data/mock';
-import { daysUntil, shortDate, timeOf, todayISO } from '../lib/dates';
+import { shortDate, timeOf, todayISO } from '../lib/dates';
 import { conceptFor, course, LEVEL_LABEL, SHIFT_LABEL, sheetKey, staffName, subject, totalAbsences } from '../lib/school';
 import { fmtNota, instancesFor, partialGrade } from '../lib/grades';
+import { calendarItems, forCourses } from '../lib/calendar';
 import { attendancePct, Hero, HScroll, isKinder, kidInitials, pendingSignatures, useKids, type Go } from './parts';
 import type { Mark } from '../data/types';
 
@@ -21,20 +22,21 @@ export function FamInicio({ go }: { go: Go }) {
   const [active, setActive] = useState(kids[0].s.id);
   const today = todayISO();
 
-  const kidClasses = ASSIGNMENTS.filter((a) => kids.some((k) => k.s.courseId === a.courseId));
-  const events = [
-    ...data.evaluations
-      .filter((e) => kidClasses.some((a) => a.id === e.assignmentId) && daysUntil(e.date) >= 0)
-      .map((e) => {
-        const a = ASSIGNMENTS.find((x) => x.id === e.assignmentId)!;
-        const k = kids.find((x) => x.s.courseId === a.courseId)!;
-        return { id: e.id, date: e.date, title: `${e.kind}: ${e.title}`, who: `${k.s.firstName} · ${subject(a.subjectId).name}`, tone: k.color === 'green' ? 'yellow' : 'blue' };
-      }),
-    { id: 'ev-fam', date: today.slice(0, 8) + '17', title: 'Reunión de padres y balance pedagógico', who: 'Toda la familia', tone: 'green' },
-  ]
-    .filter((e) => daysUntil(e.date) >= 0)
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(0, 5);
+  // Próximos eventos: el mismo calendario que carga el colegio (actos, salidas, evaluaciones…).
+  const events = forCourses(calendarItems(data), kids.map((k) => k.s.courseId))
+    .filter((i) => (i.endDate ?? i.date) >= today && i.kind !== 'Feriado')
+    .slice(0, 6)
+    .map((i) => {
+      const affected = kids.filter((k) => i.courseIds.includes(k.s.courseId));
+      const all = affected.length === kids.length;
+      return {
+        id: i.id,
+        date: i.date < today ? today : i.date,
+        title: i.title,
+        who: all ? 'Toda la familia' : affected.map((k) => k.s.firstName).join(' y ') + (i.kind === 'Evaluación' ? ` · ${i.who.split(' · ')[1] ?? ''}` : ''),
+        tone: all ? 'green' : affected[0].color === 'green' ? 'yellow' : 'blue',
+      };
+    });
 
   // Notas recientes: últimas instancias parciales con nota de cada hijo.
   const recent = kids
@@ -100,7 +102,7 @@ export function FamInicio({ go }: { go: Go }) {
         )}
 
         <section className="fam-section">
-          <div className="fam-sec-head"><span className="fam-sec-title dot">Próximos eventos</span></div>
+          <div className="fam-sec-head"><span className="fam-sec-title dot">Próximos eventos</span><button className="fam-link" onClick={() => go('calendario')}>Ver calendario ›</button></div>
           <HScroll>
             {events.map((e) => (
               <div key={e.id} className={`event-card ${e.tone}`}>

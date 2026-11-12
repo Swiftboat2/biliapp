@@ -1,10 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { buildInitialState, FAMILY, STAFF } from './mock';
 import type {
-  AttendanceSheet, Communication, HourSignature, DataState, Evaluation, GradeInstance, JustStatus, Observation, PickupPerson, StaffUser,
+  AttendanceSheet, Communication, HourSignature, SchoolEvent, DataState, Evaluation, GradeInstance, JustStatus, Observation, PickupPerson, StaffUser,
 } from './types';
 
-const DATA_KEY = 'biliapp-panel-data-v4';
+const DATA_KEY = 'biliapp-panel-data-v5';
 const SESSION_KEY = 'biliapp-panel-session-v1';
 
 function load<T>(key: string): T | null {
@@ -49,6 +49,8 @@ interface AppContextValue {
   reply: (threadId: string, text: string) => void;
   markRead: (threadId: string) => void;
   addEvaluation: (e: Omit<Evaluation, 'id'>) => void;
+  addEvent: (e: Omit<SchoolEvent, 'id' | 'createdBy'>) => void;
+  deleteEvent: (id: string) => void;
   addObservation: (o: Omit<Observation, 'id' | 'authorId' | 'date'>) => void;
   recordPickup: (studentId: string, personId: string) => void;
   logAccess: (action: string) => void;
@@ -185,6 +187,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       addEvaluation: (e) =>
         withAudit(`Evaluación agendada: ${e.title}`, (d) => ({ ...d, evaluations: [...d.evaluations, { ...e, id: uid() }] })),
+
+      addEvent: (e) =>
+        withAudit(`Evento agendado: ${e.title}`, (d) => ({ ...d, events: [...d.events, { ...e, id: uid(), createdBy: me }] })),
+
+      deleteEvent: (id) =>
+        withAudit(`Evento eliminado (${id})`, (d) => ({ ...d, events: d.events.filter((x) => x.id !== id) })),
 
       addObservation: (o) =>
         withAudit('Observación pedagógica cargada', (d) => ({

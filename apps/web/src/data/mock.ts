@@ -6,7 +6,7 @@
 import { EducationalLevel, SchoolShift, UserRole } from '@biliapp/shared-types';
 import type {
   Assignment, Communication, Course, DataState, Evaluation, GradeInstance, GradingPeriod, Justification,
-  Mark, MarkDetail, Observation, StaffUser, Student, Subject, Thread,
+  Mark, MarkDetail, Observation, SchoolEvent, StaffUser, Student, Subject, Thread,
 } from './types';
 import { addDays, isoDate, todayISO } from '../lib/dates';
 
@@ -340,6 +340,55 @@ function buildSignatures(): DataState['signatures'] {
   return out;
 }
 
+/**
+ * Calendario escolar de ejemplo del ciclo 2026: fechas institucionales, actos, feriados
+ * y algunos eventos cercanos a hoy para que la demo tenga movimiento.
+ */
+function buildEvents(): SchoolEvent[] {
+  const y = INSTITUTION.cycle;
+  const iso = (m: number, d: number) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  const rel = (n: number) => isoDate(addDays(new Date(), n));
+  const ALL = { kind: 'TODOS' } as const;
+  const lvl = (level: EducationalLevel) => ({ kind: 'NIVEL', level }) as const;
+  const crs = (courseId: string) => ({ kind: 'CURSO', courseId }) as const;
+  let n = 0;
+  const ev = (e: Omit<SchoolEvent, 'id' | 'createdBy'>, by = 'u-dir'): SchoolEvent => ({ ...e, id: `ev-${++n}`, createdBy: by });
+  return [
+    // Fechas institucionales
+    ev({ title: 'Inicio del ciclo lectivo', kind: 'Institucional', date: iso(3, 2), audience: ALL }),
+    ev({ title: 'Cierre del 1° trimestre', kind: 'Institucional', date: iso(5, 29), audience: ALL }),
+    ev({ title: 'Receso invernal', kind: 'Institucional', date: iso(7, 6), endDate: iso(7, 17), audience: ALL, detail: 'Fechas de ejemplo: el colegio confirma según el calendario provincial.' }),
+    ev({ title: 'Cierre del 2° trimestre', kind: 'Institucional', date: iso(8, 28), audience: ALL }),
+    ev({ title: 'Fin de clases', kind: 'Institucional', date: iso(12, 11), audience: ALL }),
+    ev({ title: 'Acto de colación y fin de año', kind: 'Acto', date: iso(12, 18), time: '19:00', audience: ALL }),
+    // Feriados nacionales de fecha fija
+    ev({ title: 'Año Nuevo', kind: 'Feriado', date: iso(1, 1), audience: ALL }),
+    ev({ title: 'Día de la Memoria', kind: 'Feriado', date: iso(3, 24), audience: ALL }),
+    ev({ title: 'Día de Malvinas', kind: 'Feriado', date: iso(4, 2), audience: ALL }),
+    ev({ title: 'Día del Trabajador', kind: 'Feriado', date: iso(5, 1), audience: ALL }),
+    ev({ title: 'Revolución de Mayo', kind: 'Feriado', date: iso(5, 25), audience: ALL }),
+    ev({ title: 'Día de la Bandera', kind: 'Feriado', date: iso(6, 20), audience: ALL }),
+    ev({ title: 'Día de la Independencia', kind: 'Feriado', date: iso(7, 9), audience: ALL }),
+    ev({ title: 'Inmaculada Concepción', kind: 'Feriado', date: iso(12, 8), audience: ALL }),
+    ev({ title: 'Navidad', kind: 'Feriado', date: iso(12, 25), audience: ALL }),
+    // Actos y celebraciones
+    ev({ title: 'Acto 25 de Mayo', kind: 'Acto', date: iso(5, 22), time: '09:00', audience: ALL }),
+    ev({ title: 'Festa della Repubblica', kind: 'Acto', date: iso(6, 2), time: '10:00', audience: ALL, detail: 'Celebración del Día de la República Italiana con todos los niveles.' }),
+    ev({ title: 'Promesa a la Bandera (4° grado)', kind: 'Acto', date: iso(6, 19), time: '09:30', audience: crs('c-4b') }),
+    ev({ title: 'Acto 9 de Julio', kind: 'Acto', date: iso(7, 3), time: '09:00', audience: ALL }),
+    ev({ title: 'Día del Maestro', kind: 'Institucional', date: iso(9, 11), audience: ALL, detail: 'Jornada sin clases.' }),
+    ev({ title: 'Día del Estudiante', kind: 'Institucional', date: iso(9, 21), audience: lvl(EducationalLevel.SECUNDARIA) }),
+    // Cerca de hoy
+    ev({ title: 'Muestra de arte del Nivel Inicial', kind: 'Acto', date: rel(2), time: '17:00', audience: lvl(EducationalLevel.INICIAL), detail: 'En el SUM. Las familias están invitadas.' }),
+    ev({ title: 'Salida al Museo Provincial', kind: 'Salida', date: rel(8), time: '08:30', audience: crs('c-4b'), detail: 'Regreso 12:00. Requiere autorización firmada.' }, 'u-pre1'),
+    ev({ title: 'Reunión de padres y balance pedagógico', kind: 'Reunión', date: rel(6), time: '18:30', audience: ALL }),
+    ev({ title: 'Torneo intercolegial de atletismo', kind: 'Salida', date: rel(1), time: '08:00', audience: lvl(EducationalLevel.PRIMARIA) }),
+    ev({ title: 'Jornada de capacitación docente (sin clases)', kind: 'Institucional', date: rel(15), audience: ALL }),
+    ev({ title: 'Entrevistas de Sala de 4', kind: 'Reunión', date: rel(4), endDate: rel(5), time: '14:00', audience: crs('c-s4') }, 'u-pre2'),
+    ev({ title: 'Viaje de estudios (3° año)', kind: 'Salida', date: rel(20), endDate: rel(22), audience: crs('c-3a') }, 'u-pre2'),
+  ];
+}
+
 export function buildInitialState(): DataState {
   const students = buildStudents();
   return {
@@ -353,6 +402,7 @@ export function buildInitialState(): DataState {
     communications: buildCommunications(),
     threads: buildThreads(students),
     evaluations: buildEvaluations(),
+    events: buildEvents(),
     observations: buildObservations(students),
     pickupLogs: [],
     signatures: buildSignatures(),

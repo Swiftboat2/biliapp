@@ -197,6 +197,23 @@ export interface Evaluation {
   kind: 'Examen' | 'Trabajo práctico' | 'Oral' | 'Entrega';
 }
 
+/** Tipos de evento del calendario escolar. */
+export type EventKind = 'Acto' | 'Reunión' | 'Salida' | 'Institucional' | 'Feriado';
+
+/** Evento del calendario que carga Dirección o Preceptoría. */
+export interface SchoolEvent {
+  id: string;
+  title: string;
+  kind: EventKind;
+  date: string; // YYYY-MM-DD
+  /** Último día, para eventos de varios días (receso, semana de muestras). */
+  endDate?: string;
+  time?: string; // HH:MM
+  detail?: string;
+  audience: Audience;
+  createdBy: string;
+}
+
 export interface Observation {
   id: string;
   studentId: string;
@@ -234,6 +251,8 @@ export interface DataState {
   communications: Communication[];
   threads: Thread[];
   evaluations: Evaluation[];
+  /** Calendario escolar: actos, reuniones, salidas, feriados y fechas institucionales. */
+  events: SchoolEvent[];
   observations: Observation[];
   pickupLogs: PickupLog[];
   /** Firmas de los docentes en el acta de cada día. */

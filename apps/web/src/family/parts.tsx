@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Bell, ChevronLeft, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Bell, CalendarDays, ChevronLeft, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { EducationalLevel } from '@biliapp/shared-types';
 import { useApp } from '../data/store';
 import { FAMILY, INSTITUTION } from '../data/mock';
 import { course, findStudent } from '../lib/school';
 import type { Communication, DataState, Student } from '../data/types';
 
-export type Screen = 'inicio' | 'mensajes' | 'archivos' | 'galeria' | 'asistencia' | 'retiros';
+export type Screen = 'inicio' | 'mensajes' | 'archivos' | 'galeria' | 'asistencia' | 'retiros' | 'calendario';
 export type Go = (s: Screen) => void;
 
 /** Hijos de la familia de ejemplo; el primero (Mateo) en verde y la segunda (Sofía) en celeste, como en la app. */
@@ -51,6 +51,7 @@ export function Hero({ title, context, onBack, go, children }: { title: string; 
           <small>{INSTITUTION.place.toUpperCase()} · CICLO {INSTITUTION.cycle}</small>
         </div>
         <div className="fam-hero-actions">
+          <button className="fam-circle-btn" aria-label="Calendario" onClick={() => go('calendario')}><CalendarDays /></button>
           <button className="fam-circle-btn" aria-label="Retiro seguro" onClick={() => go('retiros')}><ShieldCheck /></button>
           <button className="fam-circle-btn" aria-label={`Notificaciones${alerts ? ` (${alerts})` : ''}`} onClick={() => go(alerts && pendingSignatures(data, kids).length ? 'archivos' : 'mensajes')}>
             <Bell />
