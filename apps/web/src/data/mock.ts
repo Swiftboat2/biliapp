@@ -6,7 +6,7 @@
 import { EducationalLevel, SchoolShift, UserRole } from '@biliapp/shared-types';
 import type {
   Assignment, Communication, Course, DataState, Evaluation, GradeInstance, GradingPeriod, Justification,
-  Mark, Observation, StaffUser, Student, Subject, Thread,
+  Mark, MarkDetail, Observation, StaffUser, Student, Subject, Thread,
 } from './types';
 import { addDays, isoDate, todayISO } from '../lib/dates';
 
@@ -295,20 +295,49 @@ function buildTodayAttendance(students: Student[]): DataState['attendance'] {
   const date = todayISO();
   const sheets: DataState['attendance'] = {};
   const special: Record<string, Mark> = { 'Mateo López': 'T', 'Bruno Duarte': 'A', 'Lucía Benítez': 'A', 'Thiago Godoy': 'A', 'Nicolás Rossi': 'A', 'Valentina Paz': 'R', 'Malena Castro': 'T' };
+  const why: Record<string, MarkDetail> = {
+    'Mateo López': { reason: 'Turno médico', time: '13:40' },
+    'Bruno Duarte': { reason: 'Sin aviso' },
+    'Lucía Benítez': { reason: 'Enfermedad' },
+    'Thiago Godoy': { reason: 'Sin aviso' },
+    'Nicolás Rossi': { reason: 'Turno médico' },
+    'Valentina Paz': { reason: 'Retiro con tutor/padre', time: '10:30', returns: false },
+    'Malena Castro': { reason: 'Problema de transporte', time: '08:20' },
+  };
   const take = (courseId: string, by: string, h: number, m: number) => {
     const at = new Date();
     at.setHours(h, m, 0, 0);
     const marks: Record<string, Mark> = {};
+    const details: Record<string, MarkDetail> = {};
     students.filter((s) => s.courseId === courseId).forEach((s) => {
-      marks[s.id] = special[`${s.firstName} ${s.lastName}`] ?? 'P';
+      const name = `${s.firstName} ${s.lastName}`;
+      marks[s.id] = special[name] ?? 'P';
+      if (why[name]) details[s.id] = why[name];
     });
     const key = `${courseId}|${date}|diaria`;
-    sheets[key] = { key, courseId, date, takenBy: by, takenAt: at.toISOString(), marks };
+    sheets[key] = { key, courseId, date, takenBy: by, takenAt: at.toISOString(), marks, details };
   };
   take('c-4b', 'u-pre1', 7, 52);
   take('c-1a', 'u-pre2', 7, 58);
   take('c-s4', 'u-pre2', 13, 20);
   return sheets;
+}
+
+/** Firmas de las primeras horas de hoy en dos cursos, para que el acta no esté vacía. */
+function buildSignatures(): DataState['signatures'] {
+  const date = todayISO();
+  const out: DataState['signatures'] = {};
+  const sign = (courseId: string, hour: number, teacherName: string, h: number, m: number) => {
+    const at = new Date();
+    at.setHours(h, m, 0, 0);
+    const key = `${courseId}|${date}|${hour}`;
+    out[key] = { key, courseId, date, hour, teacherName, at: at.toISOString() };
+  };
+  sign('c-1a', 1, 'Hugo Benítez', 7, 21);
+  sign('c-1a', 2, 'Hugo Benítez', 8, 2);
+  sign('c-4b', 1, 'Mónica Leiva', 7, 50);
+  sign('c-4b', 2, 'Mónica Leiva', 8, 30);
+  return out;
 }
 
 export function buildInitialState(): DataState {
@@ -326,6 +355,7 @@ export function buildInitialState(): DataState {
     evaluations: buildEvaluations(),
     observations: buildObservations(students),
     pickupLogs: [],
+    signatures: buildSignatures(),
     familyRead: [],
     familySigned: [],
     audit: [],

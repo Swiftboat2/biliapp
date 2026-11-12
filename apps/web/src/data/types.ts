@@ -81,6 +81,30 @@ export interface AttendanceSheet {
   takenBy: string;
   takenAt: string;
   marks: Record<string, Mark>;
+  /** Motivo y horarios de cada ausencia, tardanza o retiro. */
+  details?: Record<string, MarkDetail>;
+  /** Observaciones de Preceptoría por alumno. */
+  notes?: Record<string, string>;
+}
+
+export interface MarkDetail {
+  reason?: string;
+  /** Tarde: hora de llegada. Retiro: hora de salida. */
+  time?: string;
+  /** Retiro: si vuelve más tarde a clases y a qué hora. */
+  returns?: boolean;
+  returnTime?: string;
+}
+
+/** Firma de un docente en una hora del acta del día. */
+export interface HourSignature {
+  key: string; // `${courseId}|${fecha}|${hora}`
+  courseId: string;
+  date: string;
+  hour: number;
+  teacherName: string;
+  at: string;
+  note?: string;
 }
 
 export type JustStatus = 'PENDIENTE' | 'APROBADO' | 'RECHAZADO';
@@ -212,6 +236,8 @@ export interface DataState {
   evaluations: Evaluation[];
   observations: Observation[];
   pickupLogs: PickupLog[];
+  /** Firmas de los docentes en el acta de cada día. */
+  signatures: Record<string, HourSignature>;
   /** Lo que hizo la familia de ejemplo en la app: comunicados leídos y firmados. */
   familyRead: string[];
   familySigned: string[];

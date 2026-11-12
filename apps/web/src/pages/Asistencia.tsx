@@ -1,184 +1,91 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { UserRole } from '@biliapp/shared-types';
-import { AlertTriangle, CheckCheck, HeartPulse, Save } from 'lucide-react';
+import { CheckCircle2, FileText, QrCode, ScanLine } from 'lucide-react';
 import { useApp, useUser } from '../data/store';
 import { COURSES } from '../data/mock';
-import { Empty, PageHead, Tabs, useToast } from '../components/ui';
-import { longDate, timeOf, todayISO } from '../lib/dates';
-import {
-  course, dayStats, displayName, fmtFaltas, fullName, healthItems, LEVEL_LABEL, MARK_LABEL, MARK_VALUE, sheetKey, staffName, subject, THRESHOLDS,
-  thresholdReached, totalAbsences,
-} from '../lib/school';
-import { myAssignments, studentsOf, visibleCourses } from '../lib/scope';
-import type { Mark } from '../data/types';
+import { modulesOf, signatureKey, toMin } from '../data/timetable';
+import { PageHead } from '../components/ui';
+import { CourseQR } from '../components/CourseQR';
+import { hhmm, longDate, timeOf, todayISO } from '../lib/dates';
+import { course, dayStats, fmtFaltas, fullName, LEVEL_LABEL, staffName, THRESHOLDS, thresholdReached, totalAbsences } from '../lib/school';
+import { dayActa } from '../lib/acta';
+import { ParteDiario } from './ParteDiario';
 
 export function Asistencia() {
   const user = useUser();
-  return user.role === UserRole.DIRECTIVO ? <ResumenDireccion /> : <TomarAsistencia />;
+  if (user.role === UserRole.DIRECTIVO) return <ResumenDireccion />;
+  if (user.role === UserRole.PRECEPTOR) return <ParteDiario />;
+  return <MisHoras />;
 }
 
-/* --------------------------- Toma (Preceptoría / Docente) --------------------------- */
+/* --------------------------- Docente: mis horas de hoy --------------------------- */
 
-const MARKS: Mark[] = ['P', 'A', 'T', 'R'];
-const EF = 's-ef';
-
-function TomarAsistencia() {
-  const { data, saveAttendance } = useApp();
+function MisHoras() {
+  const { data } = useApp();
   const user = useUser();
-  const [params] = useSearchParams();
-  const toast = useToast();
-  const isTeacher = user.role === UserRole.DOCENTE;
-
-  // Preceptoría: curso + tipo (diaria / contraturno). Docente: su clase (materia × curso).
-  const courses = visibleCourses(user);
-  const classes = myAssignments(user);
-  const [courseId, setCourseId] = useState(params.get('curso') ?? courses[0]?.id ?? '');
-  const [classId, setClassId] = useState(params.get('clase') ?? classes[0]?.id ?? '');
-  const [kind, setKind] = useState<'diaria' | 'contraturno'>('diaria');
-  const [date, setDate] = useState(todayISO());
-
-  const activeCourseId = isTeacher ? classes.find((a) => a.id === classId)?.courseId ?? '' : courseId;
-  const subjectId = isTeacher ? classes.find((a) => a.id === classId)?.subjectId : kind === 'contraturno' ? EF : undefined;
-  const key = sheetKey(activeCourseId, date, subjectId);
-  const existing = data.attendance[key];
-  const students = useMemo(() => studentsOf(data, activeCourseId), [data, activeCourseId]);
-
-  const [marks, setMarks] = useState<Record<string, Mark>>({});
-  useEffect(() => setMarks(existing?.marks ?? {}), [key, existing]);
-
-  const complete = students.length > 0 && students.every((s) => marks[s.id]);
-  const dirty = JSON.stringify(marks) !== JSON.stringify(existing?.marks ?? {});
-  const counts = MARKS.map((m) => ({ m, n: students.filter((s) => marks[s.id] === m).length }));
-
-  function save() {
-    // Avisos por límites alcanzados con esta carga (solo asistencia diaria).
-    const crossed = subjectId
-      ? []
-      : students.filter((s) => {
-          const before = totalAbsences(s, data) - (existing?.marks[s.id] ? MARK_VALUE[existing.marks[s.id]] : 0);
-          const after = before + MARK_VALUE[marks[s.id]];
-          return THRESHOLDS.some((t) => before < t && after >= t);
-        });
-    saveAttendance({ key, courseId: activeCourseId, date, subjectId, marks });
-    toast.show(crossed.length ? `Asistencia guardada · ${crossed.length} alumno(s) llegaron a un límite: se avisó a la familia y a Dirección` : 'Asistencia guardada');
-  }
+  const date = todayISO();
+  const name = `${user.firstName} ${user.lastName}`;
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const byCourse = COURSES.map((c) => ({ c, mods: modulesOf(c.id).filter((m) => m.teacherId === user.id) })).filter((x) => x.mods.length);
+  const total = byCourse.reduce((n, x) => n + x.mods.length, 0);
+  const signed = byCourse.reduce((n, x) => n + x.mods.filter((m) => data.signatures[signatureKey(x.c.id, date, m.hour)]).length, 0);
 
   return (
     <>
       <PageHead
-        eyebrow={isTeacher ? 'Asistencia por materia' : 'Preceptoría'}
-        title="Tomar asistencia"
-        sub="Un toque por alumno. Las medias faltas y los cuartos se calculan solos."
+        eyebrow={longDate(date)}
+        title="Mis horas de hoy"
+        sub="En el aula escaneá el QR del curso con tu celular: ves el parte del día (ausentes, tardanzas y retiros con su motivo) y firmás tu hora con tu PIN."
+        actions={<span className="pill gray" style={{ fontSize: 12 }}>{signed} de {total} horas firmadas</span>}
       />
-
-      <div className="card">
-        <div className="row wrap" style={{ gap: 14, alignItems: 'flex-end' }}>
-          {isTeacher ? (
-            <div className="field" style={{ minWidth: 260 }}>
-              <label htmlFor="clase">Clase</label>
-              <select id="clase" className="select" value={classId} onChange={(e) => setClassId(e.target.value)}>
-                {classes.map((a) => (
-                  <option key={a.id} value={a.id}>{course(a.courseId).name} · {subject(a.subjectId).name}</option>
-                ))}
-              </select>
-            </div>
-          ) : (
-            <>
-              <div className="field" style={{ minWidth: 200 }}>
-                <label htmlFor="curso">Curso</label>
-                <select id="curso" className="select" value={courseId} onChange={(e) => setCourseId(e.target.value)}>
-                  {courses.map((c) => <option key={c.id} value={c.id}>{c.name} · {LEVEL_LABEL[c.level]}</option>)}
-                </select>
+      <div className="grid g-2">
+        {byCourse.map(({ c, mods }) => {
+          const stats = dayStats(data, c.id, date);
+          return (
+            <div key={c.id} className="card accent" style={{ ['--ac' as string]: 'var(--celeste-dk)' }}>
+              <div className="row" style={{ alignItems: 'flex-start', gap: 14 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <span className="pill celeste">{LEVEL_LABEL[c.level]}</span>
+                  <b style={{ display: 'block', fontSize: 17, marginTop: 6 }}>{c.name}</b>
+                  <span className="sub">{stats.sheet ? `${stats.present} presentes · ${stats.absent} ausentes · ${stats.late} tarde · ${stats.early} retiro` : 'Preceptoría todavía no cargó el parte'}</span>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <CourseQR courseId={c.id} size={92} />
+                  <span className="sub" style={{ fontSize: 10.5 }}>QR del aula</span>
+                </div>
               </div>
-              <div className="field">
-                <label>Registro</label>
-                <Tabs label="Tipo de registro" value={kind} onChange={setKind} options={[{ value: 'diaria', label: 'Diaria' }, { value: 'contraturno', label: 'Contraturno (Ed. Física)' }]} />
-              </div>
-            </>
-          )}
-          <div className="field">
-            <label htmlFor="fecha">Fecha</label>
-            <input id="fecha" type="date" className="input" value={date} max={todayISO()} onChange={(e) => e.target.value && setDate(e.target.value)} />
-          </div>
-          <div style={{ marginLeft: 'auto' }} className="row wrap">
-            {existing && <span className="pill green">Tomada por {staffName(existing.takenBy)} · {timeOf(existing.takenAt)}</span>}
-            <button className="btn" onClick={() => setMarks(Object.fromEntries(students.map((s) => [s.id, marks[s.id] ?? 'P'])))}>
-              <CheckCheck /> Resto presentes
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="card-head">
-          <h2>{course(activeCourseId)?.name} · {longDate(date)}</h2>
-          <div className="row wrap" style={{ gap: 6 }}>
-            {counts.map(({ m, n }) => <span key={m} className={`pill ${m === 'P' ? 'green' : m === 'A' ? 'red' : m === 'T' ? 'amber' : 'celeste'}`}>{MARK_LABEL[m]}: {n}</span>)}
-          </div>
-        </div>
-        {students.length === 0 ? (
-          <Empty title="No hay alumnos en este curso" />
-        ) : (
-          <div className="table-wrap">
-            <table className="data">
-              <thead><tr><th>Alumno</th><th>{subjectId ? 'Faltas (diarias)' : 'Faltas acumuladas'}</th><th>Marca</th></tr></thead>
-              <tbody>
-                {students.map((s) => {
-                  const total = totalAbsences(s, data);
-                  const hit = thresholdReached(total);
-                  const health = healthItems(s);
+              <div style={{ marginTop: 10 }}>
+                {mods.map((m) => {
+                  const sig = data.signatures[signatureKey(c.id, date, m.hour)];
+                  const isNow = nowMin >= toMin(m.start) && nowMin < toMin(m.end);
                   return (
-                    <tr key={s.id}>
-                      <td>
-                        <b>{fullName(s)}</b>
-                        {health.length > 0 && <div className="sub" style={{ color: 'var(--red-tx)', display: 'flex', gap: 4, alignItems: 'center' }}><HeartPulse size={12} /> {health.join(' · ')}</div>}
-                      </td>
-                      <td>
-                        <span style={{ fontWeight: 800 }}>{fmtFaltas(total)}</span>{' '}
-                        {hit && <span className="pill red"><AlertTriangle /> Límite {hit}</span>}
-                      </td>
-                      <td>
-                        <div className="marks" role="radiogroup" aria-label={`Asistencia de ${displayName(s)}`}>
-                          {MARKS.map((m) => (
-                            <button
-                              key={m}
-                              role="radio"
-                              aria-checked={marks[s.id] === m}
-                              title={`${MARK_LABEL[m]}${MARK_VALUE[m] ? ` (${fmtFaltas(MARK_VALUE[m])} falta)` : ''}`}
-                              className={`mark ${m}${marks[s.id] === m ? ' on' : ''}`}
-                              onClick={() => setMarks((x) => ({ ...x, [s.id]: m }))}
-                            >
-                              {m}
-                            </button>
-                          ))}
-                        </div>
-                      </td>
-                    </tr>
+                    <div key={m.hour} className={`list-row${isNow ? ' now-row' : ''}`}>
+                      <span className="pill gray" style={{ minWidth: 92, justifyContent: 'center' }}>{m.hour}ª · {m.start}</span>
+                      <div className="grow"><b>{m.subject}</b>{isNow && <span className="sub">En curso</span>}</div>
+                      {sig ? <span className="pill green"><CheckCircle2 /> Firmada {hhmm(sig.at)}</span> : <span className="pill amber">Sin firmar</span>}
+                    </div>
                   );
                 })}
-              </tbody>
-            </table>
-          </div>
-        )}
-        <div className="row between wrap" style={{ marginTop: 14 }}>
-          <span className="sub">P presente · A ausente (1 falta) · T tarde (¼) · R retiro anticipado (½){subjectId ? ' · Este registro no suma a las faltas diarias.' : ''}</span>
-          <button className="btn primary" disabled={!complete || !dirty} onClick={save}>
-            <Save /> {complete ? `Guardar · ${students.length} de ${students.length}` : `Faltan ${students.filter((s) => !marks[s.id]).length} alumnos`}
-          </button>
-        </div>
+              </div>
+              <div className="row wrap" style={{ gap: 8, marginTop: 12 }}>
+                <Link className="btn sm primary" to={`/curso/${c.id}`}><ScanLine /> Abrir como si escaneara el QR</Link>
+              </div>
+            </div>
+          );
+        })}
       </div>
-      {toast.node}
+      <p className="sub">Firmás como {name}. En el celular, la página del curso te pide crear tu perfil con un PIN la primera vez.</p>
     </>
   );
 }
 
-/* --------------------------- Resumen (Dirección) --------------------------- */
+/* --------------------------- Dirección: resumen del colegio --------------------------- */
 
 function ResumenDireccion() {
   const { data } = useApp();
   const date = todayISO();
-  const rows = COURSES.map((c) => dayStats(data, c.id, date));
+  const rows = COURSES.map((c) => ({ ...dayStats(data, c.id, date), acta: dayActa(data, c.id, date) }));
   const limit = data.students
     .map((s) => ({ s, total: totalAbsences(s, data) }))
     .filter((x) => x.total >= 8)
@@ -186,22 +93,28 @@ function ResumenDireccion() {
 
   return (
     <>
-      <PageHead eyebrow={longDate(date)} title="Asistencia del colegio" sub="Estado de la toma de hoy y alumnos cerca de los límites reglamentarios (10, 15 y 20 faltas)." />
+      <PageHead eyebrow={longDate(date)} title="Asistencia del colegio" sub="Parte diario de cada curso, firmas de los docentes por hora y alumnos cerca de los límites (10, 15 y 20 faltas)." />
       <div className="card">
         <div className="card-head"><h2>Hoy, por curso</h2></div>
         <div className="table-wrap">
           <table className="data">
-            <thead><tr><th>Curso</th><th>Nivel</th><th>Presentes</th><th>Ausentes</th><th>Tardes</th><th>Retiros</th><th>Tomada por</th></tr></thead>
+            <thead><tr><th>Curso</th><th>Presentes</th><th>Ausentes</th><th>Tardes</th><th>Retiros</th><th>Parte</th><th>Horas firmadas</th><th /></tr></thead>
             <tbody>
-              {rows.map(({ course: c, sheet, total, present, absent, late, early }) => (
+              {rows.map(({ course: c, sheet, total, present, absent, late, early, acta }) => (
                 <tr key={c.id}>
-                  <td><b>{c.name}</b></td>
-                  <td>{LEVEL_LABEL[c.level]}</td>
+                  <td><b>{c.name}</b><div className="sub">{LEVEL_LABEL[c.level]}</div></td>
                   <td>{sheet ? `${present} / ${total}` : '—'}</td>
                   <td>{sheet ? absent : '—'}</td>
                   <td>{sheet ? late : '—'}</td>
                   <td>{sheet ? early : '—'}</td>
                   <td>{sheet ? <span className="pill green">{staffName(sheet.takenBy)} · {timeOf(sheet.takenAt)}</span> : <span className="pill amber">Pendiente</span>}</td>
+                  <td><span className={`pill ${acta.signed === acta.rows.length ? 'green' : acta.signed ? 'amber' : 'gray'}`}>{acta.signed} / {acta.rows.length}</span></td>
+                  <td>
+                    <div className="row" style={{ gap: 6 }}>
+                      <Link className="btn sm" to={`/acta/${c.id}/${date}`} target="_blank"><FileText /> Acta</Link>
+                      <Link className="btn sm" to={`/qr/${c.id}`} target="_blank" title="QR del aula"><QrCode /></Link>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

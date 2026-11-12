@@ -1,10 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { buildInitialState, FAMILY, STAFF } from './mock';
 import type {
-  AttendanceSheet, Communication, DataState, Evaluation, GradeInstance, JustStatus, Observation, PickupPerson, StaffUser,
+  AttendanceSheet, Communication, HourSignature, DataState, Evaluation, GradeInstance, JustStatus, Observation, PickupPerson, StaffUser,
 } from './types';
 
-const DATA_KEY = 'biliapp-panel-data-v3';
+const DATA_KEY = 'biliapp-panel-data-v4';
 const SESSION_KEY = 'biliapp-panel-session-v1';
 
 function load<T>(key: string): T | null {
@@ -34,6 +34,9 @@ interface AppContextValue {
   signOut: () => void;
   data: DataState;
   saveAttendance: (sheet: Omit<AttendanceSheet, 'takenBy' | 'takenAt'>) => void;
+  /** Guardado automático del parte diario (sin registrar cada toque en la auditoría). */
+  updateSheet: (sheet: Omit<AttendanceSheet, 'takenBy' | 'takenAt'>) => void;
+  signHour: (s: Omit<HourSignature, 'at'>) => void;
   reviewJustification: (id: string, status: JustStatus) => void;
   setPeriodStatus: (id: string, status: 'ABIERTO' | 'CERRADO', closesOn?: string) => void;
   setGrade: (key: string, value: string) => void;
@@ -97,6 +100,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
         withAudit(`Asistencia guardada (${sheet.key})`, (d) => ({
           ...d,
           attendance: { ...d.attendance, [sheet.key]: { ...sheet, takenBy: me, takenAt: new Date().toISOString() } },
+        })),
+
+      updateSheet: (sheet) =>
+        setData((d) => {
+          const prev = d.attendance[sheet.key];
+          return {
+            ...d,
+            attendance: { ...d.attendance, [sheet.key]: { ...sheet, takenBy: prev?.takenBy ?? me, takenAt: prev?.takenAt ?? new Date().toISOString() } },
+          };
+        }),
+
+      signHour: (s) =>
+        setData((d) => ({
+          ...d,
+          signatures: { ...d.signatures, [s.key]: { ...s, at: new Date().toISOString() } },
+          audit: [{ id: uid(), at: new Date().toISOString(), userId: userId ?? 'docente', action: `${s.teacherName} firmó la ${s.hour}ª hora (${s.courseId})` }, ...d.audit].slice(0, 200),
         })),
 
       reviewJustification: (id, status) =>

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppProvider } from './data/store';
 import { App } from './App';
 import './theme.css';
+import './attendance.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

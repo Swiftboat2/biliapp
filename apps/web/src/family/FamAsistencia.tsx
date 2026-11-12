@@ -73,6 +73,7 @@ export function FamAsistencia({ go }: { go: Go }) {
                   <div className="fam-grow">
                     <div className="fam-title">{info.title}</div>
                     <div className="fam-sub">{longDate(sh.date)} · {timeOf(sh.takenAt)} hs</div>
+                    {sh.details?.[kid.s.id]?.reason && <div className="fam-sub" style={{ color: 'var(--fg2)', fontWeight: 600 }}>Motivo: {sh.details[kid.s.id].reason}</div>}
                     {m !== 'P' && (
                       <div style={{ marginTop: 8 }}>
                         {j?.status === 'APROBADO' && <span className="fam-pill green">Justificada ✓</span>}

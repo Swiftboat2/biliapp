@@ -22,6 +22,11 @@ const parseISO = (iso: string) => (iso.length === 10 ? new Date(iso + 'T12:00:00
 export const longDate = (iso: string) => capitalize(fmtLong.format(parseISO(iso)));
 export const shortDate = (iso: string) => capitalize(fmtShort.format(parseISO(iso)));
 export const timeOf = (iso: string) => fmtTime.format(new Date(iso));
+/** Hora en formato 24 h ("07:21"), para actas y firmas. */
+export const hhmm = (iso: string) => {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+};
 
 export function relative(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
