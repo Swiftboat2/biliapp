@@ -1,6 +1,14 @@
 /**
- * Límite de faltas del reglamento institucional.
- * PENDIENTE DE CONFIRMAR con la institución: el valor anterior (15) fue marcado como incorrecto.
- * Se usa en las vistas de Familia y de Alumno, así que se cambia en un solo lugar.
+ * Umbrales de faltas del reglamento institucional.
+ * Al llegar a 10 faltas corresponde la 1° reincorporación y a las 20 la 2°.
  */
-export const ABSENCE_LIMIT = 15;
+export const REINCORPORATION_THRESHOLDS = [10, 20] as const;
+
+/** Próximo umbral a alcanzar (o el último si ya se superaron todos). */
+export const nextThreshold = (faltas: number) => {
+  const idx = REINCORPORATION_THRESHOLDS.findIndex((t) => faltas < t);
+  const i = idx === -1 ? REINCORPORATION_THRESHOLDS.length - 1 : idx;
+  return { value: REINCORPORATION_THRESHOLDS[i], label: `${i + 1}° reincorporación` };
+};
+
+export const THRESHOLDS_TEXT = '1° reincorporación a las 10 faltas · 2° a las 20';
