@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { StudentHeader } from '../../components/StudentHeader';
 import { colors } from '../../theme/colors';
 import { studentSubjects } from '../../data/studentMock';
-import { conceptStyle } from './conceptStyle';
 
 type Tab = 'parciales' | 'trimestre';
 
@@ -32,12 +31,10 @@ export const StudentGradesScreen: React.FC = () => {
 
         {tab === 'parciales' ? (
           <>
-            <Text style={styles.hint}>Las notas parciales son de concepto.</Text>
             {studentSubjects.map((subj) => (
               <View key={subj.id} style={styles.card}>
                 <Text style={styles.subject}>{subj.name}</Text>
                 {subj.partials.map((p) => {
-                  const cs = conceptStyle[p.concept];
                   return (
                     <View key={p.id} style={styles.partialRow}>
                       <View style={{ flex: 1 }}>
@@ -45,8 +42,8 @@ export const StudentGradesScreen: React.FC = () => {
                         <Text style={styles.partialDate}>{p.date}</Text>
                         {p.observation ? <Text style={styles.obs}>“{p.observation}”</Text> : null}
                       </View>
-                      <View style={[styles.pill, { backgroundColor: cs.bg }]}>
-                        <Text style={[styles.pillText, { color: cs.fg }]}>{p.concept}</Text>
+                      <View style={styles.pill}>
+                        <Text style={styles.pillText}>{p.grade}</Text>
                       </View>
                     </View>
                   );
@@ -57,7 +54,7 @@ export const StudentGradesScreen: React.FC = () => {
         ) : (
           <>
             <Text style={styles.hint}>
-              La nota de trimestre la carga cada docente. No es un promedio de las notas parciales.
+              La nota de trimestre la carga cada docente. No es un promedio de las notas parciales y cada trimestre se muestra por separado.
             </Text>
             {studentSubjects.map((subj) => (
               <View key={subj.id} style={styles.card}>
@@ -101,8 +98,8 @@ const styles = StyleSheet.create({
   partialTitle: { fontSize: 13, fontWeight: '600', color: colors.textPrimary },
   partialDate: { fontSize: 11, color: colors.textMuted, marginTop: 2 },
   obs: { fontSize: 12, color: colors.textSecondary, marginTop: 4, fontStyle: 'italic' },
-  pill: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
-  pillText: { fontSize: 11, fontWeight: '800' },
+  pill: { minWidth: 40, alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, backgroundColor: colors.primaryLight },
+  pillText: { fontSize: 15, fontWeight: '800', color: colors.primaryDark },
   trimRow: { flexDirection: 'row', gap: 8 },
   trimBox: { flex: 1, alignItems: 'center', backgroundColor: colors.surfaceHover, borderRadius: 14, paddingVertical: 10 },
   trimLabel: { fontSize: 10, fontWeight: '700', color: colors.textMuted },

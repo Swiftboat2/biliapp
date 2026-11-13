@@ -375,14 +375,15 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     Lengua y Cultura Italiana
                   </Text>
                   <Text style={styles.gradeAssessmentName} numberOfLines={1}>
-                    Oral: Tradizioni e Famiglia
+                    Examen trimestral oral: Tradizioni e Famiglia
                   </Text>
                 </View>
               </View>
               <View style={styles.gradeScoreBadgeCol}>
-                <View style={styles.gradeConceptPillGreen}>
-                  <Text style={styles.gradeConceptTextGreen}>Muy Bueno</Text>
+                <View style={styles.gradeScoreCircleGreen}>
+                  <Text style={styles.gradeScoreNum}>9.8</Text>
                 </View>
+                <Text style={styles.gradeScoreLabelGreen}>Sobresaliente</Text>
               </View>
             </View>
 
@@ -410,9 +411,10 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </View>
               </View>
               <View style={styles.gradeScoreBadgeCol}>
-                <View style={styles.gradeConceptPillBlue}>
-                  <Text style={styles.gradeConceptTextBlue}>Bueno</Text>
+                <View style={styles.gradeScoreCircleBlue}>
+                  <Text style={styles.gradeScoreNumBlue}>9.5</Text>
                 </View>
+                <Text style={styles.gradeScoreLabelBlue}>Distinguido</Text>
               </View>
             </View>
           </View>
@@ -645,10 +647,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.primary,
   },
-  gradeConceptPillGreen: { backgroundColor: colors.emeraldLight, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
-  gradeConceptTextGreen: { color: colors.emeraldDark, fontSize: 11, fontWeight: '800' },
-  gradeConceptPillBlue: { backgroundColor: colors.celesteLight, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
-  gradeConceptTextBlue: { color: colors.celesteDark, fontSize: 11, fontWeight: '800' },
   familyAvatar: {
     width: 38,
     height: 38,
