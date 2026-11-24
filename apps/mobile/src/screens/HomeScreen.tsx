@@ -12,9 +12,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useActiveStudent } from '../context/StudentContext';
 import { colors } from '../theme/colors';
 import { Icon } from '../components/Icon';
+import { useAppMode } from '../context/AppModeContext';
 
 export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { students, activeStudent, setActiveStudent } = useActiveStudent();
+  const { setMode } = useAppMode();
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
@@ -68,9 +70,15 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               <View style={styles.notifRedDot} />
             </TouchableOpacity>
 
-            <View style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}>
+            {/* Acceso de demostración a la vista Alumno (en producción lo define el rol de la cuenta) */}
+            <TouchableOpacity
+              style={[styles.familyAvatar, isSmallScreen && styles.actionBtnSmall]}
+              activeOpacity={0.85}
+              onPress={() => setMode('alumno')}
+              accessibilityLabel="Cambiar a vista Alumno"
+            >
               <Text style={styles.familyAvatarText}>FL</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -367,15 +375,14 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     Lengua y Cultura Italiana
                   </Text>
                   <Text style={styles.gradeAssessmentName} numberOfLines={1}>
-                    Examen trimestral oral: Tradizioni e Famiglia
+                    Oral: Tradizioni e Famiglia
                   </Text>
                 </View>
               </View>
               <View style={styles.gradeScoreBadgeCol}>
-                <View style={styles.gradeScoreCircleGreen}>
-                  <Text style={styles.gradeScoreNum}>9.8</Text>
+                <View style={styles.gradeConceptPillGreen}>
+                  <Text style={styles.gradeConceptTextGreen}>Muy Bueno</Text>
                 </View>
-                <Text style={styles.gradeScoreLabelGreen}>Sobresaliente</Text>
               </View>
             </View>
 
@@ -403,10 +410,9 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </View>
               </View>
               <View style={styles.gradeScoreBadgeCol}>
-                <View style={styles.gradeScoreCircleBlue}>
-                  <Text style={styles.gradeScoreNumBlue}>9.5</Text>
+                <View style={styles.gradeConceptPillBlue}>
+                  <Text style={styles.gradeConceptTextBlue}>Bueno</Text>
                 </View>
-                <Text style={styles.gradeScoreLabelBlue}>Distinguido</Text>
               </View>
             </View>
           </View>
@@ -639,6 +645,10 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.primary,
   },
+  gradeConceptPillGreen: { backgroundColor: colors.emeraldLight, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
+  gradeConceptTextGreen: { color: colors.emeraldDark, fontSize: 11, fontWeight: '800' },
+  gradeConceptPillBlue: { backgroundColor: colors.celesteLight, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
+  gradeConceptTextBlue: { color: colors.celesteDark, fontSize: 11, fontWeight: '800' },
   familyAvatar: {
     width: 38,
     height: 38,

@@ -5,6 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { StudentProvider } from './src/context/StudentContext';
 import { BottomTabNavigator } from './src/navigation/BottomTabNavigator';
+import { StudentTabNavigator } from './src/navigation/StudentTabNavigator';
+import { AppModeProvider, useAppMode } from './src/context/AppModeContext';
 import { colors } from './src/theme/colors';
 
 // Initial Mock Data: Mateo in Kindergarten and Sofía in Primary
@@ -29,14 +31,22 @@ const initialStudentsMock = [
   },
 ];
 
+function RootNavigator() {
+  const { mode } = useAppMode();
+  // key fuerza un árbol de navegación limpio al cambiar de modo
+  return mode === 'alumno' ? <StudentTabNavigator key="alumno" /> : <BottomTabNavigator key="familia" />;
+}
+
 export default function App() {
   return (
     <SafeAreaProvider style={styles.rootContainer}>
       <StudentProvider initialStudents={initialStudentsMock}>
         <StatusBar style="light" />
-        <NavigationContainer>
-          <BottomTabNavigator />
-        </NavigationContainer>
+        <AppModeProvider>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </AppModeProvider>
       </StudentProvider>
     </SafeAreaProvider>
   );
