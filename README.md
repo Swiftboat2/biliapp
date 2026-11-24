@@ -4,7 +4,7 @@ Sistema integral de gestión escolar, seguridad física en puerta, asistencia co
 
 ---
 
-## 🏗️ Arquitectura del Monorepo
+## 🏗️ Arquitectura del repo
 
 ```text
 biliapp/
