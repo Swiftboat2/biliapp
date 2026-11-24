@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { StudentHeader } from '../../components/StudentHeader';
 import { colors } from '../../theme/colors';
-import { ABSENCE_LIMIT } from '../../config/attendance';
+import { nextThreshold, THRESHOLDS_TEXT } from '../../config/attendance';
 import { studentAttendance } from '../../data/studentMock';
 
 export const StudentAttendanceScreen: React.FC = () => {
@@ -15,10 +15,10 @@ export const StudentAttendanceScreen: React.FC = () => {
         <View style={styles.card}>
           <Text style={styles.label}>FALTAS COMPUTADAS</Text>
           <Text style={styles.big}>
-            {faltas} <Text style={styles.muted}>/ {ABSENCE_LIMIT}</Text>
+            {faltas} <Text style={styles.muted}>/ {nextThreshold(faltas).value}</Text>
           </Text>
           <Text style={styles.note}>
-            Tardanza = 1/4 falta · Retiro anticipado = 1/2 falta. Las justificaciones las gestiona tu familia.
+            {THRESHOLDS_TEXT}. Tardanza = 1/4 falta · Retiro anticipado = 1/2 falta. Las justificaciones las gestiona tu familia.
           </Text>
         </View>
 

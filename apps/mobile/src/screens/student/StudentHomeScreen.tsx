@@ -5,7 +5,7 @@ import { useAppMode } from '../../context/AppModeContext';
 import { StudentHeader } from '../../components/StudentHeader';
 import { Icon } from '../../components/Icon';
 import { colors } from '../../theme/colors';
-import { ABSENCE_LIMIT } from '../../config/attendance';
+import { nextThreshold } from '../../config/attendance';
 import { studentAttendance, studentSubjects, studentSchedulePreview } from '../../data/studentMock';
 
 export const StudentHomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -30,7 +30,7 @@ export const StudentHomeScreen: React.FC<{ navigation: any }> = ({ navigation })
           <Text style={styles.cardLabel}>MIS FALTAS</Text>
           <View style={styles.row}>
             <Text style={styles.big}>{faltas}</Text>
-            <Text style={styles.muted}> de {ABSENCE_LIMIT} permitidas</Text>
+            <Text style={styles.muted}> para la {nextThreshold(faltas).label}</Text>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('Asistencia')}>
             <Text style={styles.link}>Ver mi asistencia →</Text>

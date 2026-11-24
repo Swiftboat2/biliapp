@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useActiveStudent } from '../context/StudentContext';
 import { colors } from '../theme/colors';
 import { Icon } from '../components/Icon';
-import { ABSENCE_LIMIT } from '../config/attendance';
+import { nextThreshold } from '../config/attendance';
 
 interface AttendanceRecord {
   id: string;
@@ -229,8 +229,8 @@ export const AttendanceScreen: React.FC<{ navigation?: any }> = ({ navigation })
                   </View>
                   <View style={styles.metricDivider} />
                   <View style={styles.metricAbsenceItem}>
-                    <Text style={styles.metricAbsenceLimit}>{ABSENCE_LIMIT}</Text>
-                    <Text style={styles.metricAbsenceLabel}>Límite reglamentario</Text>
+                    <Text style={styles.metricAbsenceLimit}>{nextThreshold(totalAbsences).value}</Text>
+                    <Text style={styles.metricAbsenceLabel}>{nextThreshold(totalAbsences).label}</Text>
                   </View>
                 </View>
               </View>
