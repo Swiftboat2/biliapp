@@ -1,21 +1,20 @@
 // Datos de ejemplo de la vista Alumno (se reemplazan por la API).
 
-export type Concept = 'Muy Bueno' | 'Bueno' | 'Regular' | 'En proceso';
-
 export interface PartialNote {
   id: string;
   title: string;
   date: string;
-  concept: Concept;
+  /** Nota parcial numérica (1 - 10). */
+  grade: number;
   observation?: string;
 }
 
 export interface SubjectGrades {
   id: string;
   name: string;
-  /** Notas parciales: siempre de concepto. */
+  /** Notas parciales numéricas. */
   partials: PartialNote[];
-  /** Nota de trimestre: la carga el docente (no es promedio). null = todavía no cargada. */
+  /** Nota de trimestre: la carga el docente (no es promedio ni se promedia entre trimestres). null = todavía no cargada. */
   trimester: { 1: number | null; 2: number | null; 3: number | null };
 }
 
@@ -24,8 +23,8 @@ export const studentSubjects: SubjectGrades[] = [
     id: 'lengua',
     name: 'Lengua',
     partials: [
-      { id: 'l1', title: 'Lectura comprensiva: El zorro y la luna', date: 'Hace 2 días', concept: 'Muy Bueno', observation: 'Excelente participación oral.' },
-      { id: 'l2', title: 'Producción escrita: Cuento breve', date: '28 Oct', concept: 'Bueno' },
+      { id: 'l1', title: 'Lectura comprensiva: El zorro y la luna', date: 'Hace 2 días', grade: 9, observation: 'Excelente participación oral.' },
+      { id: 'l2', title: 'Producción escrita: Cuento breve', date: '28 Oct', grade: 8 },
     ],
     trimester: { 1: 8, 2: 9, 3: null },
   },
@@ -33,8 +32,8 @@ export const studentSubjects: SubjectGrades[] = [
     id: 'matematica',
     name: 'Matemática',
     partials: [
-      { id: 'm1', title: 'Fracciones y ángulos', date: 'Hace 2 días', concept: 'Bueno', observation: 'Repasar fracciones equivalentes.' },
-      { id: 'm2', title: 'Problemas de proporcionalidad', date: '22 Oct', concept: 'En proceso' },
+      { id: 'm1', title: 'Fracciones y ángulos', date: 'Hace 2 días', grade: 8, observation: 'Repasar fracciones equivalentes.' },
+      { id: 'm2', title: 'Problemas de proporcionalidad', date: '22 Oct', grade: 6 },
     ],
     trimester: { 1: 7, 2: 7, 3: null },
   },
@@ -42,7 +41,7 @@ export const studentSubjects: SubjectGrades[] = [
     id: 'italiano',
     name: 'Lengua y Cultura Italiana',
     partials: [
-      { id: 'i1', title: 'Oral: Tradizioni e Famiglia', date: 'Ayer', concept: 'Muy Bueno' },
+      { id: 'i1', title: 'Oral: Tradizioni e Famiglia', date: 'Ayer', grade: 9 },
     ],
     trimester: { 1: 9, 2: 10, 3: null },
   },
@@ -50,7 +49,7 @@ export const studentSubjects: SubjectGrades[] = [
     id: 'naturales',
     name: 'Ciencias Naturales',
     partials: [
-      { id: 'n1', title: 'Informe: Ciclo del agua', date: '30 Oct', concept: 'Bueno' },
+      { id: 'n1', title: 'Informe: Ciclo del agua', date: '30 Oct', grade: 8 },
     ],
     trimester: { 1: 8, 2: 8, 3: null },
   },
@@ -58,7 +57,7 @@ export const studentSubjects: SubjectGrades[] = [
     id: 'sociales',
     name: 'Ciencias Sociales',
     partials: [
-      { id: 's1', title: 'Línea de tiempo: Inmigración', date: '20 Oct', concept: 'Regular', observation: 'Completar las fechas faltantes.' },
+      { id: 's1', title: 'Línea de tiempo: Inmigración', date: '20 Oct', grade: 6, observation: 'Completar las fechas faltantes.' },
     ],
     trimester: { 1: 8, 2: null, 3: null },
   },

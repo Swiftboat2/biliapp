@@ -7,7 +7,6 @@ import { Icon } from '../../components/Icon';
 import { colors } from '../../theme/colors';
 import { ABSENCE_LIMIT } from '../../config/attendance';
 import { studentAttendance, studentSubjects, studentSchedulePreview } from '../../data/studentMock';
-import { conceptStyle } from './conceptStyle';
 
 export const StudentHomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { students } = useActiveStudent();
@@ -55,15 +54,14 @@ export const StudentHomeScreen: React.FC<{ navigation: any }> = ({ navigation })
           </TouchableOpacity>
         </View>
         {latest.map((n) => {
-          const cs = conceptStyle[n.concept];
           return (
             <View key={n.id} style={[styles.card, styles.noteRow]}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.noteSubject}>{n.subject}</Text>
                 <Text style={styles.noteTitle} numberOfLines={1}>{n.title}</Text>
               </View>
-              <View style={[styles.pill, { backgroundColor: cs.bg }]}>
-                <Text style={[styles.pillText, { color: cs.fg }]}>{n.concept}</Text>
+              <View style={styles.pill}>
+                <Text style={styles.pillText}>{n.grade}</Text>
               </View>
             </View>
           );
@@ -95,8 +93,8 @@ const styles = StyleSheet.create({
   noteRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   noteSubject: { fontSize: 15, fontWeight: '800', color: colors.textPrimary },
   noteTitle: { fontSize: 12, color: colors.textSecondary, marginTop: 2 },
-  pill: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
-  pillText: { fontSize: 11, fontWeight: '800' },
+  pill: { minWidth: 40, alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, backgroundColor: colors.primaryLight },
+  pillText: { fontSize: 15, fontWeight: '800', color: colors.primaryDark },
   switchBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 16, padding: 12 },
   switchText: { color: colors.primary, fontWeight: '700' },
 });
