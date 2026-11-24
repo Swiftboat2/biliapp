@@ -53,6 +53,13 @@ export default function RootLayout({
                 <span className="w-2 h-2 rounded-full bg-amber-600"></span>
                 Docente
               </a>
+              <a
+                href="/alumno"
+                className="px-3.5 py-1.5 rounded-lg text-slate-700 hover:text-purple-800 hover:bg-white transition-all shadow-none hover:shadow-xs flex items-center gap-1.5"
+              >
+                <span className="w-2 h-2 rounded-full bg-purple-600"></span>
+                App Alumno
+              </a>
               <span className="h-4 w-px bg-slate-300 mx-1"></span>
               <a
                 href="/seguridad-puerta"
